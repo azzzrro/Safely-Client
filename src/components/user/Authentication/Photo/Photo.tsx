@@ -1,4 +1,20 @@
+import {useFormik} from 'formik'
+import * as Yup from 'yup'
+
 function Photo() {
+
+    const formik = useFormik({
+        initialValues:{
+            userImage: null
+        },
+        validationSchema:Yup.object({
+            userImage:Yup.mixed().required("Please upload your image")
+        }),
+        onSubmit :(values)=>{
+       
+        }
+    })
+
     return (
         <>
             <div className="registration-container h-screen flex justify-center items-center">
@@ -22,9 +38,18 @@ function Photo() {
                                 <div className="text-left">
                                     <h1 className="text-blue-800 font-bold text-lg mb-2">Upload the image</h1>
                                 </div>
+                                <div>
+                                    <img src="" alt="" />
+                                </div>
                                 <div className="mb-4 mt-4">
                                     <input
                                         type="file"
+                                        accept="image/*"
+                                        capture="environment"
+                                        name='userImage'
+                                        onChange={(e)=>{
+                                            formik.setFieldValue("userImage",e.currentTarget.files?.[0])
+                                        }}
                                         className="block w-full px-3 py-1.5 mt-2 text-sm text-gray-600 bg-white border
                                          border-gray-200 rounded-2xl file:bg-gray-200 file:text-gray-700 file:text-sm 
                                          file:px-4 file:py-0.5 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-500

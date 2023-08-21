@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { apiURL } from '../../utils/constants'
+import { apiURL } from '../utils/constants'
 
 
 const axiosInstance = axios.create({
