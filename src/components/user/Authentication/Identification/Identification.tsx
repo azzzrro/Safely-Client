@@ -56,6 +56,7 @@ function Identification() {
             .then((response) => {
                 if (response.data.message === "Success") {
                     setphotoPage(true);
+                    toast.success("Identification details submitted successfully!")
                 } else {
                     toast.error(response.data.message);
                 }

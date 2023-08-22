@@ -9,7 +9,7 @@ import { useState } from "react";
 import axiosInstance from "../../../../services/axios";
 import "../../Authentication/Otp/Otp.scss";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { signInWithPhoneNumber, RecaptchaVerifier, Auth, ConfirmationResult } from "firebase/auth";
@@ -87,7 +87,6 @@ const Signup = () => {
             } else if (data.message === "User must fill documents") {
                 toast.info("User Already registered!\n Please verify the documents");
                 console.log(data);
-
                 localStorage.setItem("token", data.token);
                 setIdentificationPage(true);
             } else {
@@ -151,6 +150,7 @@ const Signup = () => {
         try {
             const response = await axiosInstance.post(`/register`, formik.values);
             if (response.data.email) {
+                toast.error("OTP verified successfully")
                 setIdentificationPage(true);
             }
         } catch (error) {
@@ -168,8 +168,6 @@ const Signup = () => {
 
     return (
         <>
-            <ToastContainer />
-
             {identificationPage ? (
                 <Identificationpage />
             ) : (

@@ -12,31 +12,31 @@ import DriverIdentificationPage from "./pages/driver/Authentication/DriverIdenti
 import DriverPhotoPage from "./pages/driver/Authentication/DriverPhotoPage";
 import DriverLocationPage from "./pages/driver/Authentication/DriverLocationPage";
 import DriverLoginPage from "./pages/driver/Authentication/DriverLoginPage";
+import { ToastContainer } from "react-toastify";
 
 function App() {
     return (
         <>
+            <ToastContainer />
             <ChakraProvider>
                 <BrowserRouter>
                     <Routes>
-
-                      {/* User Routes */}
+                        {/* User Routes */}
 
                         <Route path="/" element={<Signuppage />} />
                         <Route path="/otp" element={<Otppage />} />
                         <Route path="/Identification" element={<Identificationpage />} />
-                        <Route path="/photo" element={<Photopage/>} />
-                        <Route path="/login" element={<Loginpage/>}/>
+                        <Route path="/photo" element={<Photopage />} />
+                        <Route path="/login" element={<Loginpage />} />
 
-                      {/* Driver Routes */}
+                        {/* Driver Routes */}
 
-                        <Route path="/Driver-signup" element={<DriverSignupPage/>}/>
-                        <Route path="/Driver-otp" element={<DriverOtpPage/>}/>
-                        <Route path="/Driver-identification" element={<DriverIdentificationPage/>}/>
-                        <Route path="/Driver-photo" element={<DriverPhotoPage/>}/>
-                        <Route path="/Driver-location" element={<DriverLocationPage/>}/>
-                        <Route path="/Driver-login" element={<DriverLoginPage/>}/>
-
+                        <Route path="/Driver-signup" element={<DriverSignupPage />} />
+                        <Route path="/Driver-otp" element={<DriverOtpPage />} />
+                        <Route path="/Driver-identification" element={<DriverIdentificationPage />} />
+                        <Route path="/Driver-photo" element={<DriverPhotoPage />} />
+                        <Route path="/Driver-location" element={<DriverLocationPage />} />
+                        <Route path="/Driver-login" element={<DriverLoginPage />} />
                     </Routes>
                 </BrowserRouter>
             </ChakraProvider>
