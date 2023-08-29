@@ -13,6 +13,7 @@ import DriverPhotoPage from "./pages/driver/Authentication/DriverPhotoPage";
 import DriverLocationPage from "./pages/driver/Authentication/DriverLocationPage";
 import DriverLoginPage from "./pages/driver/Authentication/DriverLoginPage";
 import { ToastContainer } from "react-toastify";
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 function App() {
     return (
@@ -31,12 +32,12 @@ function App() {
 
                         {/* Driver Routes */}
 
-                        <Route path="/Driver-signup" element={<DriverSignupPage />} />
-                        <Route path="/Driver-otp" element={<DriverOtpPage />} />
-                        <Route path="/Driver-identification" element={<DriverIdentificationPage />} />
-                        <Route path="/Driver-photo" element={<DriverPhotoPage />} />
-                        <Route path="/Driver-location" element={<DriverLocationPage />} />
-                        <Route path="/Driver-login" element={<DriverLoginPage />} />
+                        <Route path="/driver/signup" element={<DriverSignupPage />} />
+                        <Route path="/driver/otp" element={<DriverOtpPage />} />
+                        <Route path="/driver/identification" element={<DriverIdentificationPage />} />
+                        <Route path="/driver/photo" element={<DriverPhotoPage />} />
+                        <Route path="/driver/location" element={<DriverLocationPage />} />
+                        <Route path="/driver/login" element={<DriverLoginPage />} />
                     </Routes>
                 </BrowserRouter>
             </ChakraProvider>

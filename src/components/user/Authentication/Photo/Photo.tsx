@@ -18,7 +18,7 @@ function Photo() {
     const [initial, setInitial] = useState(true);
     const webcamRef = useRef<Webcam | null>(null);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -27,35 +27,34 @@ function Photo() {
         validationSchema: Yup.object({
             userImage: Yup.mixed().required("Please upload your image"),
         }),
-        onSubmit : async (values) => {
+        onSubmit: async (values) => {
             try {
-                if(values.userImage){
-                const blob = await fetch(values.userImage).then((res)=>res.blob())
-                const file = new File([blob],'userImage.jpeg',{type:'image/jpeg'})
-                const formData = new FormData()
-                formData.append("userImage",file)
-                const token = localStorage.getItem("token")
-                console.log(token,"tokennnnn");
-                
-                const response = await axiosInstance.post('/uploadUserImage',formData,{
-                    headers:{
-                        Authorization : `bearer ${token}`,
-                        'Content-Type' : 'multipart/form-data'
+                if (values.userImage) {
+                    const blob = await fetch(values.userImage).then((res) => res.blob());
+                    const file = new File([blob], "userImage.jpeg", { type: "image/jpeg" });
+                    const formData = new FormData();
+                    formData.append("userImage", file);
+                    const token = localStorage.getItem("token");
+                    console.log(token, "tokennnnn");
+
+                    const response = await axiosInstance.post("/uploadUserImage", formData, {
+                        headers: {
+                            Authorization: `bearer ${token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    });
+
+                    console.log(response);
+
+                    if (response.data.message === "Success") {
+                        toast.success("Registration successfull!\nPlease wait for the verification");
+                        navigate("/login", { state: { status: "pending" } });
+                    } else {
+                        toast.error(response.data.message);
                     }
-                })
-
-                console.log(response);
-                
-
-                if(response.data.message === "Success"){
-                    toast.success("Registration successfull!\nPlease wait for the verification")
-                    navigate('/login')
-                }else{
-                    toast.error(response.data.message)   
-                }
                 }
             } catch (error) {
-                
+                toast.error((error as Error).message);
             }
         },
     });
@@ -73,7 +72,6 @@ function Photo() {
                 <div className="registration-container h-screen flex justify-center items-center">
                     <div className="w-5/6 md:w-4/6 md:h-4/5 md:flex justify-center items-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                         {formik.values.userImage ? (
-                            // ... Your form contents for showing the uploaded image
                             <>
                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16 md:w-1/2 i justify-around items-center mb-3 md:m-0">
                                     <div className="flex w-full justify-center pt-10 items-center">
@@ -96,7 +94,11 @@ function Photo() {
                                             </div>
 
                                             <div className="flex justify-center items-center">
-                                                <img className="max-h-44 w-auto rounded-3xl" src={formik.values.userImage} alt="" />
+                                                <img
+                                                    className="max-h-44 w-auto rounded-3xl"
+                                                    src={formik.values.userImage}
+                                                    alt=""
+                                                />
                                             </div>
 
                                             <div className="mb-4 mt-4">
@@ -112,7 +114,6 @@ function Photo() {
 
                                             <button
                                                 type="submit"
-                                                
                                                 className="block w-full bg-blue-800 py-2 rounded-2xl text-golden font-semibold mb-2"
                                             >
                                                 Submit
@@ -148,18 +149,6 @@ function Photo() {
                                                             Take your Photo
                                                         </h1>
                                                     </div>
-
-                                                    {/* <div className="mb-4 mt-4">
-                        <button
-                            onClick={() => {
-                                setInitial(false);
-                            }}
-                            className="block w-full px-3 py-1.5 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-2xl focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-                        >
-                            Take photo
-                        </button>
-                    </div> */}
-
                                                     <button
                                                         onClick={() => {
                                                             setInitial(false);
@@ -169,8 +158,6 @@ function Photo() {
                                                     >
                                                         Open Camera
                                                     </button>
-
-                                                    {/* <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">Forgot Password ?</span> */}
                                                 </form>
                                             </div>
                                         </div>
@@ -178,7 +165,7 @@ function Photo() {
                                 ) : (
                                     <div className="mt-4">
                                         <div>
-                                            <Webcam 
+                                            <Webcam
                                                 className="rounded-3xl"
                                                 audio={false}
                                                 height={400}

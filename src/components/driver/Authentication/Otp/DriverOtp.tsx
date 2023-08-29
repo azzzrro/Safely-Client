@@ -7,7 +7,7 @@ function DriverOtp() {
                 <div className="w-5/6 md:w-4/6 md:h-4/5 md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                     <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
                         <div className="flex w-full justify-center pt-10 items-center">
-                            <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-7xl user-otp-title">
+                            <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
                                 don’t share your secret OTP!
                             </h1>
                         </div>
@@ -20,7 +20,7 @@ function DriverOtp() {
                         </div>
                     </div>
                     <div className="flex md:w-1/2 justify-center px-4  pb-10 md:py-10 items-center">
-                        <div className="user-otp-form md:w-8/12 px-9 py-10  bg-white drop-shadow-2xl">
+                        <div className="user-otp-form md:w-10/12 px-9 py-10  bg-white drop-shadow-2xl">
                             <form>
                                 <div className="flex justify-center items-center">
                                     {/* <PasswordIcon className={iconsColor} /> */}
@@ -28,14 +28,6 @@ function DriverOtp() {
                                         Enter the OTP sent to your mobile
                                     </h1>
                                 </div>
-                                {/* <div className="flex justify-evenly items-center  py-2 px-3 rounded-2xl mb-2">
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                    <input className="pl-2 outline-none border-b w-full mx-2" type="text" name="" id="" />
-                                </div> */}
                                 <HStack>
                                     <PinInput otp placeholder=''>
                                         <PinInputField />

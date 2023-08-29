@@ -149,8 +149,9 @@ const Signup = () => {
     const registerSubmit = async () => {
         try {
             const response = await axiosInstance.post(`/register`, formik.values);
-            if (response.data.email) {
+            if (response.data.message === "Success") {
                 toast.error("OTP verified successfully")
+                localStorage.setItem('token',response.data.token)
                 setIdentificationPage(true);
             }
         } catch (error) {
@@ -357,7 +358,7 @@ const Signup = () => {
                                             </button>
                                             <span
                                                 onClick={() => {
-                                                    navigate("/login");
+                                                    navigate("/login",{ state: { status : ""} });
                                                 }}
                                                 className="text-sm ml-2 hover:text-blue-500 cursor-pointer"
                                             >
