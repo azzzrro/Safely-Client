@@ -1,4 +1,4 @@
-import { PinInput, PinInputField,HStack } from "@chakra-ui/react";
+import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 
 function DriverOtp() {
     return (
@@ -6,14 +6,17 @@ function DriverOtp() {
             <div className="driver-registration-container h-screen flex justify-center items-center">
                 <div className="w-5/6 md:w-4/6 md:h-4/5 md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                     <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
-                        <div className="flex w-full justify-center pt-10 items-center">
+                        <div className=" w-full justify-center pt-10 items-center">
                             <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
                                 don’t share your secret OTP!
                             </h1>
+                            <h1 className="text-blue-800 font-normal text-sm mt-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
+                                Please enter the One-Time-Password sent to your registered mobile number
+                            </h1>
                         </div>
-                        <div className="hidden md:block" style={{marginTop:"-30px"}}>
+                        <div className="hidden md:block" style={{ marginTop: "-30px" }}>
                             <img
-                                style={{ height: "420px", width: "auto" }}
+                                style={{ height: "360px", width: "auto" }}
                                 src="../../../../../public/images/[removal.ai]_db9470d4-ef32-48f1-a055-183c21878584-13246824_5191079.png"
                                 alt=""
                             />
@@ -29,7 +32,7 @@ function DriverOtp() {
                                     </h1>
                                 </div>
                                 <HStack>
-                                    <PinInput otp placeholder=''>
+                                    <PinInput otp placeholder="">
                                         <PinInputField />
                                         <PinInputField />
                                         <PinInputField />

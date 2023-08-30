@@ -52,7 +52,7 @@ function DriverPhoto() {
                     console.log(response);
 
                     if (response.data.message === "Success") {
-                        toast.success("Registration successfull!\nPlease wait for the verification");
+                        toast.success("Successfully uploaded Image!");
                         // navigate("/driver/login", { state: { status: "pending" } });
                         setlocationPage(true)
                     } else {

@@ -37,8 +37,7 @@ function DriverSignup() {
         setOtp(parseInt(newOtp.join("")));
     };
 
-
-    //Formik-Yup setup 
+    //Formik-Yup setup
 
     const formik = useFormik({
         initialValues: {
@@ -51,28 +50,33 @@ function DriverSignup() {
         },
         validationSchema: Yup.object({
             name: Yup.string().min(3, "Type a valid name").required("Please enter a name"),
-            email : Yup.string().email("Please enter a valid email").required("Please enter an email"),
-            mobile: Yup.string().length(10,"Please enter a valid number").required("Please enter an email"),
-            password : Yup.string().matches(/^(?=.*[A-Z])/,"Must include One uppercase letter").matches(/^(?=.*\d)/,"Must include one digit").required("Passowrd is required"),
-            re_password: Yup.string().oneOf([Yup.ref("password")],"Password must match").required("Please re-enter the password"),
-            reffered_Code : Yup.string().min(5,"Enter a valid code").matches(/^(?=.*\d)/,"Enter a valid code")
+            email: Yup.string().email("Please enter a valid email").required("Please enter an email"),
+            mobile: Yup.string().length(10, "Please enter a valid number").required("Please enter an email"),
+            password: Yup.string()
+                .matches(/^(?=.*[A-Z])/, "Must include One uppercase letter")
+                .matches(/^(?=.*\d)/, "Must include one digit")
+                .required("Passowrd is required"),
+            re_password: Yup.string()
+                .oneOf([Yup.ref("password")], "Password must match")
+                .required("Please re-enter the password"),
+            reffered_Code: Yup.string()
+                .min(5, "Enter a valid code")
+                .matches(/^(?=.*\d)/, "Enter a valid code"),
         }),
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                await signupHandle(values)
+                await signupHandle(values);
             } catch (error) {
-                toast.error((error as Error).message)
-            }finally{
-                setSubmitting(false)
+                toast.error((error as Error).message);
+            } finally {
+                setSubmitting(false);
             }
         },
     });
 
-
-
     // check-user API
 
-    const signupHandle = async (formData:any) => {
+    const signupHandle = async (formData: any) => {
         try {
             const { data } = await axiosInstance.post(`/driver/checkDriver`, formData);
 
@@ -93,7 +97,6 @@ function DriverSignup() {
         }
     };
 
-
     // OTP and Captcha-verification
 
     const onCaptchaVerify = (auth: Auth) => {
@@ -110,7 +113,6 @@ function DriverSignup() {
         }
     };
 
-
     const sendOtp = async () => {
         try {
             onCaptchaVerify(auth);
@@ -123,7 +125,6 @@ function DriverSignup() {
             toast.error((error as Error).message);
         }
     };
-
 
     const otpVerify = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
@@ -142,7 +143,6 @@ function DriverSignup() {
         }
     };
 
-
     // signup-form submition API
 
     const registerSubmit = async () => {
@@ -150,16 +150,14 @@ function DriverSignup() {
             const response = await axiosInstance.post(`/driver/registerDriver`, formik.values);
             console.log(response);
             if (response.data.message === "Success") {
-                toast.success("OTP verified successfully")
-                localStorage.setItem("driverToken",response.data.token)
+                toast.success("OTP verified successfully");
+                localStorage.setItem("driverToken", response.data.token);
                 setIdentificationPage(true);
             }
         } catch (error) {
             toast.error((error as Error).message);
         }
     };
-
-
 
     const iconsColor = "text-gray-400";
     const with_error_class = "pl-2 outline-none border-b border-red-400 w-full";
@@ -175,14 +173,17 @@ function DriverSignup() {
                         <div className="w-5/6 md:w-4/6 md:h-4/5  md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                             {otpPage ? (
                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
-                                    <div className="flex w-full justify-center pt-10 items-center">
+                                    <div className=" w-full justify-center pt-10 items-center">
                                         <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
                                             don’t share your secret OTP!
+                                        </h1>
+                                        <h1 className="text-blue-800 font-normal text-sm mt-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
+                                            Please enter the One-Time-Password sent to your registered mobile number
                                         </h1>
                                     </div>
                                     <div className="hidden md:block" style={{ marginTop: "-30px" }}>
                                         <img
-                                            style={{ height: "420px", width: "auto" }}
+                                            style={{ height: "360px", width: "auto" }}
                                             src="../../../../../public/images/[removal.ai]_db9470d4-ef32-48f1-a055-183c21878584-13246824_5191079.png"
                                             alt=""
                                         />
@@ -248,7 +249,11 @@ function DriverSignup() {
                                             <div className="flex items-center  py-2 px-3 rounded-2xl mb-2">
                                                 <PersonIcon className={iconsColor} />
                                                 <input
-                                                    className={formik.touched.name && formik.errors.name ? with_error_class : without_error_class}
+                                                    className={
+                                                        formik.touched.name && formik.errors.name
+                                                            ? with_error_class
+                                                            : without_error_class
+                                                    }
                                                     type="text"
                                                     name="name"
                                                     value={formik.values.name}
@@ -258,11 +263,17 @@ function DriverSignup() {
                                                     placeholder="Full name"
                                                 />
                                             </div>
-                                            {formik.touched.name && formik.errors.name && <p className="form-error-p-tag">{formik.errors.name}</p>}
+                                            {formik.touched.name && formik.errors.name && (
+                                                <p className="form-error-p-tag">{formik.errors.name}</p>
+                                            )}
                                             <div className="flex items-center  py-2 px-3 rounded-2xl mb-2">
                                                 <AlternateEmailIcon className={iconsColor} />
                                                 <input
-                                                    className={formik.touched.email && formik.errors.email ? with_error_class : without_error_class}
+                                                    className={
+                                                        formik.touched.email && formik.errors.email
+                                                            ? with_error_class
+                                                            : without_error_class
+                                                    }
                                                     type="text"
                                                     name="email"
                                                     value={formik.values.email}
@@ -280,7 +291,9 @@ function DriverSignup() {
 
                                                 <input
                                                     className={
-                                                        formik.touched.mobile && formik.errors.mobile ? with_error_class : without_error_class
+                                                        formik.touched.mobile && formik.errors.mobile
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="text"
                                                     name="mobile"
@@ -298,7 +311,9 @@ function DriverSignup() {
                                                 <VpnKeyIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.password && formik.errors.password ? with_error_class : without_error_class
+                                                        formik.touched.password && formik.errors.password
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="password"
                                                     name="password"
@@ -316,7 +331,9 @@ function DriverSignup() {
                                                 <VpnKeyIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.re_password && formik.errors.re_password ? with_error_class : without_error_class
+                                                        formik.touched.re_password && formik.errors.re_password
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="password"
                                                     name="re_password"
@@ -334,7 +351,9 @@ function DriverSignup() {
                                                 <GroupIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.reffered_Code && formik.errors.reffered_Code ? with_error_class : without_error_class
+                                                        formik.touched.reffered_Code && formik.errors.reffered_Code
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="text"
                                                     name="reffered_code"
@@ -345,7 +364,7 @@ function DriverSignup() {
                                                     placeholder="Referral Code"
                                                 />
                                             </div>
-                                            {formik.touched.reffered_Code &&  formik.errors.reffered_Code && (
+                                            {formik.touched.reffered_Code && formik.errors.reffered_Code && (
                                                 <p className="form-error-p-tag">{formik.errors.reffered_Code}</p>
                                             )}
                                             <button
@@ -354,14 +373,17 @@ function DriverSignup() {
                                             >
                                                 Register Now
                                             </button>
-                                            <span
-                                                onClick={() => {
-                                                    navigate("/Driver/login",{ state: { status : ""} });
-                                                }}
-                                                className="text-sm ml-2 hover:text-blue-500 cursor-pointer"
-                                            >
-                                                Already a member? Login here
-                                            </span>
+
+                                            <div className="text-center">
+                                                <span
+                                                    onClick={() => {
+                                                        navigate("/Driver/login", { state: { status: "" } });
+                                                    }}
+                                                    className="text-sm ml-2 hover:text-blue-500 cursor-pointer"
+                                                >
+                                                    Already a member? Login here
+                                                </span>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

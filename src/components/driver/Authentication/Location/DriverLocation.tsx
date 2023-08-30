@@ -1,68 +1,72 @@
 import { useEffect, useState } from "react";
 import SignupMap from "../../Map/SignupMap";
-import {useFormik} from 'formik'
-import * as Yup from 'yup'
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../../services/axios";
 import { useNavigate } from "react-router-dom";
+import ExploreIcon from "@mui/icons-material/Explore";
+import GroupIcon from "@mui/icons-material/Group";
+import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 
 function DriverLocation() {
-            
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [isGeolocationActive, setIsGeolocationActive] = useState(false);
-    const [marker, setmarker] = useState(false)
+    const [marker, setmarker] = useState(false);
 
-    const [location, setlocation] = useState(false)
-    const [longitude, setlongitude] = useState(68.7)
-    const [latitude, setlatitude] = useState(8.4)
+    const [location, setlocation] = useState(false);
+    const [longitude, setlongitude] = useState(68.7);
+    const [latitude, setlatitude] = useState(8.4);
 
-    const handleGeolocation = (lat: any, lng: any, status:any) => {
-        console.log("User Location:", lat, lng,status);
-        setlocation(status)
-        setlongitude(lng)
-        setlatitude(lat)
-        formik.setFieldValue("latitude",lat)
-        formik.setFieldValue("longitude",lng)
-      };
-
+    const handleGeolocation = (lat: any, lng: any, status: any) => {
+        console.log("User Location:", lat, lng, status);
+        setlocation(status);
+        setlongitude(lng);
+        setlatitude(lat);
+        formik.setFieldValue("latitude", lat);
+        formik.setFieldValue("longitude", lng);
+    };
 
     const formik = useFormik({
-        initialValues:{
-            latitude:latitude,
-            longitude:longitude
+        initialValues: {
+            latitude: latitude,
+            longitude: longitude,
         },
-        validationSchema:Yup.object({
-            latitude:Yup.number().min(8.4,"Choose a valid location in India").max(37.6,"Choose a valid location in India"),
-            longitude:Yup.number().min(68.7,"Choose a valid location in India").max(97.25,"Choose a valid location in India")
+        validationSchema: Yup.object({
+            latitude: Yup.number()
+                .min(8.4, "Choose a valid location in India")
+                .max(37.6, "Choose a valid location in India"),
+            longitude: Yup.number()
+                .min(68.7, "Choose a valid location in India")
+                .max(97.25, "Choose a valid location in India"),
         }),
-        onSubmit:async (values,{setSubmitting})=>{
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                const token = localStorage.getItem("driverToken")
-                const {data} = await axiosInstance.post('/driver/location',values,{
-                    headers:{
+                const token = localStorage.getItem("driverToken");
+                const { data } = await axiosInstance.post("/driver/location", values, {
+                    headers: {
                         Authorization: `bearer ${token}`,
-                        "Content-Type" : "application/json"
-                    }
-                })
-                if(data.message === "Success"){
-                    toast.success("Registration Successfull! Please wait for the verification.")
-                    navigate('/driver/login')
-                }else{
-                    toast.error(data.message)
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (data.message === "Success") {
+                    toast.success("Registration Successfull! Please wait for the verification.");
+                    navigate("/driver/login" , { state: { status: "pending" } });
+                } else {
+                    toast.error(data.message);
                 }
-            } catch (error:any) {
-                toast.error(error.message)
-            }finally{
-                setSubmitting(false)
+            } catch (error: any) {
+                toast.error(error.message);
+            } finally {
+                setSubmitting(false);
             }
-        }
-    })
+        },
+    });
 
-    useEffect(()=>{
-        toast.error(formik.errors.longitude)
-    },[formik.errors.longitude || formik.errors.latitude])
-    
+    useEffect(() => {
+        toast.error(formik.errors.longitude);
+    }, [formik.errors.longitude || formik.errors.latitude]);
 
     return (
         <>
@@ -75,7 +79,9 @@ function DriverLocation() {
                             </h1>
                         </div>
                         <h1 className="text-blue-800  text-sm mt-3 mx-7 md:mx-0  md:text-sm md:max-w-sm md:mt-3 user-signup-title">
-                        Select your preferred location to enhance navigation and provide efficient service to your passengers.                        </h1>
+                            Select your preferred location to enhance navigation and provide efficient service to your
+                            passengers.{" "}
+                        </h1>
                         <div className="hidden  md:flex md:items-center justify-center">
                             <img
                                 style={{ height: "300px", width: "auto" }}
@@ -88,27 +94,32 @@ function DriverLocation() {
                             <div className="user-signup-form driver-signup-map-form w-full h-full md:w-96 md:h-96   bg-white drop-shadow-xl">
                                 <div className="mb-4 mt-4">
                                     <SignupMap
-                                    handleGeolocation={handleGeolocation} 
-                                    isGeolocationActive={isGeolocationActive}
-                                    selectMarker={marker}
+                                        handleGeolocation={handleGeolocation}
+                                        isGeolocationActive={isGeolocationActive}
+                                        selectMarker={marker}
                                     />
                                 </div>
                             </div>
-                            <div className="flex mt-6 justify-center">
-                                <button
-                                    onClick={()=>setIsGeolocationActive(!isGeolocationActive)}
-                                    type="button"
-                                    className="block w-1/3 text-xs bg-blue-800 py-2 rounded-2xl text-golden font-semibold mb-2"
-                                >
-                                    Get Current Location
-                                </button>
-                                <button 
-                                type="submit"
-                                className="block w-1/3 text-xs bg-blue-800 py-2 rounded-2xl text-golden font-semibold mb-2"
-                                  >
-                                    
-                                    Choose this location
-                                </button>
+                            <div className="flex mt-6 justify-evenly ">
+                                <div className="w-1/2 py-2.5 px-3 mr-1 flex justify-center items-center  bg-blue-800 rounded-2xl">
+                                    <ExploreIcon style={{ color: "white" }} />
+                                    <button
+                                        onClick={() => setIsGeolocationActive(!isGeolocationActive)}
+                                        type="button"
+                                        className=" w-full text-sm  text-golden font-normal "
+                                    >
+                                        Get Current Location
+                                    </button>
+                                </div>
+
+                                <div className="w-1/2 ml-1 px-3 flex justify-center items-center bg-blue-800  rounded-2xl">
+                                    <WhereToVoteIcon style={{ color: "white" }} />
+                                    <button 
+                                    type="submit" 
+                                    className=" w-full text-sm  text-golden font-normal ">
+                                        Choose this location
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

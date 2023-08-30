@@ -81,15 +81,15 @@ const Signup = () => {
             const { data } = await axiosInstance.post(`/checkUser`, formData);
 
             if (data.message === "User login") {
-                toast.error("User Already registered!");
-                toast.info("Please Login to continue");
+                toast.info("User Already registered! Please Login to continue");
                 navigate("/login");
             } else if (data.message === "User must fill documents") {
-                toast.info("User Already registered!\n Please verify the documents");
+                toast.info(`User Already registered! ${<br/>} Please verify the documents`);
                 console.log(data);
                 localStorage.setItem("token", data.token);
                 setIdentificationPage(true);
             } else {
+                toast.info(`User Already registered! ${<br/>} Please verify the documents`);
                 sendOtp();
             }
         } catch (error) {
@@ -150,7 +150,7 @@ const Signup = () => {
         try {
             const response = await axiosInstance.post(`/register`, formik.values);
             if (response.data.message === "Success") {
-                toast.error("OTP verified successfully")
+                toast.success("OTP verified successfully")
                 localStorage.setItem('token',response.data.token)
                 setIdentificationPage(true);
             }
@@ -176,20 +176,23 @@ const Signup = () => {
                     <div className="registration-container h-screen flex justify-center items-center">
                         <div className="registration-container-second md:w-4/6 w-5/6 md:h-4/5  md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                             {otpPage ? (
-                                <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
-                                    <div className="flex w-full justify-center pt-10 items-center">
-                                        <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-7xl user-otp-title">
-                                            don’t share your secret OTP!
-                                        </h1>
-                                    </div>
-                                    <div className="sm:hidden md:block">
-                                        <img
-                                            style={{ height: "300px", width: "auto" }}
-                                            src="https://img.freepik.com/free-vector/new-message-concept-illustration_114360-666.jpg?w=1060&t=st=1692082525~exp=1692083125~hmac=b2a80958a9575bc687f38f052c36e556a1aa6a5bcaaa94134ba0db6c37823bf4"
-                                            alt=""
-                                        />
-                                    </div>
-                                </div>
+                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
+                                 <div className=" w-full justify-center pt-10 items-center">
+                                     <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
+                                         don’t share your secret OTP!
+                                     </h1>
+                                     <h1 className="text-blue-800 font-normal text-sm my-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
+                                         Please enter the One-Time-Password sent to your registered mobile number
+                                     </h1>
+                                 </div>
+                                 <div className="sm:hidden md:block">
+                                     <img
+                                         style={{ height: "290px", width: "auto" }}
+                                         src="https://img.freepik.com/free-vector/new-message-concept-illustration_114360-666.jpg?w=1060&t=st=1692082525~exp=1692083125~hmac=b2a80958a9575bc687f38f052c36e556a1aa6a5bcaaa94134ba0db6c37823bf4"
+                                         alt=""
+                                     />
+                                 </div>
+                             </div>
                             ) : (
                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16 md:w-1/2 i justify-around items-center mb-3 md:m-0">
                                     <div className="flex w-full justify-center pt-10 items-center">
@@ -237,7 +240,9 @@ const Signup = () => {
                                             >
                                                 Verify
                                             </button>
-                                            <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">
+                                            <span 
+                                            onClick={()=>sendOtp}
+                                            className="text-sm ml-2 hover:text-blue-500 cursor-pointer">
                                                 Didn't recieved the OTP?
                                             </span>
                                         </form>
@@ -356,6 +361,7 @@ const Signup = () => {
                                             >
                                                 Register Now
                                             </button>
+                                            <div className="text-center">
                                             <span
                                                 onClick={() => {
                                                     navigate("/login",{ state: { status : ""} });
@@ -364,6 +370,7 @@ const Signup = () => {
                                             >
                                                 Already a member? Login here
                                             </span>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

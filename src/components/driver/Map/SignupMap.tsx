@@ -55,7 +55,7 @@ const SignupMap = ({ handleGeolocation, isGeolocationActive }: any) => {
         setLng(lng)
         setLat(lat)
         setZoom(15)
-        handleGeolocation(lat, lng);
+        handleGeolocation(lat, lng, true);
     }
 
     useEffect(() => {

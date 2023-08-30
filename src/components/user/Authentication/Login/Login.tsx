@@ -1,24 +1,25 @@
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
-import GoogleIcon from "@mui/icons-material/Google";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axiosInstance from "../../../../services/axios";
 import { toast } from "react-toastify";
 import { signInWithPhoneNumber, RecaptchaVerifier, Auth, ConfirmationResult } from "firebase/auth";
 import { auth } from "../../../../services/firebase";
-import { useNavigate } from "react-router-dom";
 import "./Login.scss";
-import axios from "axios";
-import { CredentialResponse, GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 
 function Login({ status }: { status: string }) {
+
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const navigate = useNavigate();
 
     // formik
+
     const formik = useFormik({
         initialValues: {
             mobile: "",
@@ -33,8 +34,10 @@ function Login({ status }: { status: string }) {
                 if (data.message === "Success") {
                     sendOtp();
                 } else if (data.message === "Incomplete registration") {
-                    toast.error("Please complete the registration!");
-                }else if (data.message === "Not verified") {
+                    toast.error("Please complete the verification!");
+                    localStorage.setItem("token", data.token);
+                    navigate("/identification");
+                } else if (data.message === "Not verified") {
                     toast.info("Verification is ongoing!\n We'll send you an email after the verification");
                 } else {
                     toast.error("Not registered! Please register to  continue.");
@@ -94,6 +97,7 @@ function Login({ status }: { status: string }) {
                 .confirm(otpValue)
                 .then(async () => {
                     toast.success("login success");
+                    navigate('/home')
                 })
                 .catch(() => {
                     toast.error("Enter a valid otp");
@@ -103,7 +107,6 @@ function Login({ status }: { status: string }) {
         }
     };
 
-    // const [profile, setProfile] = useState<any | null>(null);
 
     const googleLogin = async (data: CredentialResponse) => {
         try {
@@ -115,53 +118,20 @@ function Login({ status }: { status: string }) {
                 const response = await axiosInstance.post("/checkGoogleLoginUser", formData);
                 if (response.data.message === "Success") {
                     toast.success("Login success!");
-                } else if(response.data.message === "Incomplete registration"){
-                    toast.error("Please complete the registration!");
-                }else if(response.data.message === "Not verified"){
-                    toast.info("Verification is ongoing!")
-                }else{
-                    toast.error("Not registered! Please register to  continue.")
+                } else if (response.data.message === "Incomplete registration") {
+                    toast.info("Please complete the verification!");
+                    localStorage.setItem("token", response.data.token);
+                    navigate("/identification");
+                } else if (response.data.message === "Not verified") {
+                    toast.info("Verification is ongoing!");
+                } else {
+                    toast.error("Not registered! Please register to  continue.");
                 }
             }
         } catch (error: any) {
             toast.error(error);
         }
     };
-
-    // useEffect(() => {
-    //     console.log("inside useeee");
-
-    //     if (profile) {
-    //         console.log(profile);
-
-    //         axios
-    //             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${profile.access_token}`, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${profile.access_token}`,
-    //                     Accept: "application/json",
-    //                 },
-    //             })
-    //             .then((res) => {
-    //                 () => {
-    //                     const formData = new FormData();
-    //                     formData.append("email", res.data.email);
-    //                     axiosInstance
-    //                         .post("/checkGoogleLoginUser", formData)
-    //                         .then((res) => {
-    //                             if (res.data.message === "Success") {
-    //                                 // navigate('/')
-    //                                 console.log(res);
-    //                                 toast.success("Login success!");
-    //                             } else {
-    //                                 toast.error("Not registered!");
-    //                             }
-    //                         })
-    //                         .catch((err) => toast.error(err));
-    //                 };
-    //             })
-    //             .catch((err) => toast.error(err));
-    //     }
-    // }, [profile]);
 
     const iconsColor = "text-gray-400";
     return (
@@ -223,17 +193,6 @@ function Login({ status }: { status: string }) {
                                     <p className="form-error-p-tag">{formik.errors.mobile}</p>
                                 )}
 
-                                {/* <div className="flex items-center  py-2 px-3 rounded-2xl mb-2">
-                                    <VpnKeyIcon className={iconsColor} />
-                                    <input
-                                        className="pl-2 outline-none border-b w-full"
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        placeholder="Password"
-                                    />
-                                </div> */}
-
                                 <div className="my-4 px-2">
                                     {otpInput && (
                                         <HStack>
@@ -265,15 +224,22 @@ function Login({ status }: { status: string }) {
                                     </button>
                                 )}
 
+                                <div className="flex justify-center items-center text-center text-xs mt-4 text-blue-800">
+                                    <HorizontalRuleIcon />
+                                    <h1>or sign-in using Google</h1>
+                                    <HorizontalRuleIcon />
+                                </div>
+
                                 <div className="flex justify-center items-center mt-3 mb-2">
-                                    {/* <div className="flex items-center justify-center w-full bg-blue-800 py-1.5 rounded-2xl text-golden font-semibold mb-2">
-                                        <GoogleIcon className="text-golden" style={{ fontSize: "18px" }} /> */}
                                     <GoogleLogin shape="circle" ux_mode="popup" onSuccess={googleLogin} />
-                                    {/* <h1 className="ml-1">Continue with Google</h1>
-                                    </div> */}
                                 </div>
                                 <div className="text-center">
-                                <span className="text-xs ml-2 hover:text-blue-500 cursor-pointer">Not registered yet? Sign-up here!</span>
+                                    <span
+                                        onClick={() => navigate("/")}
+                                        className="text-xs ml-2 hover:text-blue-500 cursor-pointer"
+                                    >
+                                        Not registered yet? Sign-up here!
+                                    </span>
                                 </div>
                             </form>
                         </div>

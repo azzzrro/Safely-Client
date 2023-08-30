@@ -6,12 +6,20 @@ import Photopage from "./pages/user/Authentication/Photopage";
 import Loginpage from "./pages/user/Authentication/Loginpage";
 import Signuppage from "./pages/user/Authentication/Signuppage";
 import Otppage from "./pages/user/Authentication/Otppage";
+import { Homepage } from "./pages/user/Home/Homepage";
+
+
 import DriverSignupPage from "./pages/driver/Authentication/DriverSignupPage";
 import DriverOtpPage from "./pages/driver/Authentication/DriverOtpPage";
 import DriverIdentificationPage from "./pages/driver/Authentication/DriverIdentificationPage";
 import DriverPhotoPage from "./pages/driver/Authentication/DriverPhotoPage";
 import DriverLocationPage from "./pages/driver/Authentication/DriverLocationPage";
 import DriverLoginPage from "./pages/driver/Authentication/DriverLoginPage";
+import { DriverDashboardpage } from "./pages/driver/Dashboard/DriverDashboardpage";
+
+
+import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
+import { AdminDashboardpage } from "./pages/admin/AdminDashboardpage";
 import { ToastContainer } from "react-toastify";
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -26,9 +34,11 @@ function App() {
 
                         <Route path="/" element={<Signuppage />} />
                         <Route path="/otp" element={<Otppage />} />
-                        <Route path="/Identification" element={<Identificationpage />} />
+                        <Route path="/identification" element={<Identificationpage />} />
                         <Route path="/photo" element={<Photopage />} />
                         <Route path="/login" element={<Loginpage />} />
+                        
+                        <Route path="/home" element={<Homepage/>} />
 
                         {/* Driver Routes */}
 
@@ -38,6 +48,14 @@ function App() {
                         <Route path="/driver/photo" element={<DriverPhotoPage />} />
                         <Route path="/driver/location" element={<DriverLocationPage />} />
                         <Route path="/driver/login" element={<DriverLoginPage />} />
+
+                        <Route path="/driver/dashobard" element={<DriverDashboardpage />} />
+
+                        {/* Driver Routes */}
+
+                        <Route path="/admin/login" element={<AdminLoginPage/>}/>
+                        <Route path="/admin/dashboard" element={<AdminDashboardpage/>}/>
+
                     </Routes>
                 </BrowserRouter>
             </ChakraProvider>
