@@ -16,10 +16,19 @@ import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import axiosInstance from "../../../../services/axios";
 
 function DriverSignup() {
-    const navigate = useNavigate();
 
+    const [counter, setCounter] = useState(30);
+    
+    const navigate = useNavigate();
+    
     const [otpPage, setOtpPage] = useState(false);
     const [identificationPage, setIdentificationPage] = useState(false);
+    
+        useEffect(() => {
+            if(otpPage){
+                counter  > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+            }
+        }, [counter,otpPage]);
 
     const [otp, setOtp] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -210,9 +219,8 @@ function DriverSignup() {
                                 <div className="flex md:w-1/2 justify-center px-4  pb-10 md:py-10 items-center">
                                     <div className="user-otp-form md:w-10/12 px-9 py-10  bg-white drop-shadow-2xl">
                                         <form>
-                                            <div className="flex justify-center items-center">
-                                                {/* <PasswordIcon className={iconsColor} /> */}
-                                                <h1 className="text-gray-800 font-bold text-2xl mb-2 text-center">
+                                            <div className="flex justify-center items-center mb-5">
+                                                <h1 className="text-gray-800 font-bold text-xl text-center">
                                                     Enter the OTP sent to your mobile
                                                 </h1>
                                             </div>

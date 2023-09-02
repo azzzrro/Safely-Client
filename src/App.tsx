@@ -8,7 +8,6 @@ import Signuppage from "./pages/user/Authentication/Signuppage";
 import Otppage from "./pages/user/Authentication/Otppage";
 import { Homepage } from "./pages/user/Home/Homepage";
 
-
 import DriverSignupPage from "./pages/driver/Authentication/DriverSignupPage";
 import DriverOtpPage from "./pages/driver/Authentication/DriverOtpPage";
 import DriverIdentificationPage from "./pages/driver/Authentication/DriverIdentificationPage";
@@ -17,11 +16,13 @@ import DriverLocationPage from "./pages/driver/Authentication/DriverLocationPage
 import DriverLoginPage from "./pages/driver/Authentication/DriverLoginPage";
 import { DriverDashboardpage } from "./pages/driver/Dashboard/DriverDashboardpage";
 
-
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardpage } from "./pages/admin/AdminDashboardpage";
 import { ToastContainer } from "react-toastify";
-import 'mapbox-gl/dist/mapbox-gl.css';
+import "mapbox-gl/dist/mapbox-gl.css";
+import { AdminDrivers } from "./pages/admin/AdminDrivers";
+import { AdminDriverDetailsPending } from "./pages/admin/AdminDriverDetailsPending";
+
 
 function App() {
     return (
@@ -37,8 +38,8 @@ function App() {
                         <Route path="/identification" element={<Identificationpage />} />
                         <Route path="/photo" element={<Photopage />} />
                         <Route path="/login" element={<Loginpage />} />
-                        
-                        <Route path="/home" element={<Homepage/>} />
+
+                        <Route path="/home" element={<Homepage />} />
 
                         {/* Driver Routes */}
 
@@ -51,10 +52,12 @@ function App() {
 
                         <Route path="/driver/dashobard" element={<DriverDashboardpage />} />
 
-                        {/* Driver Routes */}
+                        {/* Admin Routes */}
 
-                        <Route path="/admin/login" element={<AdminLoginPage/>}/>
-                        <Route path="/admin/dashboard" element={<AdminDashboardpage/>}/>
+                        <Route path="/admin/login" element={<AdminLoginPage />} />
+                        <Route path="/admin/dashboard" element={<AdminDashboardpage />} />
+                        <Route path="/admin/drivers" element={<AdminDrivers />} />
+                        <Route path="/admin/pendingDriver/:id" element={<AdminDriverDetailsPending />} />
 
                     </Routes>
                 </BrowserRouter>

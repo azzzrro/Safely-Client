@@ -19,11 +19,18 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const Signup = () => {
+    const [counter, setCounter] = useState(30);
 
     const navigate = useNavigate();
 
     const [otpPage, setOtpPage] = useState(false);
     const [identificationPage, setIdentificationPage] = useState(false);
+
+    useEffect(() => {
+        if(otpPage){
+            counter  > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+        }
+    }, [counter,otpPage]);
 
     const [otp, setOtp] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -33,8 +40,7 @@ const Signup = () => {
         setIdentificationPage(false);
     }, []);
 
-
-    //Formik-Yup setup 
+    //Formik-Yup setup
 
     const formik = useFormik({
         initialValues: {
@@ -47,36 +53,41 @@ const Signup = () => {
         },
         validationSchema: Yup.object({
             name: Yup.string().min(3, "Type a valid name").required("Please enter a name"),
-            email : Yup.string().email("Please enter a valid email").required("Please enter an email"),
-            mobile: Yup.string().length(10,"Please enter a valid number").required("Please enter an email"),
-            password : Yup.string().matches(/^(?=.*[A-Z])/,"Must include One uppercase letter").matches(/^(?=.*\d)/,"Must include one digit").required("Passowrd is required"),
-            re_password: Yup.string().oneOf([Yup.ref("password")],"Password must match").required("Please re-enter the password"),
-            reffered_Code : Yup.string().min(5,"Enter a valid code").matches(/^(?=.*\d)/,"Enter a valid code")
+            email: Yup.string().email("Please enter a valid email").required("Please enter an email"),
+            mobile: Yup.string().length(10, "Please enter a valid number").required("Please enter an email"),
+            password: Yup.string()
+                .matches(/^(?=.*[A-Z])/, "Must include One uppercase letter")
+                .matches(/^(?=.*\d)/, "Must include one digit")
+                .required("Passowrd is required"),
+            re_password: Yup.string()
+                .oneOf([Yup.ref("password")], "Password must match")
+                .required("Please re-enter the password"),
+            reffered_Code: Yup.string()
+                .min(5, "Enter a valid code")
+                .matches(/^(?=.*\d)/, "Enter a valid code"),
         }),
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                await signupHandle(values)
+                await signupHandle(values);
             } catch (error) {
-                toast.error((error as Error).message)
-            }finally{
-                setSubmitting(false)
+                toast.error((error as Error).message);
+            } finally {
+                setSubmitting(false);
             }
         },
     });
 
-
     // Handle-OTP change
- 
+
     const handleOtpChange = (index: number, newValue: number) => {
         const newOtp = [...otp.toString()];
         newOtp[index] = newValue.toString();
         setOtp(parseInt(newOtp.join("")));
     };
 
-
     // check-user API
 
-    const signupHandle = async (formData:any) => {
+    const signupHandle = async (formData: any) => {
         try {
             const { data } = await axiosInstance.post(`/checkUser`, formData);
 
@@ -84,19 +95,17 @@ const Signup = () => {
                 toast.info("User Already registered! Please Login to continue");
                 navigate("/login");
             } else if (data.message === "User must fill documents") {
-                toast.info(`User Already registered! ${<br/>} Please verify the documents`);
+                toast.info(`User Already registered! Please verify the documents`);
                 console.log(data);
                 localStorage.setItem("token", data.token);
                 setIdentificationPage(true);
             } else {
-                toast.info(`User Already registered! ${<br/>} Please verify the documents`);
                 sendOtp();
             }
         } catch (error) {
             toast.error((error as Error).message);
         }
     };
-    
 
     // OTP and Captcha-verification
 
@@ -150,8 +159,8 @@ const Signup = () => {
         try {
             const response = await axiosInstance.post(`/register`, formik.values);
             if (response.data.message === "Success") {
-                toast.success("OTP verified successfully")
-                localStorage.setItem('token',response.data.token)
+                toast.success("OTP verified successfully");
+                localStorage.setItem("token", response.data.token);
                 setIdentificationPage(true);
             }
         } catch (error) {
@@ -176,23 +185,23 @@ const Signup = () => {
                     <div className="registration-container h-screen flex justify-center items-center">
                         <div className="registration-container-second md:w-4/6 w-5/6 md:h-4/5  md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">
                             {otpPage ? (
-                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
-                                 <div className=" w-full justify-center pt-10 items-center">
-                                     <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
-                                         don’t share your secret OTP!
-                                     </h1>
-                                     <h1 className="text-blue-800 font-normal text-sm my-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
-                                         Please enter the One-Time-Password sent to your registered mobile number
-                                     </h1>
-                                 </div>
-                                 <div className="sm:hidden md:block">
-                                     <img
-                                         style={{ height: "290px", width: "auto" }}
-                                         src="https://img.freepik.com/free-vector/new-message-concept-illustration_114360-666.jpg?w=1060&t=st=1692082525~exp=1692083125~hmac=b2a80958a9575bc687f38f052c36e556a1aa6a5bcaaa94134ba0db6c37823bf4"
-                                         alt=""
-                                     />
-                                 </div>
-                             </div>
+                                <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16  md:w-2/3 i justify-around items-center mb-3 md:m-0">
+                                    <div className=" w-full justify-center pt-10 items-center">
+                                        <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-otp-title">
+                                            don’t share your secret OTP!
+                                        </h1>
+                                        <h1 className="text-blue-800 font-normal text-sm my-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
+                                            Please enter the One-Time-Password sent to your registered mobile number
+                                        </h1>
+                                    </div>
+                                    <div className="sm:hidden md:block">
+                                        <img
+                                            style={{ height: "290px", width: "auto" }}
+                                            src="https://img.freepik.com/free-vector/new-message-concept-illustration_114360-666.jpg?w=1060&t=st=1692082525~exp=1692083125~hmac=b2a80958a9575bc687f38f052c36e556a1aa6a5bcaaa94134ba0db6c37823bf4"
+                                            alt=""
+                                        />
+                                    </div>
+                                </div>
                             ) : (
                                 <div className="relative overflow-hidden h-full sm:pl-14 md:pl-16 md:w-1/2 i justify-around items-center mb-3 md:m-0">
                                     <div className="flex w-full justify-center pt-10 items-center">
@@ -214,8 +223,8 @@ const Signup = () => {
                                 <div className="flex md:w-1/2 justify-center px-4  pb-10 md:py-10 items-center">
                                     <div className="user-otp-form md:w-10/12 px-9 py-10  bg-white drop-shadow-2xl">
                                         <form>
-                                            <div className="flex justify-center items-center">
-                                                <h1 className="text-gray-800 font-bold text-2xl mb-2 text-center">
+                                            <div className="flex justify-center items-center mb-5">
+                                                <h1 className="text-gray-800 font-bold text-xl text-center">
                                                     Enter the OTP sent to your mobile
                                                 </h1>
                                             </div>
@@ -240,11 +249,21 @@ const Signup = () => {
                                             >
                                                 Verify
                                             </button>
-                                            <span 
-                                            onClick={()=>sendOtp}
-                                            className="text-sm ml-2 hover:text-blue-500 cursor-pointer">
-                                                Didn't recieved the OTP?
-                                            </span>
+                                            <div className="text-center text-blue-800 mt-4 cursor-pointer">
+                                                {counter > 0 ? (
+                                                    <p className="text-sm">Resend OTP in 00:{counter}</p>
+                                                ) : (
+                                                    <p
+                                                        className="text-sm"
+                                                        onClick={() => {
+                                                            setCounter(30);
+                                                            sendOtp;
+                                                        }}
+                                                    >
+                                                        Resend OTP
+                                                    </p>
+                                                )}
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -255,7 +274,11 @@ const Signup = () => {
                                             <div className="flex items-center  py-2 px-3 rounded-2xl mb-2">
                                                 <PersonIcon className={iconsColor} />
                                                 <input
-                                                    className={formik.touched.name && formik.errors.name ? with_error_class : without_error_class}
+                                                    className={
+                                                        formik.touched.name && formik.errors.name
+                                                            ? with_error_class
+                                                            : without_error_class
+                                                    }
                                                     type="text"
                                                     name="name"
                                                     value={formik.values.name}
@@ -265,11 +288,17 @@ const Signup = () => {
                                                     placeholder="Full name"
                                                 />
                                             </div>
-                                            {formik.touched.name && formik.errors.name && <p className="form-error-p-tag">{formik.errors.name}</p>}
+                                            {formik.touched.name && formik.errors.name && (
+                                                <p className="form-error-p-tag">{formik.errors.name}</p>
+                                            )}
                                             <div className="flex items-center  py-2 px-3 rounded-2xl mb-2">
                                                 <AlternateEmailIcon className={iconsColor} />
                                                 <input
-                                                    className={formik.touched.email && formik.errors.email ? with_error_class : without_error_class}
+                                                    className={
+                                                        formik.touched.email && formik.errors.email
+                                                            ? with_error_class
+                                                            : without_error_class
+                                                    }
                                                     type="text"
                                                     name="email"
                                                     value={formik.values.email}
@@ -287,7 +316,9 @@ const Signup = () => {
 
                                                 <input
                                                     className={
-                                                        formik.touched.mobile && formik.errors.mobile ? with_error_class : without_error_class
+                                                        formik.touched.mobile && formik.errors.mobile
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="text"
                                                     name="mobile"
@@ -305,7 +336,9 @@ const Signup = () => {
                                                 <VpnKeyIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.password && formik.errors.password ? with_error_class : without_error_class
+                                                        formik.touched.password && formik.errors.password
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="password"
                                                     name="password"
@@ -323,7 +356,9 @@ const Signup = () => {
                                                 <VpnKeyIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.re_password && formik.errors.re_password ? with_error_class : without_error_class
+                                                        formik.touched.re_password && formik.errors.re_password
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="password"
                                                     name="re_password"
@@ -341,7 +376,9 @@ const Signup = () => {
                                                 <GroupIcon className={iconsColor} />
                                                 <input
                                                     className={
-                                                        formik.touched.reffered_Code && formik.errors.reffered_Code ? with_error_class : without_error_class
+                                                        formik.touched.reffered_Code && formik.errors.reffered_Code
+                                                            ? with_error_class
+                                                            : without_error_class
                                                     }
                                                     type="text"
                                                     name="reffered_Code"
@@ -352,7 +389,7 @@ const Signup = () => {
                                                     placeholder="Referral Code"
                                                 />
                                             </div>
-                                            {formik.touched.reffered_Code &&  formik.errors.reffered_Code && (
+                                            {formik.touched.reffered_Code && formik.errors.reffered_Code && (
                                                 <p className="form-error-p-tag">{formik.errors.reffered_Code}</p>
                                             )}
                                             <button
@@ -362,14 +399,14 @@ const Signup = () => {
                                                 Register Now
                                             </button>
                                             <div className="text-center">
-                                            <span
-                                                onClick={() => {
-                                                    navigate("/login",{ state: { status : ""} });
-                                                }}
-                                                className="text-sm ml-2 hover:text-blue-500 cursor-pointer"
-                                            >
-                                                Already a member? Login here
-                                            </span>
+                                                <span
+                                                    onClick={() => {
+                                                        navigate("/login");
+                                                    }}
+                                                    className="text-sm ml-2 hover:text-blue-500 cursor-pointer"
+                                                >
+                                                    Already a member? Login here
+                                                </span>
                                             </div>
                                         </form>
                                     </div>

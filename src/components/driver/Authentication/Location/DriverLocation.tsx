@@ -6,10 +6,16 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../../services/axios";
 import { useNavigate } from "react-router-dom";
 import ExploreIcon from "@mui/icons-material/Explore";
-import GroupIcon from "@mui/icons-material/Group";
 import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 
+import { useDispatch } from "react-redux";
+import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
+
+
 function DriverLocation() {
+
+    const dispatch = useDispatch()
+
     const navigate = useNavigate();
 
     const [isGeolocationActive, setIsGeolocationActive] = useState(false);
@@ -51,8 +57,8 @@ function DriverLocation() {
                     },
                 });
                 if (data.message === "Success") {
-                    toast.success("Registration Successfull! Please wait for the verification.");
-                    navigate("/driver/login" , { state: { status: "pending" } });
+                    navigate("/driver/login");
+                    dispatch(openPendingModal())
                 } else {
                     toast.error(data.message);
                 }

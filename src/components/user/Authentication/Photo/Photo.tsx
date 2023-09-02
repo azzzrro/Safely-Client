@@ -1,10 +1,12 @@
-import React, { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import Webcam from "react-webcam";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axiosInstance from "../../../../services/axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
 
 const WebcamComponent = () => <Webcam />;
 
@@ -17,6 +19,8 @@ const videoConstraints = {
 function Photo() {
     const [initial, setInitial] = useState(true);
     const webcamRef = useRef<Webcam | null>(null);
+
+    const dispatch = useDispatch()
 
     const navigate = useNavigate();
 
@@ -47,8 +51,8 @@ function Photo() {
                     console.log(response);
 
                     if (response.data.message === "Success") {
-                        toast.success("Registration successfull!\nPlease wait for the verification");
-                        navigate("/login", { state: { status: "pending" } });
+                        navigate("/login");
+                        dispatch(openPendingModal())
                     } else {
                         toast.error(response.data.message);
                     }

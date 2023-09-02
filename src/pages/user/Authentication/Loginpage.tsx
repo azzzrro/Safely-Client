@@ -1,14 +1,16 @@
-import Login from "../../../components/user/Authentication/Login/Login"
-import {useLocation} from 'react-router-dom'
+import Login from "../../../components/user/Authentication/Login/Login";
+import { PendingModal } from "../../../components/PendingModal";
+import { useSelector } from "react-redux";
 
 function Loginpage() {
-  const location = useLocation()
-  const {status} = location.state || { status: "" }
-  return (
-    <div>
-        <Login status={status}/>
-    </div>
-  )
+    const { isOpen } = useSelector((store: any) => store.pendingModal);
+
+    return (
+        <div>
+            {isOpen && <PendingModal />}
+            <Login />
+        </div>
+    );
 }
 
-export default Loginpage
+export default Loginpage;

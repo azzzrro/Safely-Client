@@ -1,14 +1,15 @@
-import DriverLogin from '../../../components/driver/Authentication/Login/DriverLogin'
-import {useLocation} from 'react-router-dom'
+import DriverLogin from "../../../components/driver/Authentication/Login/DriverLogin";
+import { useSelector } from "react-redux";
+import { PendingModal } from "../../../components/PendingModal";
 
 function DriverLoginPage() {
-  const location = useLocation()
-  const {status} = location.state || { status: "" }
-  return (
-    <div>
-        <DriverLogin status={status}/>
-    </div>
-  )
+    const { isOpen } = useSelector((store: any) => store.pendingModal);
+    return (
+        <div>
+            {isOpen && <PendingModal />}
+            <DriverLogin />
+        </div>
+    );
 }
 
-export default DriverLoginPage
+export default DriverLoginPage;

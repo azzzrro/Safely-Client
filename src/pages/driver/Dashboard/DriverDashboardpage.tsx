@@ -1,4 +1,4 @@
-import { DriverDashboard } from '../../../components/driver/Dashboard/driverDashboard'
+import { DriverDashboard } from "../../../components/driver/Dashboard/DriverDashboard"
 
 export const DriverDashboardpage = () => {
   return (
