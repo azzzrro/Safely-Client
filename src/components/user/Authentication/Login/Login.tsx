@@ -11,10 +11,10 @@ import "./Login.scss";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 
 import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
+import { openRejectedModal } from "../../../../services/redux/slices/rejectedModalSlice";
 
 function Login() {
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -40,10 +40,13 @@ function Login() {
                     toast.error("Please complete the verification!");
                     localStorage.setItem("token", data.token);
                     navigate("/identification");
+                }else if (data.message === "Blocked") {
+                    toast.info("Your account is blocked!");
                 } else if (data.message === "Not verified") {
                     dispatch(openPendingModal());
                 }else if (data.message === "Rejected") {
-                    toast.error("rejected")
+                    dispatch(openRejectedModal());
+                    localStorage.setItem("token", data.token);
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }
@@ -219,21 +222,21 @@ function Login() {
                                             Verify OTP
                                         </button>
 
-                                        <div className="text-center text-blue-800 mt-4 cursor-pointer">
-                                            {counter > 0 ? (
-                                                <p className="text-sm">Resend OTP in 00:{counter}</p>
-                                            ) : (
-                                                <p
-                                                    className="text-sm"
-                                                    onClick={() => {
-                                                        setCounter(30);
-                                                        sendOtp;
-                                                    }}
-                                                >
-                                                    Resend OTP
-                                                </p>
-                                            )}
-                                        </div>
+                                        <div className="text-center text-gray-500 mt-4">
+                                                {counter > 0 ? (
+                                                    <p className="text-sm">Resend OTP in 00:{counter}</p>
+                                                ) : (
+                                                    <p
+                                                        className="text-sm text-blue-800 cursor-pointer"
+                                                        onClick={() => {
+                                                            setCounter(30);
+                                                            sendOtp;
+                                                        }}
+                                                    >
+                                                        Resend OTP
+                                                    </p>
+                                                )}
+                                            </div>
                                     </>
                                 ) : (
                                     <button

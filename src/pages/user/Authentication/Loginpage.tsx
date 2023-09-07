@@ -1,13 +1,16 @@
 import Login from "../../../components/user/Authentication/Login/Login";
 import { PendingModal } from "../../../components/PendingModal";
 import { useSelector } from "react-redux";
+import { RejectedModal } from "../../../components/RejectedModal";
 
 function Loginpage() {
-    const { isOpen } = useSelector((store: any) => store.pendingModal);
+    const { isOpenPending } = useSelector((store: any) => store.pendingModal);
+    const {isOpenRejected} = useSelector((store:any)=>store.rejectedModal)
 
     return (
         <div>
-            {isOpen && <PendingModal />}
+            {isOpenPending && <PendingModal />}
+            {isOpenRejected && <RejectedModal/>}
             <Login />
         </div>
     );

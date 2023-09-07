@@ -244,9 +244,21 @@ function DriverSignup() {
                                             >
                                                 Verify
                                             </button>
-                                            <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">
-                                                Didn't recieve the OTP?
-                                            </span>
+                                            <div className="text-center text-gray-500 mt-4">
+                                                {counter > 0 ? (
+                                                    <p className="text-sm">Resend OTP in 00:{counter}</p>
+                                                ) : (
+                                                    <p
+                                                        className="text-sm text-blue-800 cursor-pointer"
+                                                        onClick={() => {
+                                                            setCounter(30);
+                                                            sendOtp;
+                                                        }}
+                                                    >
+                                                        Resend OTP
+                                                    </p>
+                                                )}
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

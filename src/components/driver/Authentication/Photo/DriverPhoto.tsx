@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import axiosInstance from "../../../../services/axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import DriverLocationPage from "../../../../pages/driver/Authentication/DriverLocationPage";
+import DriverVehiclePage from "../../../../pages/driver/Authentication/DriverVehiclePage";
 
 const WebcamComponent = () => <Webcam />;
 
@@ -17,7 +17,7 @@ const videoConstraints = {
 
 function DriverPhoto() {
     const [initial, setInitial] = useState(true);
-    const [locationPage, setlocationPage] = useState(false);
+    const [vehiclePage, setvehiclePage] = useState(false);
 
     const webcamRef = useRef<Webcam | null>(null);
 
@@ -54,7 +54,7 @@ function DriverPhoto() {
                     if (response.data.message === "Success") {
                         toast.success("Successfully uploaded Image!");
                         // navigate("/driver/login", { state: { status: "pending" } });
-                        setlocationPage(true)
+                        setvehiclePage(true)
                     } else {
                         toast.error(response.data.message);
                     }
@@ -74,8 +74,8 @@ function DriverPhoto() {
 
     return (
         <>
-            {locationPage ? (
-                <DriverLocationPage />
+            {vehiclePage ? (
+                <DriverVehiclePage />
             ) : (
                 <div className="driver-registration-container h-screen flex justify-center items-center">
                     <div className="w-5/6 md:w-4/6 md:h-4/5  md:flex justify-center bg-white rounded-3xl my-5 drop-shadow-2xl">

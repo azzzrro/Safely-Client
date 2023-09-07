@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    isOpen : false
+    isOpenPending : false
 }
 
 const pendingModalSlice:any = createSlice({
-    name:"modal",
+    name:"pendingModal",
     initialState,
     reducers:{
         openPendingModal:(state)=>{
-            state.isOpen = true
+            state.isOpenPending = true
         },
         closePendingModal:(state)=>{
-            state.isOpen = false
+            state.isOpenPending = false
         }
     }
 })

@@ -1,7 +1,5 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import { closePendingModal } from "../services/redux/slices/pendingModalSlice";
-import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export const PendingModal = () => {
   const dispatch = useDispatch()

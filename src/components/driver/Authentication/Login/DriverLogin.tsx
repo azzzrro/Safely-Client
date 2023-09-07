@@ -6,7 +6,6 @@ import { auth } from "../../../../services/firebase";
 import axiosInstance from "../../../../services/axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import jwt_decode from "jwt-decode";
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -14,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
+import { openRejectedModal } from "../../../../services/redux/slices/rejectedModalSlice";
 
 function DriverLogin() {
     const dispatch = useDispatch();
@@ -39,10 +39,13 @@ function DriverLogin() {
                     toast.info("Please complete the verification!");
                     localStorage.setItem("driverToken", data.token);
                     navigate("/driver/identification");
+                } else if (data.message === "Blocked") {
+                    toast.info("Your account is blocked!");
                 } else if (data.message === "Not verified") {
                     dispatch(openPendingModal());
-                }else if (data.message === "Rejected") {
-                    toast.error("rejected")
+                } else if (data.message === "Rejected") {
+                    localStorage.setItem("driverToken", data.token);
+                    dispatch(openRejectedModal());
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }
@@ -132,10 +135,13 @@ function DriverLogin() {
                     toast.info("Please complete the registration!");
                     localStorage.setItem("driverToken", response.data.token);
                     navigate("/driver/identification");
+                } else if (response.data.message === "Blocked") {
+                    toast.info("Your account is blocked!");
                 } else if (response.data.message === "Not verified") {
-                    toast.info("Verification is ongoing!");
-                }else if (response.data.message === "Rejected") {
-                    toast.error("rejected")
+                    dispatch(openPendingModal());
+                } else if (response.data.message === "Rejected") {
+                    dispatch(openRejectedModal());
+                    localStorage.setItem("driverToken", response.data.token);
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }
@@ -160,7 +166,7 @@ function DriverLogin() {
                             </h1>
                         </div>
 
-                        <div className="hidden  md:flex md:items-center" style={{ marginTop: "-30px" }}>
+                        <div className="hidden  md:flex md:items-center" style={{ marginTop: "-45px" }}>
                             <img
                                 style={{ height: "300px", width: "auto" }}
                                 src="../../../public/images/[removal.ai]_4c7ba0ac-90b6-43f1-b097-932d54d9f8b0-sssdsdsd.png"
@@ -216,12 +222,12 @@ function DriverLogin() {
                                         >
                                             Verify OTP
                                         </button>
-                                        <div className="text-center text-blue-800 mt-4 cursor-pointer">
+                                        <div className="text-center text-gray-500 mt-4">
                                             {counter > 0 ? (
                                                 <p className="text-sm">Resend OTP in 00:{counter}</p>
                                             ) : (
                                                 <p
-                                                    className="text-sm"
+                                                    className="text-sm text-blue-800 cursor-pointer"
                                                     onClick={() => {
                                                         setCounter(30);
                                                         sendOtp;

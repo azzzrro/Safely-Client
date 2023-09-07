@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../services/axios";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
-import * as Yup from 'yup'
+import * as Yup from "yup";
 
-const DriversDetails = () => {
+const PendingDetails = () => {
     const [acceptModal, setacceptModal] = useState(false);
     const [rejectModal, setrejectModal] = useState(false);
     const [driverData, setdriverData] = useState<any | null>(null);
@@ -31,31 +31,29 @@ const DriversDetails = () => {
     };
 
     const formik = useFormik({
-        initialValues:{
-            reason:"",
+        initialValues: {
+            reason: "",
         },
-        validationSchema:Yup.object({
-            reason:Yup.string().required("Reason for rejection is required!").min(5,"Enter a valid reason")
+        validationSchema: Yup.object({
+            reason: Yup.string().required("Please provide a valid reason!").min(5, "Enter a valid reason"),
         }),
-        onSubmit :async (values, { setSubmitting }) => {
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                    const { data } = await axiosInstance.get(`/admin/rejectDriver?id=${id}`);
-                    if (data.message === "Success") {
-                        setrejectModal(false);
-                        toast.success("Driver rejected successfully!");
-                        navigate("/admin/drivers");
-                    } else {
-                        toast.error("Something internal error");
-                    }
+                const { data } = await axiosInstance.post(`/admin/rejectDriver?id=${id}`, values);
+                if (data.message === "Success") {
+                    setrejectModal(false);
+                    toast.success("Driver rejected successfully!");
+                    navigate("/admin/drivers");
+                } else {
+                    toast.error("Something internal error");
+                }
             } catch (error) {
                 toast.error((error as Error).message);
             } finally {
                 setSubmitting(false);
             }
-        }
-    })
-
-    
+        },
+    });
 
     return (
         <>
@@ -138,14 +136,17 @@ const DriversDetails = () => {
                                     </div>
                                 </div>
 
-                                <form>
+                                <form onSubmit={formik.handleSubmit}>
                                     <div className="mt-2 -mx-1 text-center">
                                         <h1 className="mx-1 text-sm mt-4 mb-2">Please provide the reason for rejection.</h1>
-                                        <textarea 
-                                        name="reason"
-                                        onChange={formik.handleChange}
-                                        className="flex-1 block h-10 w-full px-3 py-2 mx-1 text-sm text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring" />
-                                        <p>{formik.errors.reason}</p>
+                                        <textarea
+                                            name="reason"
+                                            onChange={formik.handleChange}
+                                            className="flex-1 block h-10 w-full px-3 py-2 mx-1 text-sm text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
+                                        />
+                                        <div className="text-center mt-1 text-red-500">
+                                            <p className="text-xs">{formik.errors.reason}</p>
+                                        </div>
                                     </div>
 
                                     <div className="mt-5 sm:flex sm:items-center sm:justify-center">
@@ -172,10 +173,10 @@ const DriversDetails = () => {
             )}
 
             <div className="ml-4 h-screen">
-                <h1 className=" text-3xl font-semibold text-gray-500">Driver Details</h1>
+                <h1 className=" text-3xl font-bold text-black">Driver Details</h1>
                 <div className="grid md:grid-cols-2 sm:grid-cols-2 gap-4 mt-7 md:px-28 w-full h-full  rounded-3xl">
                     <div className=" ml-4 my-4 rounded-3xl px-3 pt-3 pb-4 h-5/6">
-                        <div className="w-full h-4/6 bg-white drop-shadow-2xl rounded-3xl mb-3 overflow-hidden">
+                        <div className="w-full h-3/6 bg-white drop-shadow-2xl rounded-3xl mb-3 overflow-hidden">
                             <img className="w-full" src={driverData?.driverImage} alt="" />
                         </div>
 
@@ -207,13 +208,13 @@ const DriversDetails = () => {
                             <div className="md:flex justify-center items-center h-2/5">
                                 <button
                                     onClick={() => setacceptModal(true)}
-                                    className="btn btn-active btn-accent btn-sm mx-2 text-white"
+                                    className="btn btn-active btn-success btn-sm mx-2 text-white"
                                 >
                                     accept
                                 </button>
                                 <button
                                     onClick={() => setrejectModal(true)}
-                                    className="btn btn-active btn-secondary btn-sm text-white"
+                                    className="btn btn-active btn-error btn-sm text-white"
                                 >
                                     reject
                                 </button>
@@ -221,11 +222,36 @@ const DriversDetails = () => {
                         </div>
                     </div>
                     <div className=" mx-4 my-4 rounded-3xl px-3 py-4 h-5/6">
-                        <div className="w-full h-1/2 bg-amber-200 mb-1 rounded-3xl overflow-hidden drop-shadow-2xl">
+                        <div className="w-full h-1/3 bg-amber-200 mb-1 rounded-3xl overflow-hidden drop-shadow-2xl">
                             <img src={driverData?.aadhar.aadharImage} alt="" />
                         </div>
-                        <div className="w-full h-1/2 bg-amber-200 mt-2 rounded-3xl overflow-hidden drop-shadow-2xl">
-                            <img src={driverData?.license.licenseImage} alt="" />
+                        <div className="w-full h-1/3 bg-amber-200 mt-2 rounded-3xl overflow-hidden drop-shadow-2xl">
+                            <img className="w-full" src={driverData?.license.licenseImage} alt="" />
+                        </div>
+                    </div>
+                </div>
+                <h1 className=" text-3xl font-bold text-black">Vehicle Details</h1>
+                <div className="w-full h-fit md:flex md:justify-evenly md:px-28 py-10">
+                    <div className="bg-indigo-400  drop-shadow-2xl w-1/3 h-1/2 rounded-3xl flex flex-col justify-evenly px-5 py-5">
+                        <div className="">
+                            <h1 className="text-xl text-white font-bold">Vehicle Registeration ID</h1>
+                            <div className="text-center mt-2">
+                                <h1 className="btn btn-sm btn-neutral">{driverData?.vehicle_details.registerationID}</h1>
+                            </div>
+                        </div>
+                        <div className="mt-5">
+                            <h1 className="text-xl text-white font-bold">Vehicle Model</h1>
+                            <div className="text-center mt-2">
+                                <h1 className="btn btn-sm btn-neutral">{driverData?.vehicle_details.model}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-2/4">
+                        <div className="drop-shadow-2xl h-fit mb-1 rounded-3xl overflow-hidden">
+                            <img className="w-full" src={driverData?.vehicle_details.rcImageUrl} alt="" />
+                        </div>
+                        <div className="drop-shadow-2xl h-fit mt-2 rounded-3xl overflow-hidden">
+                            <img  src={driverData?.vehicle_details.carImageUrl} alt="" />
                         </div>
                     </div>
                 </div>
@@ -234,4 +260,4 @@ const DriversDetails = () => {
     );
 };
 
-export default DriversDetails;
+export default PendingDetails;

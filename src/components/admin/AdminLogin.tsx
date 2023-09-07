@@ -44,22 +44,22 @@ export const AdminLogin = () => {
     return (
         <>
             <div className="admin-login-container h-screen flex justify-center items-center">
-                <div className="admin-login-container-second w-5/6 md:w-4/6 md:h-4/6  md:flex justify-center items-center bg-white rounded-3xl my-5 drop-shadow-2xl">
-                    <div className="flex flex-col justify-center h-full sm:pl-14 md:pl-16 md:w-1/2 i mb-3 md:m-0">
+                <div className="admin-login-container-second w-5/6 md:w-3/6 md:h-4/6  md:flex justify-center items-center bg-white rounded-3xl my-5 drop-shadow-2xl">
+                    <div className="flex flex-col justify-center h-full sm:pl-14 md:pl-10 md:w-1/2 i mb-3 md:m-0">
                         <div className="">
-                            <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-6xl user-signup-title md:max-w-sm">
+                            <h1 className="text-blue-800 font-bold text-4xl mx-7 md:mx-0  md:text-5xl user-signup-title md:max-w-sm">
                                 Admin Login
                             </h1>
                         </div>
                         <div className="">
-                            <h1 className="text-blue-800 md:max-w-xs font-normal text-sm my-3 mx-7 md:mx-0  md:text-lg md:mt-3 user-signup-title">
+                            <h1 className="text-blue-800 md:max-w-xs font-normal text-sm my-3 mx-7 md:mx-0  md:text-base md:mt-3 user-signup-title">
                             Please enter the admin email and password to login!
                             </h1>
                         </div>
                     </div>
 
-                    <div className="flex md:w-1/2 justify-center pb-10 md:py-10 md:mr-4 items-center">
-                        <div className="admin-login-form md:w-4/5 px-9 py-8  bg-white drop-shadow-2xl">
+                    <div className="flex md:w-1/2 justify-center pb-10 md:py-10 md:pr-3 md:mr-4 items-center">
+                        <div className="admin-login-form md:w-11/12 px-7 py-8  bg-white drop-shadow-2xl">
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="text-center">
                                     <h1 className="text-gray-800 font-bold text-3xl mt-7 mb-7">Welcome back!</h1>

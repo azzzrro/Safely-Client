@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axios";
 import { useNavigate } from "react-router-dom";
 
-export const VerifiedDrivers = () => {
+const BlockedDrivers = () => {
     const [driversData, setdriversData] = useState([]);
     const navigate = useNavigate()
 
     useEffect(() => {
         const getData = async () => {
-            const { data } = await axiosInstance.get("/admin/verifiedDrivers");
+            const { data } = await axiosInstance.get("/admin/blockedDrivers");
             setdriversData(data);
         };
         getData();
     }, []);
 
-  return (
-    <>
-    <div className="overflow-x-auto">
+    return (
+        <>
+            <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
                     <thead>
@@ -71,6 +71,8 @@ export const VerifiedDrivers = () => {
                     {/* foot */}
                 </table>
             </div>
-    </>
+        </>
   )
 }
+
+export default BlockedDrivers

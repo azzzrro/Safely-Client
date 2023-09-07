@@ -19,6 +19,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const Signup = () => {
+
+
+
     const [counter, setCounter] = useState(30);
 
     const navigate = useNavigate();
@@ -34,6 +37,13 @@ const Signup = () => {
 
     const [otp, setOtp] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
+    
+    useEffect(()=>{
+        console.log(otp);
+        
+        },[otp])
+
 
     useEffect(() => {
         setOtpPage(false);
@@ -249,15 +259,15 @@ const Signup = () => {
                                             >
                                                 Verify
                                             </button>
-                                            <div className="text-center text-blue-800 mt-4 cursor-pointer">
+                                            <div className="text-center text-gray-500 mt-4">
                                                 {counter > 0 ? (
                                                     <p className="text-sm">Resend OTP in 00:{counter}</p>
                                                 ) : (
                                                     <p
-                                                        className="text-sm"
+                                                        className="text-sm text-blue-800 cursor-pointer"
                                                         onClick={() => {
                                                             setCounter(30);
-                                                            sendOtp;
+                                                            sendOtp();
                                                         }}
                                                     >
                                                         Resend OTP

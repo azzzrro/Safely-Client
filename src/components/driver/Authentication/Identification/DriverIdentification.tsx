@@ -31,7 +31,8 @@ function DriverIdentification() {
     const handleUpload = (formData: any) => {
         
         const token = localStorage.getItem("driverToken");
-
+        console.log("insideeeee");
+        
         axiosInstance
             .post("/driver/identification", formData, {
                 headers: {
@@ -162,7 +163,6 @@ function DriverIdentification() {
                                     >
                                         Submit
                                     </button>
-                                    {/* <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">Forgot Password ?</span> */}
                                 </form>
                             </div>
                         </div>
