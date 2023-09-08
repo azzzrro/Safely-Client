@@ -11,8 +11,8 @@ const WhySafely = () => {
                     <h1 className="text-4xl font-bold text-blue-800">Why Safely?</h1>
                 </div>
 
-                <div className="container w-full h-fit md:flex md:justify-between grid grid-rows-1 gap-5 py-10">
-                    <div>
+                <div className="container w-full h-fit md:flex md:justify-between grid grid-rows-1 gap-5 py-10 ">
+                    <div className="mx-auto">
                         <Card
                             shadow={false}
                             className="relative grid h-[15rem] w-full max-w-[25rem] justify-center overflow-hidden text-center"
@@ -47,7 +47,7 @@ const WhySafely = () => {
                             </CardBody>
                         </Card>
                     </div>
-                    <div>
+                    <div className="mx-auto">
                         <Card
                             shadow={false}
                             className="relative grid h-[15rem] w-full max-w-[25rem] justify-center overflow-hidden text-center"
@@ -83,7 +83,7 @@ const WhySafely = () => {
                             </CardBody>
                         </Card>
                     </div>
-                    <div>
+                    <div className="mx-auto">
                         <Card
                             shadow={false}
                             className="relative grid h-[15rem] w-full max-w-[25rem]  justify-center overflow-hidden text-center"

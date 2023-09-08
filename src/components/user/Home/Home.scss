@@ -1,3 +1,11 @@
-.vehicle-section::-webkit-scrollbar{
+.car-selection::-webkit-scrollbar {
     display: none;
+}
+
+.car-one {
+    transition: all 0.2s ease-in-out;
+}
+.car-one:hover {
+    transform: scale(1.03);
+    cursor: pointer;
 }
