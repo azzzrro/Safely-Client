@@ -11,7 +11,7 @@ export const AdminDrivers = () => {
     return (
         <>
             <AdminNavbar />
-            <div className="admin-container">
+            <div className="admin-container rounded-3xl bg-indigo-50 drop-shadow-xl md:mx-[8rem] mt-[2.5rem] py-8">
                 <Tabs position="relative" variant="unstyled">
                     <div className="ml-5">
                         <TabList>

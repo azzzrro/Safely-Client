@@ -172,8 +172,8 @@ const PendingDetails = () => {
                 </div>
             )}
 
-            <div className="ml-4 h-screen">
-                <h1 className=" text-3xl font-bold text-black">Driver Details</h1>
+            <div className="h-screen">
+                <h1 className="mx-[7.8rem] mt-10 text-3xl font-bold text-black">Driver Details</h1>
                 <div className="grid md:grid-cols-2 sm:grid-cols-2 gap-4 mt-7 md:px-28 w-full h-full  rounded-3xl">
                     <div className=" ml-4 my-4 rounded-3xl px-3 pt-3 pb-4 h-5/6">
                         <div className="w-full h-3/6 bg-white drop-shadow-2xl rounded-3xl mb-3 overflow-hidden">

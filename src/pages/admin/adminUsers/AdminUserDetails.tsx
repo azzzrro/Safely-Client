@@ -6,7 +6,7 @@ const AdminUserDetails = () => {
     return (
         <>
             <AdminNavbar />
-            <div className="admin-container">
+            <div className="admin-container drop-shadow-xl">
                 <PendingUserDetails />
             </div>
         </>

@@ -1,3 +1,6 @@
+//DriverNavbar
+
+
 import React from "react";
 import {
   Navbar,
@@ -6,11 +9,8 @@ import {
   Button,
   IconButton,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-
-export function AdminNavbar() {
-    const navigate = useNavigate();
-
+ 
+export function DriverNavbar() {
   const [openNav, setOpenNav] = React.useState(false);
  
   React.useEffect(() => {
@@ -28,9 +28,7 @@ export function AdminNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={() => navigate("/admin/dashboard")}
-        className="flex items-center cursor-pointer">
+        <p className="flex items-center cursor-pointer">
           Dashboard
         </p>
       </Typography>
@@ -40,10 +38,8 @@ export function AdminNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={() => navigate("/admin/drivers")}
-        className="flex items-center cursor-pointer">
-          Drivers
+        <p className="flex items-center cursor-pointer">
+          Rides
         </p>
       </Typography>
       <Typography
@@ -52,10 +48,8 @@ export function AdminNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={() => navigate("/admin/users")}
-        className="flex items-center cursor-pointer">
-          Users
+        <p className="flex items-center cursor-pointer">
+          Notifications
         </p>
       </Typography>
       <Typography
@@ -72,14 +66,14 @@ export function AdminNavbar() {
   );
  
   return (
-    <Navbar className="mx-auto max-w-screen-xl py-2 px-4 lg:px-8 lg:py-4 bg-gradient-to-r from-gray-700 via-gray-900 to-black">
+    <Navbar className="mx-auto max-w-screen-xl py-2 px-4 lg:px-8 lg:py-4 bg-gradient-to-r from-indigo-400 to-cyan-400">
       <div className="container mx-auto flex items-center justify-between text-white">
         <Typography
           as="a"
           href="#"
           className="mr-4 cursor-pointer py-1.5 font-medium"
         >
-          Admin Dashboard
+          Driver Dashboard
         </Typography>
         <div className="hidden lg:block">{navList}</div>
         <Button variant="gradient" size="sm" className="hidden lg:inline-block">

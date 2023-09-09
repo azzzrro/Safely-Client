@@ -99,12 +99,12 @@ const Navbar = () => {
                                                 <a>Signout</a>
                                             </li>
                                         </ul>
-                                        <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
-                                            <img
-                                                src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436185.jpg?w=740&t=st=1693803682~exp=1693804282~hmac=c888a79a5dcadeaaf9ce7326aa9a7dc03c6648d288b43e25d6142950b8223908"
-                                                className="object-cover w-full h-full"
-                                                alt="avatar"
-                                            />
+                                        <div className="w-8 h-8">
+                                            <div className="avatar placeholder object-cover w-full h-full">
+                                                <div className="bg-neutral-focus text-neutral-content rounded-full w-16">
+                                                    <span className="text-sm">A</span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">Khatab wedaa</h3>

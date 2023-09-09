@@ -1,9 +1,12 @@
 import React from 'react'
 
-export const DriverNavbar = () => {
+const DriverInfo = () => {
   return (
     <>
+      
     
     </>
   )
 }
+
+export default DriverInfo

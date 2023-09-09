@@ -20,6 +20,7 @@ import DriverVehiclePage from "./pages/driver/Authentication/DriverVehiclePage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardpage } from "./pages/admin/AdminDashboardpage";
 import { ToastContainer } from "react-toastify";
+import {Toaster} from 'react-hot-toast'
 import "mapbox-gl/dist/mapbox-gl.css";
 import { AdminDrivers } from "./pages/admin/adminDrivers/AdminDrivers";
 import { AdminDriverDetailsPending } from "./pages/admin/adminDrivers/AdminDriverDetailsPending";
@@ -31,6 +32,7 @@ function App() {
     return (
         <>
             <ToastContainer />
+            <Toaster/>
             <ChakraProvider>
                 <BrowserRouter>
                     <Routes>
@@ -55,7 +57,7 @@ function App() {
                         <Route path="/driver/location" element={<DriverLocationPage />} />
                         <Route path="/driver/login" element={<DriverLoginPage />} />
 
-                        <Route path="/driver/dashobard" element={<DriverDashboardpage />} />
+                        <Route path="/driver/dashboard" element={<DriverDashboardpage />} />
 
                         {/* Admin Routes */}
 
