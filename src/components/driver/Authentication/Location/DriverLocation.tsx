@@ -49,10 +49,9 @@ function DriverLocation() {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const token = localStorage.getItem("driverToken");
-                const { data } = await axiosInstance.post("/driver/location", values, {
+                const driverId = localStorage.getItem("driverId");
+                const { data } = await axiosInstance.post(`/driver/location?driverId=${driverId}`, values, {
                     headers: {
-                        Authorization: `bearer ${token}`,
                         "Content-Type": "application/json",
                     },
                 });

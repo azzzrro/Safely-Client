@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { userLogout } from "../../../services/redux/slices/userAuthSlice";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    const user = useSelector((store: any) => store.user.user);
 
     return (
         <>
@@ -74,10 +80,10 @@ const Navbar = () => {
                                         Notifications
                                     </p>
                                     <p
-                                        onClick={() => navigate("/admin/users")}
+                                        onClick={()=>navigate('/login')}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
-                                        Support
+                                        login
                                     </p>
                                 </div>
 
@@ -92,12 +98,29 @@ const Navbar = () => {
                                             tabIndex={0}
                                             className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4"
                                         >
-                                            <li>
-                                                <a>Profile</a>
-                                            </li>
-                                            <li>
-                                                <a>Signout</a>
-                                            </li>
+                                            {user ? (
+                                                <>
+                                                    <li onClick={()=>navigate('/profile')}>
+                                                        <a>Profile</a>
+                                                    </li>
+                                                    <li onClick={() => dispatch(userLogout())}>
+                                                        <a>Signout</a>
+                                                    </li>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <li
+                                                    onClick={()=>navigate('/login')}
+                                                    >
+                                                        <a>Login</a>
+                                                    </li>
+                                                    <li
+                                                    onClick={()=>navigate('/signup')}
+                                                    >
+                                                        <a>Signup</a>
+                                                    </li>
+                                                </>
+                                            )}
                                         </ul>
                                         <div className="w-8 h-8">
                                             <div className="avatar placeholder object-cover w-full h-full">

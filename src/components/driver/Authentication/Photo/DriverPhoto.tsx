@@ -39,12 +39,11 @@ function DriverPhoto() {
                     const formData = new FormData();
                     formData.append("driverImage", file);
 
-                    const token = localStorage.getItem("driverToken");
-                    console.log(token, "tokennnnn");
+                    const driverId = localStorage.getItem("driverId");
+                    console.log(driverId, "tokennnnn");
 
-                    const response = await axiosInstance.post("/driver/uploadDriverImage", formData, {
+                    const response = await axiosInstance.post(`/driver/uploadDriverImage?driverId=${driverId}`, formData, {
                         headers: {
-                            Authorization: `bearer ${token}`,
                             "Content-Type": "multipart/form-data",
                         },
                     });

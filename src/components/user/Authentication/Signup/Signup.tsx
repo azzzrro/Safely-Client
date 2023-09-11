@@ -107,7 +107,7 @@ const Signup = () => {
             } else if (data.message === "User must fill documents") {
                 toast.info(`User Already registered! Please verify the documents`);
                 console.log(data);
-                localStorage.setItem("token", data.token);
+                localStorage.setItem("userId", data.userId);
                 setIdentificationPage(true);
             } else {
                 sendOtp();
@@ -170,7 +170,7 @@ const Signup = () => {
             const response = await axiosInstance.post(`/register`, formik.values);
             if (response.data.message === "Success") {
                 toast.success("OTP verified successfully");
-                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("userId", response.data.userId);
                 setIdentificationPage(true);
             }
         } catch (error) {

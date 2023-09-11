@@ -90,13 +90,12 @@ function DriverSignup() {
             const { data } = await axiosInstance.post(`/driver/checkDriver`, formData);
 
             if (data.message === "Driver login") {
-                toast.error("Driver Already registered!");
-                toast.info("Please Login to continue");
+                toast.error("Driver Already registered! Please Login to continue");
                 navigate("/driver/login");
             } else if (data.message === "Driver must fill documents") {
                 toast.info("Driver Already registered!\n Please verify the documents");
                 console.log(data);
-                localStorage.setItem("driverToken", data.token);
+                localStorage.setItem("driverId", data.driverId);
                 setIdentificationPage(true);
             } else {
                 sendOtp();
@@ -160,7 +159,7 @@ function DriverSignup() {
             console.log(response);
             if (response.data.message === "Success") {
                 toast.success("OTP verified successfully");
-                localStorage.setItem("driverToken", response.data.token);
+                localStorage.setItem("driverId", response.data.driverId);
                 setIdentificationPage(true);
             }
         } catch (error) {

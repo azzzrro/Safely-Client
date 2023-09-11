@@ -30,13 +30,11 @@ function DriverIdentification() {
 
     const handleUpload = (formData: any) => {
         
-        const token = localStorage.getItem("driverToken");
-        console.log("insideeeee");
-        
+        const driverId = localStorage.getItem("driverId");
+
         axiosInstance
-            .post("/driver/identification", formData, {
+            .post(`/driver/identification?driverId=${driverId}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 },
             })

@@ -28,11 +28,10 @@ const Vehicle = () => {
         onSubmit: async (values) => {
             try {
 
-                const token = localStorage.getItem("driverToken");
+                const driverId = localStorage.getItem("driverId");
 
-                const { data } = await axiosInstance.post("/driver/vehicleDetails", values,{
+                const { data } = await axiosInstance.post(`/driver/vehicleDetails?driverId=${driverId}`, values,{
                     headers: {
-                        Authorization: `bearer ${token}`,
                         "Content-Type": "multipart/form-data",
                     },
                 });

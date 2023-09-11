@@ -38,12 +38,11 @@ function Photo() {
                     const file = new File([blob], "userImage.jpeg", { type: "image/jpeg" });
                     const formData = new FormData();
                     formData.append("userImage", file);
-                    const token = localStorage.getItem("token");
-                    console.log(token, "tokennnnn");
+                    const userId = localStorage.getItem("userId");
+                    console.log(userId, "tokennnnn");
 
-                    const response = await axiosInstance.post("/uploadUserImage", formData, {
+                    const response = await axiosInstance.post(`/uploadUserImage?userId=${userId}`, formData, {
                         headers: {
-                            Authorization: `bearer ${token}`,
                             "Content-Type": "multipart/form-data",
                         },
                     });

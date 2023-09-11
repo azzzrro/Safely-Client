@@ -14,12 +14,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
 import { openRejectedModal } from "../../../../services/redux/slices/rejectedModalSlice";
+import { driverLogin } from "../../../../services/redux/slices/driverAuthSlice";
 
 function DriverLogin() {
     const dispatch = useDispatch();
 
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const navigate = useNavigate();
+
+    const [driverData, setdriverData] = useState({
+        name: "",
+        driverToken: null,
+    });
 
     // formik
     const formik = useFormik({
@@ -35,16 +41,18 @@ function DriverLogin() {
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
+                    setdriverData({ name: data.name, driverToken: data.token });
+                    console.log(driverData, "driverData");                
                 } else if (data.message === "Incomplete registration") {
                     toast.info("Please complete the verification!");
-                    localStorage.setItem("driverToken", data.token);
+                    localStorage.setItem("driverId", data.driverId);
                     navigate("/driver/identification");
                 } else if (data.message === "Blocked") {
                     toast.info("Your account is blocked!");
                 } else if (data.message === "Not verified") {
                     dispatch(openPendingModal());
                 } else if (data.message === "Rejected") {
-                    localStorage.setItem("driverToken", data.token);
+                    localStorage.setItem("driverId", data.driverId);
                     dispatch(openRejectedModal());
                 } else {
                     toast.error("Not registered! Please register to  continue.");
@@ -112,6 +120,9 @@ function DriverLogin() {
                 .confirm(otpValue)
                 .then(async () => {
                     toast.success("Login success");
+                    dispatch(driverLogin(driverData))
+                    navigate('/driver/dashboard')
+                    localStorage.removeItem("driverId")
                 })
                 .catch(() => {
                     toast.error("Enter a valid otp");
@@ -131,9 +142,12 @@ function DriverLogin() {
                 const response = await axiosInstance.post("/driver/checkGoogleLoginDriver", formData);
                 if (response.data.message === "Success") {
                     toast.success("Login success!");
+                    dispatch(driverLogin({driver:response.data.name,driverToken:response.data.token}))
+                    localStorage.removeItem("driverId")
+                    navigate('/driver/dashboard')
                 } else if (response.data.message === "Incomplete registration") {
                     toast.info("Please complete the registration!");
-                    localStorage.setItem("driverToken", response.data.token);
+                    localStorage.setItem("driverId", response.data.driverId);
                     navigate("/driver/identification");
                 } else if (response.data.message === "Blocked") {
                     toast.info("Your account is blocked!");
@@ -141,7 +155,7 @@ function DriverLogin() {
                     dispatch(openPendingModal());
                 } else if (response.data.message === "Rejected") {
                     dispatch(openRejectedModal());
-                    localStorage.setItem("driverToken", response.data.token);
+                    localStorage.setItem("driverId", response.data.driverId);
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }

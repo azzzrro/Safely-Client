@@ -16,9 +16,16 @@ import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
 import { openRejectedModal } from "../../../../services/redux/slices/rejectedModalSlice";
 
+import { userLogin } from "../../../../services/redux/slices/userAuthSlice";
+
 function Login() {
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const navigate = useNavigate();
+
+    const [userData, setuserData] = useState({
+        name: "",
+        userToken: null,
+    });
 
     const dispatch = useDispatch();
     // formik
@@ -36,17 +43,19 @@ function Login() {
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
+                    setuserData({ name: data.name, userToken: data.token });
+                    console.log(userData, "userdattaaa");
                 } else if (data.message === "Incomplete registration") {
                     toast.error("Please complete the verification!");
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("userId", data.userId);
                     navigate("/identification");
-                }else if (data.message === "Blocked") {
+                } else if (data.message === "Blocked") {
                     toast.info("Your account is blocked!");
                 } else if (data.message === "Not verified") {
                     dispatch(openPendingModal());
-                }else if (data.message === "Rejected") {
+                } else if (data.message === "Rejected") {
                     dispatch(openRejectedModal());
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("userId", data.userId);
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }
@@ -112,8 +121,10 @@ function Login() {
             confirmationResult
                 .confirm(otpValue)
                 .then(async () => {
+                    dispatch(userLogin(userData))
                     toast.success("login success");
-                    navigate("/home");
+                    navigate("/");
+                    localStorage.removeItem("userId")
                 })
                 .catch(() => {
                     toast.error("Enter a valid otp");
@@ -132,15 +143,21 @@ function Login() {
                 formData.append("email", userEmail);
                 const response = await axiosInstance.post("/checkGoogleLoginUser", formData);
                 if (response.data.message === "Success") {
+                    console.log(response.data);
                     toast.success("Login success!");
+                    dispatch(userLogin({ user: response.data.name, userToken: response.data.token }));
+                    localStorage.removeItem("userId")
+                    navigate("/");
                 } else if (response.data.message === "Incomplete registration") {
                     toast.info("Please complete the verification!");
-                    localStorage.setItem("token", response.data.token);
+                    localStorage.setItem("userId", response.data.userId);
                     navigate("/identification");
                 } else if (response.data.message === "Not verified") {
                     dispatch(openPendingModal());
-                }else if (response.data.message === "Rejected") {
-                    toast.error("rejected")
+                } else if (response.data.message === "Rejected") {
+                    toast.error("rejected");
+                    dispatch(openRejectedModal());
+                    localStorage.setItem("userId", response.data.userId);
                 } else {
                     toast.error("Not registered! Please register to  continue.");
                 }
@@ -223,20 +240,20 @@ function Login() {
                                         </button>
 
                                         <div className="text-center text-gray-500 mt-4">
-                                                {counter > 0 ? (
-                                                    <p className="text-sm">Resend OTP in 00:{counter}</p>
-                                                ) : (
-                                                    <p
-                                                        className="text-sm text-blue-800 cursor-pointer"
-                                                        onClick={() => {
-                                                            setCounter(30);
-                                                            sendOtp;
-                                                        }}
-                                                    >
-                                                        Resend OTP
-                                                    </p>
-                                                )}
-                                            </div>
+                                            {counter > 0 ? (
+                                                <p className="text-sm">Resend OTP in 00:{counter}</p>
+                                            ) : (
+                                                <p
+                                                    className="text-sm text-blue-800 cursor-pointer"
+                                                    onClick={() => {
+                                                        setCounter(30);
+                                                        sendOtp;
+                                                    }}
+                                                >
+                                                    Resend OTP
+                                                </p>
+                                            )}
+                                        </div>
                                     </>
                                 ) : (
                                     <button
@@ -257,7 +274,7 @@ function Login() {
 
                                 <div className="text-center">
                                     <span
-                                        onClick={() => navigate("/")}
+                                        onClick={() => navigate("/signup")}
                                         className="text-xs ml-2 hover:text-blue-500 cursor-pointer"
                                     >
                                         Not registered yet? Sign-up here!

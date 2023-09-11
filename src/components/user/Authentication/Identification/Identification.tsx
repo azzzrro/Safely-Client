@@ -44,12 +44,11 @@ function Identification() {
         // formData.append("chooseID", chooseID);
         // formData.append("enterID", enterID);
 
-        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
 
         axiosInstance
-            .post("/identification", formData, {
+            .post(`/identification?userId=${userId}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 },
             })
