@@ -23,8 +23,9 @@ function Login() {
     const navigate = useNavigate();
 
     const [userData, setuserData] = useState({
-        name: "",
+        user: "",
         userToken: null,
+        user_id:""
     });
 
     const dispatch = useDispatch();
@@ -43,7 +44,7 @@ function Login() {
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
-                    setuserData({ name: data.name, userToken: data.token });
+                    setuserData({ user: data.name, userToken: data.token,user_id:data._id });
                     console.log(userData, "userdattaaa");
                 } else if (data.message === "Incomplete registration") {
                     toast.error("Please complete the verification!");
@@ -145,7 +146,7 @@ function Login() {
                 if (response.data.message === "Success") {
                     console.log(response.data);
                     toast.success("Login success!");
-                    dispatch(userLogin({ user: response.data.name, userToken: response.data.token }));
+                    dispatch(userLogin({ user: response.data.name, userToken: response.data.token,user_id:response.data._id }));
                     localStorage.removeItem("userId")
                     navigate("/");
                 } else if (response.data.message === "Incomplete registration") {

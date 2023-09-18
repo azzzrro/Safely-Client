@@ -25,6 +25,7 @@ function DriverLogin() {
     const [driverData, setdriverData] = useState({
         name: "",
         driverToken: null,
+        driver_id: "",
     });
 
     // formik
@@ -41,8 +42,8 @@ function DriverLogin() {
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
-                    setdriverData({ name: data.name, driverToken: data.token });
-                    console.log(driverData, "driverData");                
+                    setdriverData({ name: data.name, driverToken: data.token, driver_id: data._id });
+                    console.log(driverData, "driverData");
                 } else if (data.message === "Incomplete registration") {
                     toast.info("Please complete the verification!");
                     localStorage.setItem("driverId", data.driverId);
@@ -120,9 +121,9 @@ function DriverLogin() {
                 .confirm(otpValue)
                 .then(async () => {
                     toast.success("Login success");
-                    dispatch(driverLogin(driverData))
-                    navigate('/driver/dashboard')
-                    localStorage.removeItem("driverId")
+                    dispatch(driverLogin(driverData));
+                    navigate("/driver/dashboard");
+                    localStorage.removeItem("driverId");
                 })
                 .catch(() => {
                     toast.error("Enter a valid otp");
@@ -142,9 +143,15 @@ function DriverLogin() {
                 const response = await axiosInstance.post("/driver/checkGoogleLoginDriver", formData);
                 if (response.data.message === "Success") {
                     toast.success("Login success!");
-                    dispatch(driverLogin({driver:response.data.name,driverToken:response.data.token}))
-                    localStorage.removeItem("driverId")
-                    navigate('/driver/dashboard')
+                    dispatch(
+                        driverLogin({
+                            driver: response.data.name,
+                            driverToken: response.data.token,
+                            driver_id: response.data._id,
+                        })
+                    );
+                    localStorage.removeItem("driverId");
+                    navigate("/driver/dashboard");
                 } else if (response.data.message === "Incomplete registration") {
                     toast.info("Please complete the registration!");
                     localStorage.setItem("driverId", response.data.driverId);

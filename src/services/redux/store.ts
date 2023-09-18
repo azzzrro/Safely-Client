@@ -4,9 +4,12 @@ import storage from "redux-persist/lib/storage";
 
 import { userAuthSlice } from "./slices/userAuthSlice";
 import { driverAuthSlice } from "./slices/driverAuthSlice";
+import { adminAuthSlice } from "./slices/adminAuthSlice";
 
 import pendingModalSlice from "./slices/pendingModalSlice";
 import rejectedModalSlice from "./slices/rejectedModalSlice";
+
+import driverSearchSlice from "./slices/driverSearchSlice";
 
 const userPersistConfig = { key: "userAuth", storage, version: 1 };
 const driverPersistConfig = { key: "driverAuth", storage, version: 1 };
@@ -14,13 +17,16 @@ const adminPersistConfig = { key: "adminAuth", storage, version: 1 };
 
 const userAuthPersistReducer = persistReducer(userPersistConfig, userAuthSlice.reducer);
 const driverAuthPersistReducer = persistReducer(driverPersistConfig, driverAuthSlice.reducer);
+const adminAuthPersistReducer = persistReducer(adminPersistConfig, adminAuthSlice.reducer);
 
 export const store = configureStore({
     reducer: {
         user: userAuthPersistReducer,
         driver: driverAuthPersistReducer,
+        admin:adminAuthPersistReducer,
         pendingModal: pendingModalSlice,
         rejectedModal: rejectedModalSlice,
+        driverSearch : driverSearchSlice
     },
     middleware: (getDefaultMiddleware) => {
         const middleware = getDefaultMiddleware({

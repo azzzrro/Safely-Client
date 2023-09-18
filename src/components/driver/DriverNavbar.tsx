@@ -1,6 +1,3 @@
-//DriverNavbar
-
-
 import React from "react";
 import {
   Navbar,
@@ -9,9 +6,14 @@ import {
   Button,
   IconButton,
 } from "@material-tailwind/react";
+import { useDispatch } from "react-redux";
+import { driverLogout } from "../../services/redux/slices/driverAuthSlice";
+import { useNavigate } from "react-router-dom";
  
 export function DriverNavbar() {
+  const dispatch = useDispatch()
   const [openNav, setOpenNav] = React.useState(false);
+  const navigate = useNavigate()
  
   React.useEffect(() => {
     window.addEventListener(
@@ -28,7 +30,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p className="flex items-center cursor-pointer">
+        <p 
+        onClick={()=>navigate('/driver/dashboard')}
+        className="flex items-center cursor-pointer">
           Dashboard
         </p>
       </Typography>
@@ -38,7 +42,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p className="flex items-center cursor-pointer">
+        <p 
+        onClick={()=>navigate('/driver/rides')}
+        className="flex items-center cursor-pointer">
           Rides
         </p>
       </Typography>
@@ -48,7 +54,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p className="flex items-center cursor-pointer">
+        <p
+        onClick={()=>navigate('/driver/notifications')}
+        className="flex items-center cursor-pointer">
           Notifications
         </p>
       </Typography>
@@ -76,7 +84,7 @@ export function DriverNavbar() {
           Driver Dashboard
         </Typography>
         <div className="hidden lg:block">{navList}</div>
-        <Button variant="gradient" size="sm" className="hidden lg:inline-block">
+        <Button onClick={()=>dispatch(driverLogout())} variant="gradient" size="sm" className="hidden lg:inline-block">
           <span>LOG OUT</span>
         </Button>
         <IconButton
@@ -120,7 +128,7 @@ export function DriverNavbar() {
       <MobileNav open={openNav}>
         <div className="container mx-auto">
           {navList}
-          <Button variant="gradient" size="sm" fullWidth className="mb-2">
+          <Button onClick={()=>dispatch(driverLogout())} variant="gradient" size="sm" fullWidth className="mb-2">
             <span>LOG OUT</span>
           </Button>
         </div>

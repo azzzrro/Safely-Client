@@ -68,22 +68,28 @@ const Navbar = () => {
                             >
                                 <div className="flex flex-col text-gol font-medium -mx-6 lg:flex-row lg:items-center lg:mx-1">
                                     <p
-                                        onClick={() => navigate("/admin/dashboard")}
+                                        onClick={() => navigate("/")}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
                                         Home
                                     </p>
                                     <p
-                                        onClick={() => navigate("/admin/drivers")}
+                                        onClick={() => navigate("/rides")}
+                                        className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
+                                    >
+                                        Rides
+                                    </p>
+                                    <p
+                                        onClick={() => navigate("/")}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0 hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
                                         Notifications
                                     </p>
                                     <p
-                                        onClick={()=>navigate('/login')}
+                                        onClick={()=>navigate('/')}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
-                                        login
+                                        Support
                                     </p>
                                 </div>
 

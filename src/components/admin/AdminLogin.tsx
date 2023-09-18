@@ -6,10 +6,13 @@ import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.scss";
 import axiosInstance from "../../services/axios";
+import { useDispatch } from "react-redux";
+import { adminLogin } from "../../services/redux/slices/adminAuthSlice";
 
 
 export const AdminLogin = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
     const formik = useFormik({
         initialValues: {
@@ -26,6 +29,7 @@ export const AdminLogin = () => {
                 const {data} = await axiosInstance.post('/admin/login',values)
                 if(data.message === "Success"){
                     toast.success("Login successfull!")
+                    dispatch(adminLogin({admin:data.email}))
                     navigate('/admin/dashboard')
                 }else{
                     toast.error(data.message)

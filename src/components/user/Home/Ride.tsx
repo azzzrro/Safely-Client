@@ -2,11 +2,54 @@ import { Input } from "@material-tailwind/react";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import "./Home.scss";
 import { useJsApiLoader, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { cancelSearching, startSearching } from "../../../services/redux/slices/driverSearchSlice";
+import socketIOClient, { Socket } from "socket.io-client";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+
+const ENDPOINT = import.meta.env.VITE_API_URL;
 
 const Ride = () => {
+
+    const user_id = useSelector((store: any) => store.user.user_id);
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch();
+
+    const [pickupLocation, setPickupLocation] = useState<string>("");
+    const [dropoffLocation, setDropoffLocation] = useState<string>("");
+
+
+    ///COORDINATES
+
+    const [pickupCoordinates, setpickupCoordinates] = useState({
+        latitude: "",
+        longitude: "",
+    });
+
+    const [dropoffCoordinates, setdropoffCoordinates] = useState({
+        latitude: "",
+        longitude: "",
+    });
+
+
+
     const [map, setmap] = useState<google.maps.Map | undefined>(undefined);
+    const [center, setcenter] = useState({ lat: 12.9716, lng: 77.5946 });
+    const [zoom, setzoom] = useState(11);
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+        libraries: ["places"],
+    });
+
+
 
     const [directionsResponse, setdirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
     const [distance, setdistance] = useState<string | undefined>(undefined);
@@ -16,16 +59,24 @@ const Ride = () => {
     const destinationRef = useRef<HTMLInputElement | null>(null);
 
     const calculateRoute = async () => {
-
         const originValue = originRef.current?.value;
         const destinationValue = destinationRef.current?.value;
 
         if (!originValue || !destinationValue) {
-            return;
+            return toast.error("Please choose the pickup and drop0ff locations");
         }
 
-        if(originValue === destinationValue){
-            return toast.error("Please choose different locations!")
+        if (originValue === destinationValue) {
+            return toast.error("Please choose different locations!");
+        }
+
+        if (originValue && destinationRef.current?.value && originValue != destinationValue) {
+            setPickupLocation(originValue);
+            setDropoffLocation(destinationValue);
+            const pickupCoords = await geocodeLocation(originValue);
+            setpickupCoordinates(pickupCoords);
+            const dropoffCoords = await geocodeLocation(destinationValue);
+            setdropoffCoordinates(dropoffCoords);
         }
 
         const directionsService = new google.maps.DirectionsService();
@@ -40,7 +91,7 @@ const Ride = () => {
             setdirectionsResponse(result);
             setdistance(result.routes[0].legs[0].distance?.text);
             setduration(result.routes[0].legs[0].duration?.text);
-        } catch (error:any) {
+        } catch (error: any) {
             toast.error(error.message);
         }
     };
@@ -58,43 +109,80 @@ const Ride = () => {
         }
     }
 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-        libraries: ["places"],
-    });
 
-    const [center, setcenter] = useState({ lat: 12.9716, lng: 77.5946 });
-    const [zoom, setzoom] = useState(11);
+    /// FOR LOCATION ADDRESS
 
-
-    const reverseGeocode = async (latitude:any,longitude:any) =>{
+    const reverseGeocode = async (latitude: any, longitude: any) => {
         try {
-            const geocoder = new google.maps.Geocoder()
-            const latlng = new google.maps.LatLng(latitude,longitude)
+            const geocoder = new google.maps.Geocoder();
+            const latlng = new google.maps.LatLng(latitude, longitude);
 
-            return new Promise((resolve,reject)=>{
-                geocoder.geocode({location:latlng},(results,status)=>{
-                    if(status === 'OK' && results?.[0]){
-                        resolve(results[0].formatted_address)
-                    }else{
-                        reject("Getting location failed")
+            return new Promise((resolve, reject) => {
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK" && results?.[0]) {
+                        const addressComponents = results[0].address_components;
+                        let locality = "";
+
+                        for (const component of addressComponents) {
+                            if (component.types.includes("route")) {
+                                locality += component.long_name + ", ";
+                            }
+                            if (component.types.includes("neighborhood")) {
+                                locality += component.long_name + ", ";
+                            }
+                            if (component.types.includes("sublocality_level_3")) {
+                                locality += component.long_name + ", ";
+                            }
+                            if (component.types.includes("sublocality_level_2")) {
+                                locality += component.long_name + ", ";
+                            }
+                            if (component.types.includes("sublocality_level_1")) {
+                                locality += component.long_name;
+                            }
+                        }
+                        resolve(locality);
+                    } else {
+                        reject("Getting location failed");
                     }
-                })
-            })
-        } catch (error:any) {
-            return error.message
+                });
+            });
+        } catch (error: any) {
+            return error.message;
         }
-    }
+    };
+
+    ///FOR CO-ORDINATES
+
+    const geocodeLocation = async (locationName: string) => {
+        try {
+            const geocoder = new google.maps.Geocoder();
+
+            return new Promise((resolve, reject) => {
+                geocoder.geocode({ address: locationName }, (results, status) => {
+                    if (status === "OK" && results?.[0]) {
+                        const location = results[0].geometry.location;
+                        const latitude = location.lat();
+                        const longitude = location.lng();
+                        resolve({ latitude, longitude });
+                    } else {
+                        reject("Geocoding failed");
+                    }
+                });
+            });
+        } catch (error: any) {
+            return error.message;
+        }
+    };
 
     const fromLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-
-                    const locationDetails = await reverseGeocode(latitude,longitude)
-                    if(originRef.current){
-                        originRef.current.value = locationDetails
+                    const locationDetails = await reverseGeocode(latitude, longitude);
+                    if (originRef.current) {
+                        originRef.current.value = locationDetails;
+                        setPickupLocation(locationDetails);
                     }
 
                     setcenter({ lat: latitude, lng: longitude });
@@ -114,9 +202,10 @@ const Ride = () => {
                 async (position) => {
                     const { latitude, longitude } = position.coords;
 
-                    const locationDetails = await reverseGeocode(latitude,longitude)
-                    if(destinationRef.current){
-                        destinationRef.current.value = locationDetails
+                    const locationDetails = await reverseGeocode(latitude, longitude);
+                    if (destinationRef.current) {
+                        destinationRef.current.value = locationDetails;
+                        setDropoffLocation(locationDetails);
                     }
 
                     setcenter({ lat: latitude, lng: longitude });
@@ -135,24 +224,134 @@ const Ride = () => {
         sedan: number;
         suv: number;
         premium: number;
-      }
-      
-      let charges: Charges = {
+    }
+
+    let charges: Charges = {
         standard: 0,
         sedan: 0,
         suv: 0,
         premium: 0,
-      };
-      
-      if (distance && duration) {
+    };
+
+    if (distance && duration) {
         charges = {
-          standard: Math.floor(parseFloat(distance) * 50),
-          sedan: Math.floor(parseFloat(distance) * 70),
-          suv: Math.floor(parseFloat(distance) * 90),
-          premium: Math.floor(parseFloat(distance) * 150),
+            standard: Math.floor(parseFloat(distance) * 50),
+            sedan: Math.floor(parseFloat(distance) * 70),
+            suv: Math.floor(parseFloat(distance) * 90),
+            premium: Math.floor(parseFloat(distance) * 150),
         };
-      }
-      
+    }
+
+    const generateRandomString = () => {
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const digits = "0123456789";
+        let randomString = "";
+
+        for (let i = 0; i < 4; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomString += characters[randomIndex];
+        }
+
+        for (let i = 0; i < 4; i++) {
+            const randomIndex = Math.floor(Math.random() * digits.length);
+            randomString += digits[randomIndex];
+        }
+
+        return randomString;
+    };
+
+    const handleModelSelection = (e: ChangeEvent<HTMLInputElement>) => {
+        switch (e.target.value) {
+            case "Standard":
+                formik.setFieldValue("model", "Standard")
+                formik.setFieldValue('price', charges.standard)
+                break;
+            case "SUV":
+                formik.setFieldValue("model", "SUV")
+                formik.setFieldValue('price', charges.suv)
+                break;
+            case "Premium":
+                formik.setFieldValue("model", "Premium")
+                formik.setFieldValue('price', charges.premium)
+                break;
+            case "Sedan":
+                formik.setFieldValue("model", "Sedan")
+                formik.setFieldValue('price', charges.sedan)
+                break;
+        }
+    };
+
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    useEffect(() => {
+        const socketInstance = socketIOClient(ENDPOINT);
+        setSocket(socketInstance);
+
+        console.log("Socket connected user side");
+
+        socketInstance.on("userConfirmation", (rideId) => {
+            localStorage.setItem("currentRide-user", rideId)
+            dispatch(cancelSearching())
+            navigate('/rides')
+        })
+    }, [])
+
+
+    const formik = useFormik({
+        initialValues: {
+            ride_id: generateRandomString(),
+            userId: user_id,
+            pickupLocation: "",
+            dropoffLocation: "",
+            pickupCoordinates: {},
+            dropoffCoordinates: {},
+            distance: "",
+            duration: "",
+            model: "",
+            price: 0,
+        },
+        validationSchema: Yup.object({
+            model: Yup.string().min(3, "Please choose an option!").required("Please choose an option!"),
+        }),
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                socket?.emit('getNearByDrivers', values);
+                console.log(values, "formik values");
+                dispatch(startSearching());
+
+            } catch (error: any) {
+                console.log(error.message);
+            } finally {
+                setSubmitting(false);
+            }
+        },
+    });
+
+
+    const showError = () => {
+        if (formik.errors.model) {
+            toast.error(formik.errors.model)
+        }
+    }
+
+    useEffect(() => {
+        formik.setFieldValue("pickupLocation", pickupLocation)
+        formik.setFieldValue("dropoffLocation", dropoffLocation)
+    }, [pickupLocation, dropoffLocation])
+
+    useEffect(() => {
+        formik.setFieldValue("pickupCoordinates", pickupCoordinates)
+        formik.setFieldValue("dropoffCoordinates", dropoffCoordinates)
+    }, [pickupCoordinates, dropoffCoordinates])
+
+    useEffect(() => {
+        formik.setFieldValue("distance", distance)
+    }, [distance])
+
+    useEffect(() => {
+        formik.setFieldValue("duration", duration);
+    }, [duration])
+
 
     if (!isLoaded) {
         return (
@@ -177,6 +376,7 @@ const Ride = () => {
 
     return (
         <>
+
             <div className="container mx-auto px-6 py-12">
                 <div className="">
                     <h1 className="text-4xl font-bold text-blue-800">Book a safe ride!</h1>
@@ -243,100 +443,118 @@ const Ride = () => {
                                 </div>
 
                                 <div className="row-span-2 w-full pt-2 overflow-hidden">
-                                    <div className="grid grid-cols-4 gap-[9.6rem] w-full h-28 pl-1 py-1  overflow-x-auto car-selection">
-                                        <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500  car-one">
-                                            <div className=" flex items-center gap-1">
-                                                <input
-                                                    type="radio"
-                                                    name="radio-10"
-                                                    className="radio-xs checked:bg-blue-500"
-                                                />
-                                                <h1 className="text-xs">Sedan</h1>
-                                                <span>
-                                                    <h1 className="text-[9px] mt-[3px] text-teal-500">Recommended</h1>
-                                                </span>
+                                    <form onSubmit={formik.handleSubmit}>
+                                        <div className="grid grid-cols-4 gap-[9.6rem] w-full h-28 pl-1 py-1  overflow-x-auto car-selection">
+                                            <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500  car-one">
+                                                <div className=" flex items-center gap-1">
+                                                    <input
+                                                        type="radio"
+                                                        value="Sedan"
+                                                        onChange={handleModelSelection}
+                                                        name="model"
+                                                        className="radio-xs checked:bg-blue-500"
+                                                    />
+                                                    <h1 className="text-xs">Sedan</h1>
+                                                    <span>
+                                                        <h1 className="text-[9px] mt-[3px] text-teal-500">Recommended</h1>
+                                                    </span>
+                                                </div>
+                                                <div className="pl-5">
+                                                    <h1 className="text-sm font-semibold">₹{charges.sedan}/-</h1>
+                                                </div>
+                                                <div
+                                                    className="row-span-2 car-selection-one "
+                                                    style={{
+                                                        backgroundImage:
+                                                            "url(https://d2y3cuhvusjnoc.cloudfront.net/sedan.png)",
+                                                        backgroundSize: "cover",
+                                                        backgroundPosition: "center",
+                                                    }}
+                                                ></div>
                                             </div>
-                                            <div className="pl-5">
-                                                <h1 className="text-sm font-semibold">₹{charges.sedan}/-</h1>
+                                            <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
+                                                <div className=" flex items-center gap-1">
+                                                    <input
+                                                        onChange={handleModelSelection}
+                                                        value="Standard"
+                                                        type="radio"
+                                                        name="model"
+                                                        className="radio-xs checked:bg-blue-500"
+                                                    />
+                                                    <h1 className="text-xs">Standard</h1>
+                                                </div>
+                                                <div className="pl-5">
+                                                    <h1 className="text-sm font-semibold">₹{charges.standard}/-</h1>
+                                                </div>
+                                                <div
+                                                    className="row-span-2 car-selection-one "
+                                                    style={{
+                                                        backgroundImage:
+                                                            "url(https://d2y3cuhvusjnoc.cloudfront.net/standard.png)",
+                                                        backgroundSize: "cover",
+                                                        backgroundPosition: "center",
+                                                    }}
+                                                ></div>
                                             </div>
-                                            <div
-                                                className="row-span-2 car-selection-one "
-                                                style={{
-                                                    backgroundImage: "url(https://d2y3cuhvusjnoc.cloudfront.net/sedan.png)",
-                                                    backgroundSize: "cover",
-                                                    backgroundPosition: "center",
-                                                }}
-                                            ></div>
+                                            <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
+                                                <div className=" flex items-center gap-1">
+                                                    <input
+                                                        type="radio"
+                                                        value="SUV"
+                                                        onChange={handleModelSelection}
+                                                        name="model"
+                                                        className="radio-xs checked:bg-blue-500"
+                                                    />
+                                                    <h1 className="text-xs">SUV</h1>
+                                                </div>
+                                                <div className="pl-5">
+                                                    <h1 className="text-sm font-semibold">₹{charges.suv}/-</h1>
+                                                </div>
+                                                <div
+                                                    className="row-span-2 car-selection-one"
+                                                    style={{
+                                                        backgroundImage:
+                                                            "url(https://d2y3cuhvusjnoc.cloudfront.net/suv.png)",
+                                                        backgroundSize: "cover",
+                                                        backgroundPosition: "center",
+                                                    }}
+                                                ></div>
+                                            </div>
+                                            <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
+                                                <div className=" flex items-center gap-1">
+                                                    <input
+                                                        onChange={handleModelSelection}
+                                                        type="radio"
+                                                        value="Premium"
+                                                        name="model"
+                                                        className="radio-xs checked:bg-blue-500"
+                                                    />
+                                                    <h1 className="text-xs">Premium</h1>
+                                                </div>
+                                                <div className="pl-5">
+                                                    <h1 className="text-sm font-semibold">₹{charges.premium}/-</h1>
+                                                </div>
+                                                <div
+                                                    className="row-span-2 car-selection-one"
+                                                    style={{
+                                                        backgroundImage:
+                                                            "url(https://d2y3cuhvusjnoc.cloudfront.net/luxuary.png)",
+                                                        backgroundSize: "cover",
+                                                        backgroundPosition: "center",
+                                                    }}
+                                                ></div>
+                                            </div>
                                         </div>
-                                        <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
-                                            <div className=" flex items-center gap-1">
-                                                <input
-                                                    type="radio"
-                                                    name="radio-10"
-                                                    className="radio-xs checked:bg-blue-500"
-                                                />
-                                                <h1 className="text-xs">Standard</h1>
-                                            </div>
-                                            <div className="pl-5">
-                                                <h1 className="text-sm font-semibold">₹{charges.standard}/-</h1>
-                                            </div>
-                                            <div
-                                                className="row-span-2 car-selection-one "
-                                                style={{
-                                                    backgroundImage:
-                                                        "url(https://d2y3cuhvusjnoc.cloudfront.net/standard.png)",
-                                                    backgroundSize: "cover",
-                                                    backgroundPosition: "center",
-                                                }}
-                                            ></div>
+                                        <div className="w-full mt-5">
+                                            <button
+                                                type="submit"
+                                                className="btn w-full btn-outline"
+                                                onClick={formik.errors.model ? () => showError() : () => null}
+                                            >
+                                                confirm the ride
+                                            </button>
                                         </div>
-                                        <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
-                                            <div className=" flex items-center gap-1">
-                                                <input
-                                                    type="radio"
-                                                    name="radio-10"
-                                                    className="radio-xs checked:bg-blue-500"
-                                                />
-                                                <h1 className="text-xs">SUV</h1>
-                                            </div>
-                                            <div className="pl-5">
-                                                <h1 className="text-sm font-semibold">₹{charges.suv}/-</h1>
-                                            </div>
-                                            <div
-                                                className="row-span-2 car-selection-one"
-                                                style={{
-                                                    backgroundImage: "url(https://d2y3cuhvusjnoc.cloudfront.net/suv.png)",
-                                                    backgroundSize: "cover",
-                                                    backgroundPosition: "center",
-                                                }}
-                                            ></div>
-                                        </div>
-                                        <div className="w-36 py-2 px-2 rounded-2xl mr-4 grid grid-rows-4 border border-deep-orange-100 hover:border-green-500 car-one">
-                                            <div className=" flex items-center gap-1">
-                                                <input
-                                                    type="radio"
-                                                    name="radio-10"
-                                                    className="radio-xs checked:bg-blue-500"
-                                                />
-                                                <h1 className="text-xs">Premium</h1>
-                                            </div>
-                                            <div className="pl-5">
-                                                <h1 className="text-sm font-semibold">₹{charges.premium}/-</h1>
-                                            </div>
-                                            <div
-                                                className="row-span-2 car-selection-one"
-                                                style={{
-                                                    backgroundImage:
-                                                        "url(https://d2y3cuhvusjnoc.cloudfront.net/luxuary.png)",
-                                                    backgroundSize: "cover",
-                                                    backgroundPosition: "center",
-                                                }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div className="w-full mt-5">
-                                        <button className="btn w-full btn-outline">confirm the ride</button>
-                                    </div>
+                                    </form>
                                 </div>
                             </>
                         )}
