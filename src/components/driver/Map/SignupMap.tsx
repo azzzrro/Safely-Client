@@ -21,7 +21,7 @@ const SignupMap = ({ handleGeolocation, isGeolocationActive }: any) => {
                         setLng(longitude);
                         setLat(latitude);
                         setZoom(15);
-                        handleGeolocation(latitude, longitude,true);
+                        handleGeolocation(latitude, longitude, true);
                     },
                     (error) => {
                         toast.error(error.message);
@@ -42,16 +42,16 @@ const SignupMap = ({ handleGeolocation, isGeolocationActive }: any) => {
             zoom: zoom,
         });
 
-        map.current.on("dblclick",handleMapDoubleClick)
+        map.current.on("dblclick", handleMapDoubleClick)
 
         const marker = new mapboxgl.Marker()
-            .setLngLat([lng,lat])
+            .setLngLat([lng, lat])
             .addTo(map.current)
     }, [lng, lat, zoom]);
 
 
-    const handleMapDoubleClick = (e:mapboxgl.MapMouseEvent) =>{
-        const {lng,lat} = e.lngLat
+    const handleMapDoubleClick = (e: mapboxgl.MapMouseEvent) => {
+        const { lng, lat } = e.lngLat
         setLng(lng)
         setLat(lat)
         setZoom(15)

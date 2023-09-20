@@ -1,4 +1,3 @@
-import React from 'react'
 import { DriverNavbar } from "../../../components/driver/DriverNavbar";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
 import { useState } from "react";

@@ -18,17 +18,17 @@ import axiosInstance from "../../../../services/axios";
 function DriverSignup() {
 
     const [counter, setCounter] = useState(30);
-    
+
     const navigate = useNavigate();
-    
+
     const [otpPage, setOtpPage] = useState(false);
     const [identificationPage, setIdentificationPage] = useState(false);
-    
-        useEffect(() => {
-            if(otpPage){
-                counter  > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-            }
-        }, [counter,otpPage]);
+
+    useEffect(() => {
+        if (otpPage) {
+            counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+        }
+    }, [counter, otpPage]);
 
     const [otp, setOtp] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -127,6 +127,8 @@ function DriverSignup() {
             const number = "+91" + formik.values.mobile;
             const appVerifier = window.recaptchaVerifier;
             const result = await signInWithPhoneNumber(auth, number, appVerifier);
+            console.log(result,"otp");
+            
             setConfirmationResult(result);
             setOtpPage(true);
         } catch (error) {

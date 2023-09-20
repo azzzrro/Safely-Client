@@ -30,19 +30,19 @@ const Signup = () => {
     const [identificationPage, setIdentificationPage] = useState(false);
 
     useEffect(() => {
-        if(otpPage){
-            counter  > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+        if (otpPage) {
+            counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
         }
-    }, [counter,otpPage]);
+    }, [counter, otpPage]);
 
     const [otp, setOtp] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         console.log(otp);
-        
-        },[otp])
+
+    }, [otp])
 
 
     useEffect(() => {

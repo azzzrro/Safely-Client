@@ -11,11 +11,27 @@ import {
 } from "@material-tailwind/react";
 import { useFormik } from 'formik';
 import *  as Yup from 'yup'
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Dialog } from "@material-tailwind/react";
+
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
 
 const UserCurrentRide = () => {
+
+  const userId = useSelector((store: any) => store.user.user_id)
+  const [userData, setuserData] = useState<any | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axiosInstance.get(`/userData?id=${userId}`);
+      setuserData(data);
+    };
+    getData();
+    console.log(userData);
+  },[])
 
   interface RideDetails {
     ride_id: string;
@@ -50,10 +66,45 @@ const UserCurrentRide = () => {
     longitude: number;
   }
 
-  const [open, setOpen] = React.useState(0);
 
+  ///SOCKET SETUP
+
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+
+  useEffect(() => {
+    const socketInstance = socketIOClient(ENDPOINT)
+    setSocket(socketInstance)
+    socketInstance.on("rideConfirmed", () => {
+      setrideConfirmed(true)
+    })
+
+    socketInstance.on("userPaymentPage", () => {
+      console.log("response from user side");
+      setpaymentModal(true)
+    })
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
+      if (socket) {
+        setSocket(null)
+      }
+    }
+  }, [])
+
+
+  const navigate = useNavigate()
+
+  const [open, setOpen] = React.useState(0);
   const handleOpen = (value: any) => setOpen(open === value ? 0 : value);
 
+  const [paymentModal, setpaymentModal] = useState(false)
+
+  const handlePaymentModal = () => {
+    setpaymentModal(!paymentModal)
+  }
 
   const [rideData, setrideData] = useState<RideDetails>()
   const [driverData, setdriverData] = useState<any | null>(null)
@@ -61,22 +112,6 @@ const UserCurrentRide = () => {
   const [duration, setduration] = useState<string | undefined>(undefined);
 
   const [rideConfirmed, setrideConfirmed] = useState(false)
-
-
-  ///SOCKET SETUP
-
-  useEffect(() => {
-    const socketInstance = socketIOClient(ENDPOINT)
-    socketInstance.on("rideConfirmed", () => {
-      setrideConfirmed(true)
-    })
-
-    return () => {
-      if (socketInstance) {
-        socketInstance.disconnect();
-      }
-    }
-  }, [])
 
 
   ///MAP API-SCRIPT
@@ -99,7 +134,7 @@ const UserCurrentRide = () => {
       const response = await axiosInstance.get(`/getCurrentRide?rideId=${ride_id}`)
       setrideData(response.data.rideData)
       setdriverData(response.data.driverData)
-      formik.setFieldValue("amount",response.data.rideData?.price)
+      formik.setFieldValue("amount", response.data.rideData?.price)
     }
     getData()
   }, [])
@@ -111,7 +146,7 @@ const UserCurrentRide = () => {
     if (rideData) {
       const getDirectionsData = async () => {
         if (rideData.status === "Confirmed") {
-          // setrideConfirmed(true)
+          setrideConfirmed(true)
           const origin = rideData.pickupLocation
           const destination = rideData.dropoffLocation
           getDirections(origin, destination)
@@ -202,30 +237,43 @@ const UserCurrentRide = () => {
   };
 
 
+  ///PAYMENT HANDLING
+
   const formik = useFormik({
-    initialValues:{
-      paymentMode:"",
-      amount:0
+    initialValues: {
+      paymentMode: "",
+      amount: 0
     },
-    validationSchema:Yup.object({
-      paymentMode:Yup.string().required("Please choose a Payment method")
+    validationSchema: Yup.object({
+      paymentMode: Yup.string().required("Please choose a Payment method")
     }),
-    onSubmit:async (values:any) => {
-      console.log(values);
+    onSubmit: async (values: any) => {
+
+      if (values.paymentMode === "wallet" && values.amount > userData?.wallet?.balance) {
+        return 0
+      }
+
+      const rideId = localStorage.getItem("currentRide-user")
+      const { data } = await axiosInstance.post('/payment', values, { params: { rideId: rideId } })
+      if (data.message === "Success") {
+        toast.success("Payment successfull")
+        localStorage.removeItem("currentRide-user")
+        setpaymentModal(false)
+        socket?.emit("paymentCompleted")
+        navigate('/')
+      } else {
+        toast.error(data.message)
+      }
     }
   })
 
-  const errors = ()=>{
-    if(formik.errors){
-      for(let x in formik.errors){
-        toast.error(x)
-      }
+  const errors = () => {
+    if (formik.errors) {
+      const errorMessages = Object.values(formik.errors)
+      errorMessages.forEach((errors: any) => toast.error(errors))
     }
   }
 
-  useEffect(()=>{
-    console.log(formik.values);
-  },[formik.values])
 
   if (!isLoaded) {
     return (
@@ -252,102 +300,114 @@ const UserCurrentRide = () => {
   return (
     <div>
 
-      <>
-        <div x-data={{ isOpen: true }} className="relative flex justify-center">
-          <div
-            className="fixed inset-0 z-10 overflow-y-auto bg-opacity-40 bg-black"
-            aria-labelledby="modal-title"
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-              <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-                &#8203;
-              </span>
+      <Dialog className='bg-transparent' open={paymentModal} handler={handlePaymentModal} >
+        {paymentModal &&
+          <>
+            <div x-data={{ isOpen: true }} className="relative flex justify-center">
+              <div
+                className="fixed inset-0 z-10 overflow-y-auto"
+                aria-labelledby="modal-title"
+                role="dialog"
+                aria-modal="true"
+              >
+                <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                  <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+                    &#8203;
+                  </span>
 
-              <div className="relative inline-block px-4 pt-5 h-fit w-[35rem] pb-4 overflow-hidden  bg-white rounded-lg shadow-xl sm:align-middle  ">
-                <div className='mb-1'>
-                  <div className="mt-2 text-center">
-                    <h1 className="text-4xl font-bold">
-                      Your destination has been reached!
-                    </h1>
-                    <h1 className="mt-4 text-sm">Thank you for choosing safely</h1>
+                  <div className="relative inline-block px-4 pt-5 h-fit w-[35rem] pb-4 overflow-hidden  bg-white rounded-lg shadow-xl sm:align-middle  ">
+                    <div className='mb-1'>
+                      <div className="mt-2 text-center">
+                        <h1 className="text-4xl font-bold text-black">
+                          Your destination has been reached!
+                        </h1>
+                        <h1 className="mt-4 text-sm text-black">Thank you for choosing safely</h1>
 
-                    <p className="mt-4 px-5 text-xs text-gray-500 dark:text-gray-400">
-                      Now please pay the fare charge to the driver by choosing any of  the payment options available below
-                    </p>
+                        <p className="mt-4 px-5 text-xs text-gray-500 dark:text-gray-400">
+                          Now please pay the fare charge to the driver by choosing any of  the payment options available below
+                        </p>
 
-                    <div className='text-2xl mt-4 flex gap-2 w-full justify-center'>
-                      <h1>Fare charge</h1>
-                      <h1 className='text-green-800'>
-                        ₹{rideData?.price}
-                      </h1>
+                        <div className='text-2xl mt-4 flex gap-2 w-full justify-center text-black'>
+                          <h1>Fare charge</h1>
+                          <h1 className='text-green-800'>
+                            ₹{rideData?.price}
+                          </h1>
+                        </div>
+                      </div>
                     </div>
+                    <form onSubmit={formik.handleSubmit}>
+                      <div className='text-left px-8'>
+                        <Accordion open={open === 1}>
+                          <div className='flex items-center' onClick={() => handleOpen(1)}>
+                            <Radio onChange={formik.handleChange} value="wallet" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
+                            <AccordionHeader className='text-sm'>Safely Wallet</AccordionHeader>
+                          </div>
+                          <div className='px-11'>
+                            <AccordionBody>
+                              <div className='flex gap-4'>
+                                <span> Wallet balance {userData?.wallet?.balance}</span> <span>{rideData &&
+                                  (userData?.wallet?.balance < rideData?.price) &&
+                                  <p className='text-red-400'>Insufficient wallet balance</p>
+                                }</span>
+                              </div>
+                            </AccordionBody>
+
+                          </div>
+                        </Accordion>
+
+                        <Accordion open={open === 2}>
+                          <div className='flex items-center' onClick={() => handleOpen(2)}>
+                            <Radio onChange={formik.handleChange} value="stripe" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
+                            <AccordionHeader className='text-sm'>Stripe - Payements made easy</AccordionHeader>
+                          </div>
+                          <div className='px-11'>
+                            <AccordionBody>
+                              Use the stripe payment service for online payments
+                            </AccordionBody>
+                          </div>
+                        </Accordion>
+
+                        <Accordion open={open === 3}>
+                          <div className='flex items-center' onClick={() => handleOpen(3)}>
+                            <Radio onChange={formik.handleChange} value="COD" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
+                            <AccordionHeader className='text-sm'>Pay in Cash</AccordionHeader>
+                          </div>
+                          <div className='px-11'>
+                            <AccordionBody>
+                              Pay the fare charge in cash
+                            </AccordionBody>
+                          </div>
+                        </Accordion>
+                      </div>
+                      <div className="mt-5 mb-3 sm:flex sm:items-center sm:justify-center">
+                        <div className="sm:flex sm:items-center ">
+                          <button
+                            type='submit'
+                            onClick={() => errors()}
+                            className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                            PAY THE FARE
+                          </button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
-                <form onSubmit={()=>[formik.handleSubmit,errors]}>
-                  <div className='text-left px-8'>
-                  <Accordion open={open === 1}>
-                    <div className='flex items-center' onClick={() => handleOpen(1)}>
-                      <Radio onChange={formik.handleChange} value="wallet" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
-                      <AccordionHeader className='text-sm'>Safely Wallet</AccordionHeader>
-                    </div>
-                    <div className='px-11'>
-                      <AccordionBody>
-                        Wallet balance {0}
-                      </AccordionBody>
-                    </div>
-                  </Accordion>
-
-                  <Accordion open={open === 2}>
-                    <div className='flex items-center' onClick={() => handleOpen(2)}>
-                      <Radio onChange={formik.handleChange} value="stripe"  name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
-                      <AccordionHeader className='text-sm'>Stripe - Payements made easy</AccordionHeader>
-                    </div>
-                    <div className='px-11'>
-                      <AccordionBody>
-                        Use the stripe payment service for online payments
-                      </AccordionBody>
-                    </div>
-                  </Accordion>
-
-                  <Accordion open={open === 3}>
-                    <div className='flex items-center' onClick={() => handleOpen(3)}>
-                      <Radio onChange={formik.handleChange} value="cod"  name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
-                      <AccordionHeader className='text-sm'>Pay in Cash</AccordionHeader>
-                    </div>
-                    <div className='px-11'>
-                      <AccordionBody>
-                        Pay the fare charge in cash
-                      </AccordionBody>
-                    </div>
-                  </Accordion>
-                  </div>
-                <div className="mt-5 mb-3 sm:flex sm:items-center sm:justify-center">
-                  <div className="sm:flex sm:items-center ">
-                    <button
-                      className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
-                      PAY THE FARE
-                    </button>
-                  </div>
-                </div>
-                </form>
               </div>
             </div>
-          </div>
-        </div>
-      </>
+          </>
+        }
+      </Dialog>
 
 
       {rideData && driverData && (
         <>
-          <div className="container mx-auto px-6 py-10">
-            <div className="mb-4">
+          <div className="container mx-auto px-2 pb-5 pt-2">
+            {/* <div className="mb-4">
               <h1 className="text-4xl font-bold text-blue-800">Current ride</h1>
-            </div>
+            </div> */}
             <div className='container w-full h-fit  drop-shadow-xl flex justify-center items-center'>
-              <div className='w-full bg-gray-50 h-fit grid grid-cols-6 gap-4 px-5 py-5 rounded-xl'>
-                <div className='bg-indigo-50 drop-shadow-xl col-span-2 rounded-xl pt-1 pb-4 px-1'>
+              <div className='w-full h-fit md:grid md:grid-cols-6 md:gap-4 mt-2 rounded-xl'>
+                <div className='bg-indigo-50 drop-shadow-xl md:col-span-2 rounded-xl pt-1 pb-4 px-1'>
                   <div className='px-3 mt-4'>
                     <h1 className='font-bold text-indigo-400'>Driver Information</h1>
                   </div>
@@ -360,7 +420,7 @@ const UserCurrentRide = () => {
                   </div>
                   <div className=' text-center'>
                     <h1>{driverData?.name}</h1>
-                    <div className='flex gap-3 justify-center'>
+                    <div className='md:flex gap-3 md:justify-center'>
                       <div className='flex gap-2 justify-center'>
                         <h1>Cab model:</h1>
                         <h1> {driverData?.vehicle_details.model}</h1>
@@ -414,8 +474,8 @@ const UserCurrentRide = () => {
                           <div className='flex justify-center  items-center h-12 mt-1 mb-2'>
                             <h1 className='font-bold text-4xl text-indigo-700 tracking-widest'>{rideData?.pin}</h1>
                           </div>
-                          <div className='flex justify-between gap-1 bg-gray-100 rounded-2xl drop-shadow-lg items-center px-7 py-2'>
-                            <h1 className='text-[8pt] w-40'>Canceling a confirmed ride may affect your Safely account. Please proceed with caution.</h1>
+                          <div className='md:flex md:justify-between text-center md:text-left gap-1 bg-gray-100 rounded-2xl drop-shadow-lg items-center md:px-5 px-7 py-2'>
+                            <h1 className='text-[8pt] md:w-40'>Canceling a confirmed ride may affect your Safely account. Please proceed with caution.</h1>
                             <button className='btn btn-error btn-sm text-white'>cancel the ride</button>
                           </div>
                         </div>
@@ -472,7 +532,7 @@ const UserCurrentRide = () => {
                     </>
                   )}
                 </div>
-                <div className=' drop-shadow-xl col-span-4 rounded-xl'>
+                <div className='drop-shadow-xl h-96 mt-5 md:mt-0 md:h-auto w-full md:col-span-4 rounded-xl'>
                   <GoogleMap
                     center={center}
                     zoom={zoom}

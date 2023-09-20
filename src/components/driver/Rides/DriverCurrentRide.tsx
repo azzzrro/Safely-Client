@@ -1,23 +1,58 @@
-import React, { useEffect, useState } from 'react'
-import {Dialog} from "@material-tailwind/react";
+import { useEffect, useState } from 'react'
+import { Dialog } from "@material-tailwind/react";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import axiosInstance from '../../../services/axios';
-import { useJsApiLoader, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { useJsApiLoader, GoogleMap, DirectionsRenderer } from "@react-google-maps/api";
 import { toast } from 'react-hot-toast';
-import { useFormik } from 'formik';
 import socketIOClient, { Socket } from "socket.io-client";
-import *  as Yup from 'yup'
+import { useNavigate } from 'react-router-dom';
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
 const DriverCurrentRide = () => {
+
+    const navigate = useNavigate()
+
+    ///SOCKET SETUP
+
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    useEffect(() => {
+        const socketInstance = socketIOClient(ENDPOINT)
+        setSocket(socketInstance)
+        socketInstance.on("rideConfirmed", () => {
+            setrideConfirmed(true)
+        })
+
+        socketInstance.on("driverPaymentSuccess", () => {
+            setopenPayment(!openPayment)
+            toast.success("Payment recieved successfully")
+            localStorage.removeItem("currentRide-driver")
+            navigate('/driver/dashboard')
+        })
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.disconnect();
+            }
+            if (socket) {
+                setSocket(null)
+            }
+        };
+    }, [])
+
+
 
     const [openFinishModal, setopenFinishModal] = useState(false);
     const handleOpenFinishModal = () => setopenFinishModal(!openFinishModal);
 
 
     const [openPayment, setopenPayment] = useState(false);
-    const handlePaymentModal = () => setopenPayment(!openPayment)
+    
+    const handlePaymentModal = () => {
+        setopenPayment(!openPayment)
+        socket?.emit("driverRideFinish")
+    }
 
     ///MAP API-SCRIPT
 
@@ -153,35 +188,6 @@ const DriverCurrentRide = () => {
     };
 
 
-    ///SOCKET SETUP
-
-    const [socket, setSocket] = useState<Socket | null>(null);
-
-    useEffect(() => {
-        const socketInstance = socketIOClient(ENDPOINT)
-        setSocket(socketInstance)
-        socketInstance.on("rideConfirmed", () => {
-            setrideConfirmed(true)
-        })
-
-        return () => {
-            if (socketInstance) {
-                socketInstance.disconnect();
-            }
-            if (socket) {
-                setSocket(null)
-            }
-        };
-    }, [])
-
-
-    const finishRide = () => {
-        if (socket) {
-            socket.emit("finishTheRide", ride_id)
-        }
-    }
-
-
     ///VERIFY PIN AND CONFIRM RIDE
 
     const verifyPIN = async () => {
@@ -207,7 +213,7 @@ const DriverCurrentRide = () => {
 
         <div>
             <>
-                <Dialog open={openFinishModal}  handler={handleOpenFinishModal} className='bg-transparent'>
+                <Dialog open={openFinishModal} handler={handleOpenFinishModal} className='bg-transparent'>
 
                     <div className='w-full h-60 rounded-lg bg-gray-50 px-5 pt-8 flex flex-col text-center'>
                         <div className=''>
@@ -261,8 +267,8 @@ const DriverCurrentRide = () => {
             {rideData && (
                 <>
                     <div className="w-[98%] h-fit mx-auto my-1 bg-indigo-50 py-6 rounded-lg drop-shadow-lg">
-                        <div className='flex w-full gap-4 px-5'>
-                            <div className='w-1/2 h-fit  rounded-3xl'>
+                        <div className='md:flex w-full gap-4 px-5'>
+                            <div className='md:w-1/2 h-fit  rounded-3xl'>
                                 <div className='my-3'>
                                     <h1 className='text-lg font-bold'>Ride Details</h1>
                                 </div>
@@ -327,7 +333,7 @@ const DriverCurrentRide = () => {
 
                                 </div>
                             </div>
-                            <div className='w-1/2 h-96 bg-white rounded-3xl drop-shadow-xl'>
+                            <div className='md:w-1/2 mt-8 md:mt-0 h-96 bg-white rounded-3xl drop-shadow-xl'>
                                 <GoogleMap
                                     center={center}
                                     zoom={zoom}

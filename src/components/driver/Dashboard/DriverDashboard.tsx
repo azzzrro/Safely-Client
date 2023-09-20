@@ -1,21 +1,29 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import EmergencyShareIcon from '@mui/icons-material/EmergencyShare';
-import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../services/axios";
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
 export const DriverDashboard = () => {
 
     const driver_id = useSelector((store: any) => store.driver.driver_id)
+    const [driverData, setdriverData] = useState<any | null>(null);
+
+    useEffect(() => {
+        const getData = async () => {
+            const { data } = await axiosInstance.get(`/driver/driverData?id=${driver_id}`);
+            setdriverData(data);
+        };
+        getData();
+    }, [])
 
     const navigate = useNavigate()
 
     interface RideDetails {
         ride_id: string;
-        // driver: string;
         userId: string;
         pickupCoordinates: PickupLocation;
         dropoffCoordinates: DropoffLocation;
@@ -25,8 +33,6 @@ export const DriverDashboard = () => {
         duration: string;
         model: string;
         price: number;
-        // date: number;
-        // status: string;
     }
 
     interface PickupLocation {
@@ -39,12 +45,9 @@ export const DriverDashboard = () => {
         lng: number;
     }
 
-    const [rides, setRides] = useState<RideDetails>();
+    const [rides, setRides] = useState<RideDetails | null>(null);
     const [socket, setSocket] = useState<Socket | null>(null);
 
-
-    // const [latitude, setlatitude] = useState(0);
-    // const [longitude, setlongitude] = useState(0);
 
     useEffect(() => {
         const socketInstance = socketIOClient(ENDPOINT);
@@ -60,8 +63,6 @@ export const DriverDashboard = () => {
                         console.log("position", position);
                         const { latitude, longitude } = position.coords
                         console.log(latitude, longitude, "pos coordinates");
-                        // setlatitude(latitude)
-                        // setlongitude(longitude)
                         if (socketInstance) {
                             console.log("Socket is still on after getting coords");
 
@@ -82,8 +83,8 @@ export const DriverDashboard = () => {
             }
         })
 
-        socketInstance.on("driverConfirmation",(rideId)=>{
-            localStorage.setItem("currentRide-driver",rideId)
+        socketInstance.on("driverConfirmation", (rideId) => {
+            localStorage.setItem("currentRide-driver", rideId)
             navigate('/driver/rides')
         })
 
@@ -100,8 +101,8 @@ export const DriverDashboard = () => {
 
     const handleAcceptRide = () => {
         if (socket) {
-            const updatedRideDetails = {...rides,driver_id}
-            console.log(updatedRideDetails,"updated and accepted ridedetails");
+            const updatedRideDetails = { ...rides, driver_id }
+            console.log(updatedRideDetails, "updated and accepted ridedetails");
             socket.emit("acceptRide", updatedRideDetails);
         }
     };
@@ -136,10 +137,12 @@ export const DriverDashboard = () => {
                                 <h1 className="font-bold">Charge : </h1><h1 className="ml-2">₹{rides?.price}</h1>
                             </div>
                             <div className="col-span-3 md:text-right text-center py-3 md:py-0">
-                                <button className="btn btn-sm btn-error text-white mr-3">Deny</button>
-                                <button 
-                                onClick={()=>handleAcceptRide()}
-                                className="btn btn-sm btn-success text-white">Accept</button>
+                                <button
+                                    onClick={() => setRides(null)}
+                                    className="btn btn-sm btn-error text-white mr-3">Deny</button>
+                                <button
+                                    onClick={() => handleAcceptRide()}
+                                    className="btn btn-sm btn-success text-white">Accept</button>
                             </div>
                         </div>
                     </div>
@@ -150,26 +153,26 @@ export const DriverDashboard = () => {
                 <div className="w-[95%] mx-auto md:h-44 h-fit md:flex md:gap-8 grid grid-rows-3 gap-5 ">
                     <div className="bg-green-200 md:w-1/3 rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                         <div className=" row-span-2 flex items-center px-3">
-                            <h1 className="text-3xl">This month rides</h1>
+                            <h1 className="text-2xl font-medium">This month rides</h1>
                         </div>
                         <div className=" row-span-3 flex items-center justify-end">
-                            <h1 className="text-8xl px-2">0</h1>
+                            <h1 className="text-8xl px-2">{driverData?.RideDetails?.completedRides}</h1>
                         </div>
                     </div>
                     <div className="bg-green-200 md:w-1/3 rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                         <div className=" row-span-2 flex items-center px-3">
-                            <h1 className="text-3xl">Total Earnings</h1>
+                            <h1 className="text-2xl font-medium">Total Earnings</h1>
                         </div>
                         <div className=" row-span-3 flex items-center justify-end">
-                            <h1 className="text-8xl px-2">₹0</h1>
+                            <h1 className="text-8xl px-2">₹{driverData?.RideDetails?.totalEarnings}</h1>
                         </div>
                     </div>
                     <div className="bg-green-200 md:w-1/3 rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                         <div className=" row-span-2 flex items-center px-3">
-                            <h1 className="text-3xl">Total Rides</h1>
+                            <h1 className="text-2xl font-medium">Total Rides</h1>
                         </div>
                         <div className=" row-span-3 flex items-center justify-end">
-                            <h1 className="text-8xl px-2">0</h1>
+                            <h1 className="text-8xl px-2 ">{driverData?.RideDetails?.completedRides}</h1>
                         </div>
                     </div>
                 </div>

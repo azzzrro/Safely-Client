@@ -81,4 +81,55 @@
 }
   
 
-   
+
+////////////////
+
+
+.loader2 {
+  width: 65px;
+  height: 65px;
+  border: 8px solid #ee9b00a6;
+  border-radius: 50px;
+  position: relative;
+ }
+ 
+ .loader2 span {
+  display: block;
+  background: #ee9b00;
+ }
+ 
+ .loader2 .hour ,
+ .loader2 .min {
+  width: 6px;
+  height: 22px;
+  border-radius: 50px;
+  position: absolute;
+  top: 24.5px;
+  left: 21px;
+  animation: load9243 6s linear infinite;
+  transform-origin: top center;
+ }
+ 
+ .loader2 .min {
+  height: 17px;
+  animation: load9243 12s linear infinite;
+ }
+ 
+ .loader2 .circel {
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  position: absolute;
+  top: 19px;
+  left: 19px;
+ }
+ 
+ @keyframes load9243 {
+  0% {
+   transform: rotate(0deg);
+  }
+ 
+  100% {
+   transform: rotate(360deg);
+  }
+ }

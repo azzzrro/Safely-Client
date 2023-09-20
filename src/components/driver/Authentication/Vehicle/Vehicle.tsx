@@ -10,8 +10,8 @@ const Vehicle = () => {
 
     const [carImageUrl, setCarImageUrl] = useState(null);
     const [rcImageUrl, setrcImageUrl] = useState(null);
-    
-    
+
+
     const formik = useFormik({
         initialValues: {
             registerationID: "",
@@ -30,7 +30,7 @@ const Vehicle = () => {
 
                 const driverId = localStorage.getItem("driverId");
 
-                const { data } = await axiosInstance.post(`/driver/vehicleDetails?driverId=${driverId}`, values,{
+                const { data } = await axiosInstance.post(`/driver/vehicleDetails?driverId=${driverId}`, values, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -47,13 +47,13 @@ const Vehicle = () => {
         },
     })
 
-    
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, setImageUrl:any) => {
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, setImageUrl: any) => {
         const file = e.currentTarget.files?.[0];
 
         if (file) {
-            formik.setFieldValue(fieldName,file)
+            formik.setFieldValue(fieldName, file)
 
             const imageUrl = URL.createObjectURL(file);
             setImageUrl(imageUrl);
@@ -63,11 +63,11 @@ const Vehicle = () => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(formik.values);
-        console.log(rcImageUrl,carImageUrl);
-        
-    },[formik.values])
+        console.log(rcImageUrl, carImageUrl);
+
+    }, [formik.values])
 
     return (
         <>
@@ -161,7 +161,7 @@ const Vehicle = () => {
                                                     type="file"
                                                     name="carImage"
                                                     accept="image/*"
-                                                    onChange={(e) => handleFileChange(e, 'carImage', setCarImageUrl)}                                                   className="block w-full px-3 py-1.5 mt-2 text-sm text-gray-600 bg-white border
+                                                    onChange={(e) => handleFileChange(e, 'carImage', setCarImageUrl)} className="block w-full px-3 py-1.5 mt-2 text-sm text-gray-600 bg-white border
                                          border-gray-200 rounded-2xl file:bg-gray-200 file:text-gray-700 file:text-sm 
                                          file:px-4 file:py-0.5 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-500
                                           dark:text-gray-800 placeholder-gray-400/70 dark:placeholder-gray-500 focus:border-blue-400 focus:outline-none 
