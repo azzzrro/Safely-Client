@@ -14,12 +14,14 @@ import *  as Yup from 'yup'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Dialog } from "@material-tailwind/react";
-
+import { loadStripe } from '@stripe/stripe-js';
+import { useLocation } from 'react-router-dom';
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
 
 const UserCurrentRide = () => {
+
 
   const userId = useSelector((store: any) => store.user.user_id)
   const [userData, setuserData] = useState<any | null>(null);
@@ -30,10 +32,10 @@ const UserCurrentRide = () => {
       setuserData(data);
     };
     getData();
-    console.log(userData);
-  },[])
+  }, [])
 
   interface RideDetails {
+    _id: number
     ride_id: string;
     driver_id: string;
     user_id: string;
@@ -67,6 +69,12 @@ const UserCurrentRide = () => {
   }
 
 
+  ///STRIPE-PAYMENT-SUCCESS
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search)
+  const rideId = queryParams.get('rideId');
+
   ///SOCKET SETUP
 
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -83,6 +91,16 @@ const UserCurrentRide = () => {
       console.log("response from user side");
       setpaymentModal(true)
     })
+
+    if (rideId) {
+      toast.success("Payment successful");
+      localStorage.removeItem("currentRide-user");
+      if (socketInstance) {
+        socketInstance.emit("paymentCompleted");
+      } else {
+        console.log("no sockett");
+      }
+    }
 
     return () => {
       if (socketInstance) {
@@ -254,15 +272,51 @@ const UserCurrentRide = () => {
       }
 
       const rideId = localStorage.getItem("currentRide-user")
-      const { data } = await axiosInstance.post('/payment', values, { params: { rideId: rideId } })
-      if (data.message === "Success") {
-        toast.success("Payment successfull")
-        localStorage.removeItem("currentRide-user")
-        setpaymentModal(false)
-        socket?.emit("paymentCompleted")
-        navigate('/')
-      } else {
-        toast.error(data.message)
+      console.log(values.paymentMode, "valuesss");
+
+
+      if (values.paymentMode === "wallet" || values.paymentMode === "COD") {
+        console.log(values.paymentMode,"coddd,wallett");
+        
+        const { data } = await axiosInstance.post('/payment', values, { params: { rideId: rideId } })
+        if (data.message === "Success") {
+          toast.success("Payment successfull")
+          localStorage.removeItem("currentRide-user")
+          setpaymentModal(false)
+          socket?.emit("paymentCompleted")
+          navigate('/')
+        } else {
+          toast.error(data.message)
+        }
+      }
+      else if (values.paymentMode === "stripe") {
+        console.log("stripeee modee");
+        
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+
+        try {
+          console.log("stripeeee");
+
+          const { data } = await axiosInstance.post("/payment-stripe", values, { params: { rideId: rideId } })
+
+          try {
+            const result = await stripe?.redirectToCheckout({
+              sessionId: data.id
+            });
+            console.log(result, "resultt");
+
+            if (result?.error) {
+              toast.error(result.error.message || "An error occurred during payment.");
+            }
+          } catch (error) {
+            console.error("Error during redirectToCheckout:", error);
+            toast.error("An error occurred during payment. Please try again later.");
+          }
+
+        } catch (error) {
+          console.error("An error occurred:", error)
+          toast.error("An error occurred. Please try again later.")
+        }
       }
     }
   })
@@ -274,6 +328,17 @@ const UserCurrentRide = () => {
     }
   }
 
+  const [cancelModal, setcancelModal] = useState(false)
+
+  const cancelRide = () => {
+    if (socket) {
+      const ride_id = localStorage.getItem("currentRide-user")
+      socket.emit("rideCancelled", ride_id)
+      localStorage.removeItem("currentRide-user")
+      navigate('/')
+      toast.success("Ride cancelled successfully!")
+    }
+  }
 
   if (!isLoaded) {
     return (
@@ -299,8 +364,38 @@ const UserCurrentRide = () => {
 
   return (
     <div>
+      <Dialog className='bg-transparent' open={cancelModal} handler={cancelRide}>
+        {cancelModal &&
+          <>
+            <div className='w-full h-fit rounded-lg bg-gray-50 px-8 pt-8 flex flex-col text-center'>
+              <div className='text-left'>
+                <h1 className='text-2xl font-bold text-black'>
+                  Are you sure want to cancel the ride?
+                </h1>
+              </div>
+              <div className='mt-4 text-left w-full pr-7'>
+                <h1 className='text-md font-medium text-red-500'>
+                  Canceling a ride after it has already started may inconvenience your driver and affect their earnings.
+                </h1>
+                <h1 className='text-xs mt-3 pr-7'>
+                  It may affect your Safely account. So please proceed with caution.
+                </h1>
+              </div>
+              <div className='flex justify-end items-end h-fit mt-7 mb-7 gap-5'>
+                <button
+                  onClick={() => setcancelModal(false)}
+                  className='btn'>dismiss</button>
+                <button
+                  onClick={() => cancelRide()}
+                  className='btn btn-error text-white'>finish ride</button>
+              </div>
+            </div>
+          </>
+        }
+      </Dialog>
 
-      <Dialog className='bg-transparent' open={paymentModal} handler={handlePaymentModal} >
+
+      <Dialog className='bg-transparent' open={paymentModal} handler={handlePaymentModal}>
         {paymentModal &&
           <>
             <div x-data={{ isOpen: true }} className="relative flex justify-center">
@@ -476,7 +571,9 @@ const UserCurrentRide = () => {
                           </div>
                           <div className='md:flex md:justify-between text-center md:text-left gap-1 bg-gray-100 rounded-2xl drop-shadow-lg items-center md:px-5 px-7 py-2'>
                             <h1 className='text-[8pt] md:w-40'>Canceling a confirmed ride may affect your Safely account. Please proceed with caution.</h1>
-                            <button className='btn btn-error btn-sm text-white'>cancel the ride</button>
+                            <button
+                              onClick={() => setcancelModal(true)}
+                              className='btn btn-error btn-sm text-white'>cancel the ride</button>
                           </div>
                         </div>
                       </div>

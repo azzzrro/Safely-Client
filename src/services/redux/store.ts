@@ -11,6 +11,9 @@ import rejectedModalSlice from "./slices/rejectedModalSlice";
 
 import driverSearchSlice from "./slices/driverSearchSlice";
 
+import userRideDataSlice from "./slices/userRideDataSlice";
+import driverRideDataSlice from "./slices/driverRideDataSlice";
+
 const userPersistConfig = { key: "userAuth", storage, version: 1 };
 const driverPersistConfig = { key: "driverAuth", storage, version: 1 };
 const adminPersistConfig = { key: "adminAuth", storage, version: 1 };
@@ -26,6 +29,8 @@ export const store = configureStore({
         admin:adminAuthPersistReducer,
         pendingModal: pendingModalSlice,
         rejectedModal: rejectedModalSlice,
+        userRideData: userRideDataSlice,
+        driverRideData:driverRideDataSlice,
         driverSearch : driverSearchSlice
     },
     middleware: (getDefaultMiddleware) => {

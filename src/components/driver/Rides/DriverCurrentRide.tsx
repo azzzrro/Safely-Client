@@ -13,6 +13,8 @@ const DriverCurrentRide = () => {
 
     const navigate = useNavigate()
 
+    const [cancelledModal, setcancelledModal] = useState(false)
+
     ///SOCKET SETUP
 
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -29,6 +31,10 @@ const DriverCurrentRide = () => {
             toast.success("Payment recieved successfully")
             localStorage.removeItem("currentRide-driver")
             navigate('/driver/dashboard')
+        })
+
+        socketInstance.on("rideCancelled", () => {
+            setcancelledModal(true)
         })
 
         return () => {
@@ -48,7 +54,7 @@ const DriverCurrentRide = () => {
 
 
     const [openPayment, setopenPayment] = useState(false);
-    
+
     const handlePaymentModal = () => {
         setopenPayment(!openPayment)
         socket?.emit("driverRideFinish")
@@ -207,14 +213,19 @@ const DriverCurrentRide = () => {
     }
 
 
+    const clearRide = () => {
+        setcancelledModal(false)
+        localStorage.removeItem("currentRide-driver")
+        navigate('/driver/dashboard')
+    }
 
 
     return (
 
         <div>
             <>
-                <Dialog open={openFinishModal} handler={handleOpenFinishModal} className='bg-transparent'>
 
+                <Dialog open={openFinishModal} handler={handleOpenFinishModal} className='bg-transparent'>
                     <div className='w-full h-60 rounded-lg bg-gray-50 px-5 pt-8 flex flex-col text-center'>
                         <div className=''>
                             <h1 className='text-2xl font-semibold'>
@@ -236,6 +247,35 @@ const DriverCurrentRide = () => {
                                     handlePaymentModal()
                                 }}
                                 className='btn btn-success text-white'>finish ride</button>
+                        </div>
+                    </div>
+                </Dialog>
+
+
+
+                <Dialog open={cancelledModal} handler={clearRide} className='bg-transparent'>
+
+                    <div className='w-full h-fit rounded-lg bg-gray-50 px-5 pt-8 flex flex-col text-center'>
+                        <div className=''>
+                            <h1 className='text-3xl font-semibold text-red-600'>
+                                Ride Cancelled by Passenger!
+                            </h1>
+                        </div>
+                        <div className='mt-3'>
+                            <h1 className='text-md font-semibold'>
+                                Sorry for the inconvenience
+                            </h1>
+                        </div>
+                        <div className='mt-3 w-full px-8'>
+                            <h1 className='text-sm'>
+                                Passenger Has Cancelled the Ride. Feel Free to Return to Your Preferred Location or Start Looking for a New Passenger Opportunity.<br /> Your Next Fare Awaits!
+                            </h1>
+                        </div>
+                        <div className='flex justify-center items-end mt-4 mb-7 gap-5'>
+                            <button
+                                onClick={clearRide}
+                                className='btn'>dismiss
+                            </button>
                         </div>
                     </div>
                 </Dialog>

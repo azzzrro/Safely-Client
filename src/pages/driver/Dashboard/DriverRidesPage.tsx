@@ -2,9 +2,13 @@ import { DriverNavbar } from "../../../components/driver/DriverNavbar";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
 import { useState } from "react";
 import DriverCurrentRide from '../../../components/driver/Rides/DriverCurrentRide';
-
+import DriverRIdeHistory from "../../../components/driver/Rides/DriverRIdeHistory";
+import DriverRideDetails from "../../../components/driver/Rides/DriverRideDetails";
+import { useSelector } from "react-redux";
 
 const DriverRidesPage = () => {
+
+    const { isOpenDriverRideData, ride_id } = useSelector((store: any) => store.driverRideData);
     const [tab, settab] = useState(1);
 
     return (
@@ -28,7 +32,8 @@ const DriverRidesPage = () => {
                             <DriverCurrentRide />
                         </TabPanel>
                         <TabPanel>
-                            <DriverCurrentRide />
+                            {isOpenDriverRideData ? <DriverRideDetails ride_id={ride_id} /> :
+                                <DriverRIdeHistory />}
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
