@@ -19,6 +19,7 @@ import DriverLoginPage from "./pages/driver/Authentication/DriverLoginPage";
 import { DriverDashboardpage } from "./pages/driver/Dashboard/DriverDashboardpage";
 import DriverNotificationPage from "./pages/driver/Dashboard/DriverNotificationPage";
 import DriverRidesPage from "./pages/driver/Dashboard/DriverRidesPage";
+import DriverProfilePage from "./pages/driver/Dashboard/DriverProfilePage";
 
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardpage } from "./pages/admin/AdminDashboardpage";
@@ -58,6 +59,7 @@ function App() {
                         <Route path="/driver/dashboard" element={!driver? <Navigate to={'/driver/login'}/> : <DriverDashboardpage />} />
                         <Route path="/driver/notifications" element={!driver? <Navigate to={'/driver/login'}/> : <DriverNotificationPage />} />
                         <Route path="/driver/rides" element={!driver? <Navigate to={'/driver/login'}/> : <DriverRidesPage />} />
+                        <Route path="/driver/profile" element={!driver? <Navigate to={'/driver/login'}/> : <DriverProfilePage />} />
 
                         {/* Admin Routes */}
 

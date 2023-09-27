@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import UserRideDetails from '../../../components/user/Home/UserRideDetails';
 
 const CurrentRidePage = () => {
-    const { isOpenUserRideData,ride_id } = useSelector((store: any) => store.userRideData);
+    const { isOpenUserRideData, ride_id } = useSelector((store: any) => store.userRideData);
 
     const [tab, settab] = useState(1);
 
@@ -35,7 +35,7 @@ const CurrentRidePage = () => {
                             </TabPanel>
                             <TabPanel>
                                 {isOpenUserRideData ? <UserRideDetails ride_id={ride_id} /> :
-                                    <UserRideHistory/>}
+                                    <UserRideHistory />}
                             </TabPanel>
                         </TabPanels>
                     </Tabs>

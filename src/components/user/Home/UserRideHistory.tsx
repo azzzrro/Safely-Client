@@ -34,6 +34,13 @@ const UserRideHistory = () => {
         getData()
     }, [])
 
+    const [search, setSearch] = useState('');
+
+    const filteredRideData = rideData?.filter((ride) =>
+        ride.pickupLocation.toLowerCase().includes(search.toLowerCase()) ||
+        ride.dropoffLocation.toLowerCase().includes(search.toLowerCase()) ||
+        ride.status.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <>
@@ -43,13 +50,15 @@ const UserRideHistory = () => {
                         <div className="flex w-full shrink-0 gap-2 md:w-max">
                             <div className="w-full md:w-72">
                                 <Input
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                     label="Search"
                                     icon={<MagnifyingGlassIcon className="h-5 w-5" />} crossOrigin={undefined} />
                             </div>
                         </div>
                     </div>
                 </CardHeader>
-                <CardBody className="overflow-hidden px-0">
+                <CardBody className="max-h-96 overflow-y-auto px-0 driver-ride-table">
                     <table className="w-full min-w-max table-auto text-center">
                         <thead>
                             <tr>
@@ -70,7 +79,7 @@ const UserRideHistory = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {rideData?.map(
+                            {filteredRideData?.map(
                                 (
                                     {
                                         pickupLocation,
@@ -81,7 +90,7 @@ const UserRideHistory = () => {
                                     },
                                     index,
                                 ): any => {
-                                    const isLast = index === rideData?.length - 1;
+                                    const isLast = index === filteredRideData?.length - 1;
 
                                     const classes = isLast
                                         ? "p-4 text-center"

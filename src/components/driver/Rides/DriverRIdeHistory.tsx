@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RideDetails } from "../../../utils/Interfaces";
 import { useDispatch } from "react-redux";
 import { openDriverRideData } from "../../../services/redux/slices/driverRideDataSlice";
+import '../driverMain.scss'
 
 const DriverRIdeHistory = () => {
 
@@ -34,23 +35,32 @@ const DriverRIdeHistory = () => {
         getData()
     }, [])
 
+    const [search, setSearch] = useState('');
+
+    const filteredRideData = rideData?.filter((ride) =>
+        ride.pickupLocation.toLowerCase().includes(search.toLowerCase()) ||
+        ride.dropoffLocation.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <>
 
-            <Card className="h-full w-full">
+            <Card className="h-full - w-full">
                 <CardHeader floated={false} shadow={false} className="rounded-none">
                     <div className="mt-2  flex flex-col justify-end gap-8 md:flex-row md:items-center">
                         <div className="flex w-full shrink-0 gap-2 md:w-max">
                             <div className="w-full md:w-72">
                                 <Input
+                                    value={search}
+                                    onChange={(e)=>setSearch(e.target.value)}
                                     label="Search"
                                     icon={<MagnifyingGlassIcon className="h-5 w-5" />} crossOrigin={undefined} />
                             </div>
                         </div>
                     </div>
                 </CardHeader>
-                <CardBody className="overflow-hidden px-0">
-                    <table className="w-full min-w-max table-auto text-center">
+                <CardBody className="max-h-96 overflow-y-auto px-0 driver-ride-table" >
+                    <table className="w-full min-w-max table-auto text-center ">
                         <thead>
                             <tr>
                                 {TABLE_HEAD.map((head) => (
@@ -70,7 +80,7 @@ const DriverRIdeHistory = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {rideData?.map(
+                            {filteredRideData?.map(
                                 (
                                     {
                                         pickupLocation,
@@ -81,7 +91,7 @@ const DriverRIdeHistory = () => {
                                     },
                                     index,
                                 ): any => {
-                                    const isLast = index === rideData?.length - 1;
+                                    const isLast = index === filteredRideData?.length - 1;
 
                                     const classes = isLast
                                         ? "p-4 text-center"

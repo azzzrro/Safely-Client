@@ -1,14 +1,11 @@
 import { DriverNavbar } from "../../../components/driver/DriverNavbar";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
 import { useState } from "react";
-import DriverCurrentRide from '../../../components/driver/Rides/DriverCurrentRide';
-import DriverRIdeHistory from "../../../components/driver/Rides/DriverRIdeHistory";
-import DriverRideDetails from "../../../components/driver/Rides/DriverRideDetails";
-import { useSelector } from "react-redux";
+import DriverInfo from "../../../components/driver/Profile/DriverInfo";
+import DriverVehicleInfo from "../../../components/driver/Profile/DriverVehicleInfo";
+import DriverWallet from "../../../components/driver/Profile/DriverWallet";
 
-const DriverRidesPage = () => {
-
-    const { isOpenDriverRideData, ride_id } = useSelector((store: any) => store.driverRideData);
+const DriverProfilePage = () => {
     const [tab, settab] = useState(1);
 
     return (
@@ -19,27 +16,33 @@ const DriverRidesPage = () => {
                     <div className="ml-5">
                         <TabList>
                             <Tab sx={{ fontSize: "24px" }} onClick={() => settab(1)}>
-                                <h1 className={tab === 1 ? "font-bold" : "font-normal"}>Current Ride</h1>
+                                <h1 className={tab === 1 ? "font-bold" : "font-normal"}>Profile</h1>
                             </Tab>
                             <Tab sx={{ fontSize: "24px" }} onClick={() => settab(2)}>
-                                <h1 className={tab === 2 ? "font-bold " : "font-normal"}>All Rides</h1>
+                                <h1 className={tab === 2 ? "font-bold " : "font-normal"}>Vehicle Info</h1>
+                            </Tab>
+                            <Tab sx={{ fontSize: "24px" }} onClick={() => settab(3)}>
+                                <h1 className={tab === 3 ? "font-bold " : "font-normal"}>Wallet</h1>
                             </Tab>
                         </TabList>
                         <TabIndicator mt="-1.5px" height="3px" bg="blue.500" borderRadius="1px" />
                     </div>
                     <TabPanels>
                         <TabPanel>
-                            <DriverCurrentRide />
+                            <DriverInfo />
                         </TabPanel>
                         <TabPanel>
-                            {isOpenDriverRideData ? <DriverRideDetails ride_id={ride_id} /> :
-                                <DriverRIdeHistory />}
+                            <DriverVehicleInfo />
+                        </TabPanel>
+                        <TabPanel>
+                            <DriverWallet />
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
+
             </div>
         </>
     )
 }
 
-export default DriverRidesPage
+export default DriverProfilePage

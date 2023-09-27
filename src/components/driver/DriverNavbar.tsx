@@ -66,7 +66,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p className="flex items-center cursor-pointer">
+        <p 
+        onClick={()=>navigate('/driver/profile')}
+        className="flex items-center cursor-pointer">
           Profile
         </p>
       </Typography>
