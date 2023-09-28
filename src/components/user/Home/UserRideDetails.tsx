@@ -88,7 +88,7 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
                                 </div>
                                 <div>
                                     <h1 className='text-sm font-extrabold'>DATE</h1>
-                                    <h1 className='text-gray-600 text-sm'>{rideData?.date}</h1>
+                                    <h1 className='text-gray-600 text-sm'>{rideData?.formattedDate }</h1>
                                 </div>
                             </div>
                             <div className='md:flex grid grid-rows-3 gap-3 md:gap-0 justify-between px-7 mt-2 md:mt-10 border-b-2 pb-9'>

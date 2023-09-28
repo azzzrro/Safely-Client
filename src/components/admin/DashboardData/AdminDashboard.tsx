@@ -6,6 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart
 import { Spinner } from '@chakra-ui/react'
 
 
+
 export const AdminDashboard = () => {
   const [chartData, setchartData] = useState(null)
   const [pieChartData, setpieChartData] = useState<any[] | []>([])
@@ -44,7 +45,7 @@ export const AdminDashboard = () => {
 
   return (
     <>
-      <div className="w-[81.5%] h-fit mx-auto my-[2.5rem] bg-indigo-50 py-6 rounded-3xl drop-shadow-lg">
+      <div className="w-[81.5%] h-fit mx-auto my-[2.5rem] bg-gray-100 py-6 rounded-3xl drop-shadow-lg">
         {(!chartData || !pieChartData || !dashboardData) ? (
           <>
             <div className='pr-4 mx-5 w-full text-center'>
@@ -56,56 +57,62 @@ export const AdminDashboard = () => {
             <div className="w-[95%] mx-auto md:h-fit h-fit md:grid-cols-3  md:gap-8 grid  gap-5 ">
               <div className="bg-green-200  rounded-3xl md:grid-cols-1 grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">New Drivers</h1>
+                  <h1 className="text-2xl font-medium text-white">New Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2">{dashboardData?.newDrivers}</h1>
+                  <h1 className="text-8xl px-2 text-white">{dashboardData?.newDrivers}</h1>
                 </div>
               </div>
+
               <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">New Users</h1>
+                  <h1 className="text-2xl font-medium text-white">Total Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2">{dashboardData?.newUsers}</h1>
+                  <h1 className="text-8xl px-2  text-white">{dashboardData?.totalDrivers}</h1>
                 </div>
               </div>
+
               <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">Total Drivers</h1>
+                  <h1 className="text-2xl font-medium text-white">Blocked Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 ">{dashboardData?.totalDrivers}</h1>
+                  <h1 className="text-8xl px-2  text-white">{dashboardData?.blockedDrivers}</h1>
                 </div>
               </div>
-              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+
+
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">Total Users</h1>
+                  <h1 className="text-2xl font-medium text-white">New Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 ">{dashboardData?.totalUsers}</h1>
+                  <h1 className="text-8xl px-2 text-white">{dashboardData?.newUsers}</h1>
                 </div>
               </div>
-              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">Blocked Drivers</h1>
+                  <h1 className="text-2xl font-medium text-white">Total Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 ">{dashboardData?.blockedDrivers}</h1>
+                  <h1 className="text-8xl px-2  text-white">{dashboardData?.totalUsers}</h1>
                 </div>
               </div>
-              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                 <div className=" row-span-2 flex items-center px-3">
-                  <h1 className="text-2xl font-medium">Blocked Users</h1>
+                  <h1 className="text-2xl font-medium text-white">Blocked Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 ">{dashboardData?.blockedUsers}</h1>
+                  <h1 className="text-8xl px-2  text-white">{dashboardData?.blockedUsers}</h1>
                 </div>
               </div>
             </div>
             <div className="mt-16 md:grid-cols-2 md:gap-8 grid">
               <div>
-              <h1 className="pl-8 mb-8 font-bold">EARNINGS PER MONTH</h1>
+              <h1 className="pl-8 mb-8 font-bold">USERS AND DRIVERS REGISTRATIONS</h1>
                 {chartData &&
                   <LineChart
                     width={500}

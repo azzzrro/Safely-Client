@@ -378,7 +378,7 @@ const UserCurrentRide = () => {
                   className='btn'>dismiss</button>
                 <button
                   onClick={() => cancelRide()}
-                  className='btn btn-error text-white'>finish ride</button>
+                  className='btn btn-error text-white'>Cancel ride</button>
               </div>
             </div>
           </>
@@ -431,7 +431,7 @@ const UserCurrentRide = () => {
                           <div className='px-11'>
                             <AccordionBody>
                               <div className='flex gap-4'>
-                                <span> Wallet balance {userData?.wallet?.balance}</span> <span>{rideData &&
+                                <span> Wallet balance ₹{userData?.wallet?.balance}</span> <span>{rideData &&
                                   (userData?.wallet?.balance < rideData?.price) &&
                                   <p className='text-red-400'>Insufficient wallet balance</p>
                                 }</span>

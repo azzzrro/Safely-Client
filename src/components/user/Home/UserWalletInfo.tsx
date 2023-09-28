@@ -26,7 +26,7 @@ const UserWalletInfo = () => {
         const getData = async () => {
             const { data } = await axiosInstance.get(`/userData?id=${user_id}`)
             setuserData(data)
-            setwalletTransactions(data.wallet.transactions)
+            setwalletTransactions(data.formattedTransactions)
         }
         getData()
     }, [])
@@ -133,7 +133,7 @@ const UserWalletInfo = () => {
                                 {walletTransactions?.map(
                                     (
                                         {
-                                            date,
+                                            formattedDate,
                                             details,
                                             amount,
                                             status,
@@ -162,7 +162,7 @@ const UserWalletInfo = () => {
                                                         color="blue-gray"
                                                         className="font-normal"
                                                     >
-                                                        {date}
+                                                        {formattedDate}
                                                     </Typography>
                                                 </td>
                                                 <td className={classes + " max-w-[15rem]"}>

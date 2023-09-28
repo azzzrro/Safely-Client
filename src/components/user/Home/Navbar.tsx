@@ -18,7 +18,9 @@ const Navbar = () => {
                     <div className="container px-6 py-4 mx-auto">
                         <div className="lg:flex lg:items-center lg:justify-between">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center">
+                                <div 
+                                onClick={()=>navigate('/')}
+                                className="flex items-center cursor-pointer">
                                     {/* <img src="../../../public/images/Frame 7.png" alt="" style={{height:"2.5rem",width:"auto"}} /> */}
                                     <h1 className="text-blue-800 text-3xl px-2 font-bold">Safely</h1>
                                 </div>

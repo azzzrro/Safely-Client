@@ -72,7 +72,7 @@ export function AdminNavbar() {
   );
  
   return (
-    <Navbar className="mx-auto max-w-screen-xl py-2 px-4 lg:px-8 lg:py-4 bg-gradient-to-r from-gray-700 via-gray-900 to-black">
+    <Navbar className="mx-auto max-w-screen-xl py-2 px-4 lg:px-8 lg:py-4 bg-indigo-600">
       <div className="container mx-auto flex items-center justify-between text-white">
         <Typography
           as="a"

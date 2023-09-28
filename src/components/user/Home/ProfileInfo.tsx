@@ -93,7 +93,7 @@ const ProfileInfo = () => {
                             <div className='md:flex gap-6 overflow-hidden'>
                                 <Input label={userData?.account_status} disabled crossOrigin={undefined} />
                                 <p className='w-1/2 md:hidden'>Joining Date</p>
-                                <Input className='' label={userData?.joiningDate} disabled crossOrigin={undefined} />
+                                <Input className='' label={userData?.formattedDate} disabled crossOrigin={undefined} />
                             </div>
                             <div className=''>
                                 <button

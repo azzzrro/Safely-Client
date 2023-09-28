@@ -1,4 +1,5 @@
 export interface RideDetails {
+    formattedDate: string;
     _id: number;
     ride_id: string;
     userId: string;

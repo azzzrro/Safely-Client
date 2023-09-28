@@ -170,26 +170,26 @@ export const DriverDashboard = () => {
                         <div className="w-[95%] mx-auto md:h-fit h-fit md:grid-cols-3  md:gap-8 grid  gap-5 ">
                             <div className="bg-green-200  rounded-3xl md:grid-cols-1 grid grid-rows-5 gap-1 drop-shadow-xl">
                                 <div className=" row-span-2 flex items-center px-3">
-                                    <h1 className="text-2xl font-medium">This month rides</h1>
+                                    <h1 className="text-2xl font-medium text-white">This month rides</h1>
                                 </div>
                                 <div className=" row-span-3 flex items-center justify-end">
-                                    <h1 className="text-8xl px-2">{currentMonthRide}</h1>
+                                    <h1 className="text-8xl px-2 text-white">{currentMonthRide}</h1>
                                 </div>
                             </div>
                             <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                                 <div className=" row-span-2 flex items-center px-3">
-                                    <h1 className="text-2xl font-medium">Total Earnings</h1>
+                                    <h1 className="text-2xl font-medium text-white">Total Earnings</h1>
                                 </div>
                                 <div className=" row-span-3 flex items-center justify-end">
-                                    <h1 className="text-8xl px-2">₹{driverData?.RideDetails?.totalEarnings}</h1>
+                                    <h1 className="text-8xl px-2 text-white">₹{driverData?.RideDetails?.totalEarnings}</h1>
                                 </div>
                             </div>
                             <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
                                 <div className=" row-span-2 flex items-center px-3">
-                                    <h1 className="text-2xl font-medium">Total Rides</h1>
+                                    <h1 className="text-2xl font-medium text-white">Total Rides</h1>
                                 </div>
                                 <div className=" row-span-3 flex items-center justify-end">
-                                    <h1 className="text-8xl px-2 ">{driverData?.RideDetails?.completedRides}</h1>
+                                    <h1 className="text-8xl px-2  text-white">{driverData?.RideDetails?.completedRides}</h1>
                                 </div>
                             </div>
                         </div>
