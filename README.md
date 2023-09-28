@@ -28,7 +28,7 @@ Currently, two official plugins are available:
 
 - 🌐 Powered by the cutting-edge MERN stack
 - 💻 TypeScript, React, Vite, TailwindCSS, SASS - Crafting the most elegant and responsive user experience.
-- ⚙️ NodeJS, ExpressJS, MongoDB - For the strong backend support
+- ⚙️ NodeJS, ExpressJS, MongoDB, TypeScript - For the strong backend support
 - 🔒 Firebase, JWT, Redux-Toolkit, Google Auth - Fortifying data and transactions with state-of-the-art security.
 - ☁️ AWS S3, Cloudfront - for lightning-fast storage and content delivery.
 - 🌐 Socket.io - Connecting in real-time, no matter where the journey leads.
