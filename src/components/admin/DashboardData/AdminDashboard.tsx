@@ -55,58 +55,58 @@ export const AdminDashboard = () => {
         ) : (
           <>
             <div className="w-[95%] mx-auto md:h-fit h-fit md:grid-cols-3  md:gap-8 grid  gap-5 ">
-              <div className="bg-green-200  rounded-3xl md:grid-cols-1 grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-green-200  rounded-3xl md:grid-cols-1 grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">New Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 text-white">{dashboardData?.newDrivers}</h1>
+                  <h1 className="text-7xl px-2 text-white">{dashboardData?.newDrivers}</h1>
                 </div>
               </div>
 
-              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">Total Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2  text-white">{dashboardData?.totalDrivers}</h1>
+                  <h1 className="text-7xl px-2  text-white">{dashboardData?.totalDrivers}</h1>
                 </div>
               </div>
 
-              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-green-200  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">Blocked Drivers</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2  text-white">{dashboardData?.blockedDrivers}</h1>
+                  <h1 className="text-7xl px-2  text-white">{dashboardData?.blockedDrivers}</h1>
                 </div>
               </div>
 
 
-              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">New Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2 text-white">{dashboardData?.newUsers}</h1>
+                  <h1 className="text-7xl px-2 text-white">{dashboardData?.newUsers}</h1>
                 </div>
               </div>
               
-              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">Total Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2  text-white">{dashboardData?.totalUsers}</h1>
+                  <h1 className="text-7xl px-2  text-white">{dashboardData?.totalUsers}</h1>
                 </div>
               </div>
               
-              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl">
+              <div className="bg-indigo-100  rounded-3xl grid grid-rows-5 gap-1 drop-shadow-xl px-1 pb-1">
                 <div className=" row-span-2 flex items-center px-3">
                   <h1 className="text-2xl font-medium text-white">Blocked Users</h1>
                 </div>
                 <div className=" row-span-3 flex items-center justify-end">
-                  <h1 className="text-8xl px-2  text-white">{dashboardData?.blockedUsers}</h1>
+                  <h1 className="text-7xl px-2  text-white">{dashboardData?.blockedUsers}</h1>
                 </div>
               </div>
             </div>

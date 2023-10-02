@@ -16,7 +16,7 @@ const DriverRidesPage = () => {
             <DriverNavbar />
             <div className="admin-container rounded-3xl bg-teal-50 drop-shadow-xl md:mx-[8rem] mt-[2.5rem] pt-8 pb-4 mb-8">
                 <Tabs position="relative" variant="unstyled">
-                    <div className="ml-5">
+                    <div className="md:ml-5">
                         <TabList>
                             <Tab sx={{ fontSize: "24px" }} onClick={() => settab(1)}>
                                 <h1 className={tab === 1 ? "font-bold" : "font-normal"}>Current Ride</h1>

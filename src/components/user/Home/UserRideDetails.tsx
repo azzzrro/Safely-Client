@@ -58,11 +58,13 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
         return (
             <>
                 <div className='pr-4 mx-5 w-full text-center'>
-                <Spinner size='lg' />
+                    <Spinner size='lg' />
                 </div>
             </>
         )
     }
+
+    const feedbackClass = rideData?.feedback ? "h-2/6 md:h-fit" : "h-2/6"
 
     return (
         <>
@@ -75,7 +77,7 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
                 </div>
                 <div className='w-full md:flex h-fit bg-white mt-5 pb-3 rounded-2xl'>
                     <div className='h-full md:w-2/3 w-full py-3 px-7'>
-                        <div className='h-4/6'>
+                        <div className='h-4/6 md:h-56'>
                             <h1 className='font-semibold mt-2'>Ride Information</h1>
                             <div className='md:flex grid grid-rows-3 gap-3 md:gap-0 justify-between px-7 mt-6'>
                                 <div className='tooltip text-left' data-tip={rideData?.pickupLocation}>
@@ -88,7 +90,7 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
                                 </div>
                                 <div>
                                     <h1 className='text-sm font-extrabold'>DATE</h1>
-                                    <h1 className='text-gray-600 text-sm'>{rideData?.formattedDate }</h1>
+                                    <h1 className='text-gray-600 text-sm'>{rideData?.formattedDate}</h1>
                                 </div>
                             </div>
                             <div className='md:flex grid grid-rows-3 gap-3 md:gap-0 justify-between px-7 mt-2 md:mt-10 border-b-2 pb-9'>
@@ -131,7 +133,7 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className='h-2/6'>
+                        <div className={feedbackClass}>
                             <h1 className='font-semibold mt-3'>Feedback</h1>
                             {rideData?.status === "Completed" ? (<>
                                 {rideData?.feedback ? (
@@ -150,22 +152,25 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
                                         </div>
                                     </>
                                 ) :
-                                    <form onSubmit={formik.handleSubmit} className='flex gap-5 px-5 pt-2'>
-                                        <div >
-                                            <textarea onChange={formik.handleChange} placeholder='Please provide a feedback' className='rounded-lg outline-none px-2 pt-1 border border-blue-gray-50 drop-shadow-xl' name="feedback" id="" rows={3} cols={70}></textarea>
+                                    <form onSubmit={formik.handleSubmit} className='flex flex-col gap-3 md:px-5 pt-2'>
+                                        <div className='md:flex gap-6 items-center'>
+                                            <textarea onChange={formik.handleChange} placeholder='Please provide a feedback'
+                                                className='rounded-lg outline-none px-2 max-w-[14.5rem] md:max-w-full pt-1 border border-blue-gray-50 drop-shadow-xl'
+                                                name="feedback" id="" rows={3} cols={65}></textarea>
+                                            <div className=''>
+                                                <h1 className='text-sm'>Choose the rating</h1>
+                                                <div className="rating mt-1 gap-1 w-full">
+                                                    <input onChange={formik.handleChange} value={1} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                                    <input onChange={formik.handleChange} value={2} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                                    <input onChange={formik.handleChange} value={3} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                                    <input onChange={formik.handleChange} value={4} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                                    <input onChange={formik.handleChange} value={5} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h1 className='text-xs'>Choose the rating</h1>
-                                            <div className="rating gap-1 w-3/4">
-                                                <input onChange={formik.handleChange} value={1} type="radio" name="rating" className="mask mask-heart bg-red-400" />
-                                                <input onChange={formik.handleChange} value={2} type="radio" name="rating" className="mask mask-heart bg-red-400" />
-                                                <input onChange={formik.handleChange} value={3} type="radio" name="rating" className="mask mask-heart bg-red-400" />
-                                                <input onChange={formik.handleChange} value={4} type="radio" name="rating" className="mask mask-heart bg-red-400" />
-                                                <input onChange={formik.handleChange} value={5} type="radio" name="rating" className="mask mask-heart bg-red-400" />
-                                            </div>
-                                            <div>
-                                                <button className='btn btn-xs'>submit</button>
-                                            </div>
+
+                                        <div className='mt-1'>
+                                            <button className='btn btn-sm'>submit feedback</button>
                                         </div>
                                     </form>
                                 }</>) : (

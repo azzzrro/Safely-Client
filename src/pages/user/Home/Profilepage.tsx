@@ -12,9 +12,9 @@ const Profilepage = () => {
         <>
             <Navbar />
             <div className='rounded-3xl bg-gray-100 drop-shadow-xl md:w-[91%] mx-auto mt-5 pt-7 pb-4 mb-8'>
-                <div className='ml-5'>
+                <div className='md:ml-5'>
                     <Tabs position="relative" variant="unstyled">
-                        <div className="ml-5">
+                        <div className="md:ml-5">
                             <TabList>
                                 <Tab sx={{ fontSize: "24px" }} onClick={() => settab(1)}>
                                     <h1 className={tab === 1 ? "font-bold" : "font-normal"}>Profile Info</h1>

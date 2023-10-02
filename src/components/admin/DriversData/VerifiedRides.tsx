@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
@@ -13,14 +15,11 @@ import {
     Tab,
     TabsHeader,
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axios";
-import { useSelector } from "react-redux";
 import { RideDetails } from "../../../utils/Interfaces";
-import { useDispatch } from "react-redux";
-import { openUserRideData } from "../../../services/redux/slices/userRideDataSlice";
 
-const UserRideHistory = () => {
+const VerifiedRides = () => {
+    const { id } = useParams();
 
     const TABS = [
         {
@@ -37,23 +36,17 @@ const UserRideHistory = () => {
         },
     ];
 
-
-    const dispatch = useDispatch()
-
-    const TABLE_HEAD = ["No", "Pickup", "Dropoff", "Status", "Date", ""];
-
-    const user_id = useSelector((store: any) => store.user.user_id)
+    const TABLE_HEAD = ["No", "Pickup", "Dropoff", "Status", "Date"];
 
     const [rideData, setrideData] = useState<null | RideDetails[]>([])
 
     useEffect(() => {
         const getData = async () => {
-            const { data } = await axiosInstance.get(`/getAllrides?user_id=${user_id}`)
+            const { data } = await axiosInstance.get(`/admin/getDriverRides?driver_id=${id}`)
             setrideData(data)
         }
         getData()
     }, [])
-
 
     const [filteredRideData, setFilteredRideData] = useState<RideDetails[] | null>(rideData)
     const [filterValue, setfilterValue] = useState("All")
@@ -67,7 +60,6 @@ const UserRideHistory = () => {
         }
     }, [filterValue, rideData]);
 
-
     const [search, setSearch] = useState('');
 
     useEffect(() => {
@@ -78,10 +70,10 @@ const UserRideHistory = () => {
         setFilteredRideData(filteredData ? filteredData : null);
     }, [search, rideData]);
 
+  return (
+    <>
 
-    return (
-        <>
-            <Card className="h-full w-full">
+            <Card className="h-full - w-full">
                 <CardHeader floated={false} shadow={false} className="rounded-none">
                     <div className="mt-2  flex flex-col justify-between gap-8 md:flex-row md:items-center">
                         <Tabs value={filterValue} className="w-full md:w-max">
@@ -95,6 +87,7 @@ const UserRideHistory = () => {
                                 ))}
                             </TabsHeader>
                         </Tabs>
+
                         <div className="flex w-full shrink-0 gap-2 md:w-max">
                             <div className="w-full md:w-72">
                                 <Input
@@ -106,8 +99,8 @@ const UserRideHistory = () => {
                         </div>
                     </div>
                 </CardHeader>
-                <CardBody className="max-h-96 overflow-y-auto px-0 driver-ride-table">
-                    <table className="w-full min-w-max table-auto text-center">
+                <CardBody className="max-h-96 overflow-y-auto px-0 driver-ride-table" >
+                    <table className="w-full min-w-max table-auto text-center ">
                         <thead>
                             <tr>
                                 {TABLE_HEAD.map((head) => (
@@ -205,11 +198,11 @@ const UserRideHistory = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className={classes} >
+                                            {/* <td className={classes} >
                                                 <Button
-                                                    onClick={() => dispatch(openUserRideData(ride_id))}
+                                                    onClick={() => dispatch(openDriverRideData(ride_id))}
                                                     size="sm" variant="text" className="rounded-full mx-auto h-fit w-fit" children={"more details"}></Button>
-                                            </td>
+                                            </td> */}
                                         </tr>
                                     );
                                 },
@@ -249,8 +242,9 @@ const UserRideHistory = () => {
                     </Button>
                 </CardFooter> */}
             </Card>
+
         </>
-    )
+  )
 }
 
-export default UserRideHistory
+export default VerifiedRides

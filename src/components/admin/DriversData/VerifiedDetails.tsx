@@ -132,18 +132,17 @@ const VerifiedDetails = () => {
             )}
 
             <div className="h-screen">
-                <h1 className="mx-[7.8rem] mt-10 text-3xl font-bold text-black">Driver Details</h1>
-                <div className="grid md:grid-cols-2 sm:grid-cols-2 gap-4 mt-7 md:px-28 w-full h-full  rounded-3xl">
+                <div className="grid md:grid-cols-2 sm:grid-cols-2 gap-4 md:px-28 w-full h-full  rounded-3xl">
                     <div className=" ml-4 my-4 rounded-3xl px-3 pt-3 pb-4 h-5/6">
                         <div className="w-full h-3/6 bg-white drop-shadow-2xl rounded-3xl mb-3 overflow-hidden">
                             <img className="w-full" src={driverData?.driverImage} alt="" />
                         </div>
 
-                        <div className="w-full md:h-52 h-3/6 bg-white rounded-3xl drop-shadow-2xl ">
-                            <div className="text-center px-3 py-4 text-2xl font-bold">
+                        <div className="w-full md:h-fit py-5 px-4 h-3/6 bg-white rounded-3xl drop-shadow-2xl ">
+                            <div className="text-center px-3  text-2xl font-bold">
                                 <h1>{driverData?.name}</h1>
                             </div>
-                            <div className="md:flex justify-evenly">
+                            <div className="flex flex-col gap-3 mt-5 items-center">
                                 <div className="flex">
                                     <button className="btn btn-active btn-neutral btn-xs mx-2">Email</button>
                                     <h1>{driverData?.email}</h1>
@@ -153,7 +152,7 @@ const VerifiedDetails = () => {
                                     <h1>{driverData?.mobile}</h1>
                                 </div>
                             </div>
-                            <div className="md:flex justify-evenly mt-4">
+                            <div className="flex flex-col gap-3 items-center mt-3 mb-3">
                                 <div className="flex">
                                     <button className="btn btn-active btn-neutral btn-xs mx-2">Aadhar Id</button>
                                     <h1>{driverData?.aadhar.aadharId}</h1>

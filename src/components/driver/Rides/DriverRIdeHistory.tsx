@@ -8,7 +8,10 @@ import {
     CardBody,
     Chip,
     Input,
-    Button
+    Button,
+    Tabs,
+    Tab,
+    TabsHeader,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axios";
@@ -19,6 +22,22 @@ import { openDriverRideData } from "../../../services/redux/slices/driverRideDat
 import '../driverMain.scss'
 
 const DriverRIdeHistory = () => {
+
+    const TABS = [
+        {
+            label: "All",
+            value: "All",
+        },
+        {
+            label: "Completed",
+            value: "Completed",
+        },
+        {
+            label: "Cancelled",
+            value: "Cancelled",
+        },
+    ];
+
 
     const dispatch = useDispatch()
 
@@ -35,24 +54,52 @@ const DriverRIdeHistory = () => {
         getData()
     }, [])
 
+    const [filteredRideData, setFilteredRideData] = useState<RideDetails[] | null>(rideData)
+    const [filterValue, setfilterValue] = useState("All")
+
+    useEffect(() => {
+        if (filterValue === 'All') {
+            setFilteredRideData(rideData);
+        } else {
+            const filteredData = rideData?.filter(ride => ride.status === filterValue);
+            setFilteredRideData(filteredData ? filteredData : null);
+        }
+    }, [filterValue, rideData]);
+
+
     const [search, setSearch] = useState('');
 
-    const filteredRideData = rideData?.filter((ride) =>
-        ride.pickupLocation.toLowerCase().includes(search.toLowerCase()) ||
-        ride.dropoffLocation.toLowerCase().includes(search.toLowerCase())
-    );
+    useEffect(() => {
+        const filteredData = rideData?.filter(ride =>
+            ride.pickupLocation.toLowerCase().includes(search.toLowerCase()) ||
+            ride.dropoffLocation.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredRideData(filteredData ? filteredData : null);
+    }, [search, rideData]);
 
     return (
         <>
 
             <Card className="h-full - w-full">
                 <CardHeader floated={false} shadow={false} className="rounded-none">
-                    <div className="mt-2  flex flex-col justify-end gap-8 md:flex-row md:items-center">
+                    <div className="mt-2  flex flex-col justify-between gap-8 md:flex-row md:items-center">
+                        <Tabs value={filterValue} className="w-full md:w-max">
+                            <TabsHeader>
+                                {TABS.map(({ label, value }) => (
+                                    <Tab
+                                        onClick={() => setfilterValue(value)}
+                                        key={value} value={value}>
+                                        &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                                    </Tab>
+                                ))}
+                            </TabsHeader>
+                        </Tabs>
+
                         <div className="flex w-full shrink-0 gap-2 md:w-max">
                             <div className="w-full md:w-72">
                                 <Input
                                     value={search}
-                                    onChange={(e)=>setSearch(e.target.value)}
+                                    onChange={(e) => setSearch(e.target.value)}
                                     label="Search"
                                     icon={<MagnifyingGlassIcon className="h-5 w-5" />} crossOrigin={undefined} />
                             </div>

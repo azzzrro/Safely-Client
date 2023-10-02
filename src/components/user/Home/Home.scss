@@ -2,6 +2,10 @@
     display: none;
 }
 
+.chat-container::-webkit-scrollbar{
+display: none;
+}
+
 .car-one {
     transition: all 0.2s ease-in-out;
 }

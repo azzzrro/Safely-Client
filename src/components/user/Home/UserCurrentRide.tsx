@@ -17,7 +17,11 @@ import { Dialog } from "@material-tailwind/react";
 import { loadStripe } from '@stripe/stripe-js';
 import { useLocation } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react'
-
+import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
+import ChatBoxReciever from '../../ChatboxReciever';
+import ChatBoxSender from '../../ChatBoxSender';
+import ChatInputField from '../../ChatInputField';
+import './Home.scss'
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
@@ -25,12 +29,13 @@ const ENDPOINT = import.meta.env.VITE_API_URL;
 const UserCurrentRide = () => {
 
 
-  const userId = useSelector((store: any) => store.user.user_id)
+  const { user, user_id } = useSelector((store: any) => store.user)
+
   const [userData, setuserData] = useState<any | null>(null);
 
   useEffect(() => {
     const getData = async () => {
-      const { data } = await axiosInstance.get(`/userData?id=${userId}`);
+      const { data } = await axiosInstance.get(`/userData?id=${user_id}`);
       setuserData(data);
     };
     getData();
@@ -80,6 +85,7 @@ const UserCurrentRide = () => {
   ///SOCKET SETUP
 
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [chats, setchats] = useState<any[]>([])
 
 
   useEffect(() => {
@@ -92,6 +98,10 @@ const UserCurrentRide = () => {
     socketInstance.on("userPaymentPage", () => {
       console.log("response from user side");
       setpaymentModal(true)
+    })
+
+    socketInstance.on("chat", (senderChats) => {
+      setchats(senderChats)
     })
 
     if (rideId) {
@@ -115,6 +125,29 @@ const UserCurrentRide = () => {
   }, [])
 
 
+  const sendMessageToSocket = (chat: any[]) => {
+    socket?.emit("chat", chat)
+  }
+
+  const addMessage = (message: string) => {
+
+    const newChat = {
+      message,
+      sender: user,
+      avatar: userData?.userImage
+    };
+    setchats((prevChats) => [...prevChats, newChat])
+    sendMessageToSocket([...chats, newChat])
+  }
+
+  const ChatList = () => {
+    return chats.map((chat, index) => {
+      if (chat.sender === user) return <ChatBoxSender avatar={chat.avatar} message={chat.message} />
+      return <ChatBoxReciever key={index} message={chat.message} avatar={chat.avatar} />
+    })
+  }
+
+
   const navigate = useNavigate()
 
   const [open, setOpen] = React.useState(0);
@@ -128,6 +161,8 @@ const UserCurrentRide = () => {
 
   const [rideData, setrideData] = useState<RideDetails>()
   const [driverData, setdriverData] = useState<any | null>(null)
+  const [feedbacks, setfeedbacks] = useState<null | any>([])
+
   const [directionsResponse, setdirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
   const [duration, setduration] = useState<string | undefined>(undefined);
 
@@ -154,10 +189,15 @@ const UserCurrentRide = () => {
       const response = await axiosInstance.get(`/getCurrentRide?rideId=${ride_id}`)
       setrideData(response.data.rideData)
       setdriverData(response.data.driverData)
+      setfeedbacks(response.data.driverData.formattedFeedbacks)
       formik.setFieldValue("amount", response.data.rideData?.price)
     }
     getData()
   }, [])
+
+  useEffect(()=>{
+    console.log(feedbacks,"feeed");
+  },[feedbacks])
 
 
   ///SETTING UP THE DIRECTIONS
@@ -277,7 +317,7 @@ const UserCurrentRide = () => {
       console.log(values.paymentMode, "valuesss");
 
 
-      if (values.paymentMode === "Wallet" || values.paymentMode === "COD") {
+      if (values.paymentMode === "Wallet" || values.paymentMode === "Cash in hand") {
         console.log(values.paymentMode, "coddd,wallett");
 
         const { data } = await axiosInstance.post('/payment', values, { params: { rideId: rideId } })
@@ -285,13 +325,13 @@ const UserCurrentRide = () => {
           toast.success("Payment successfull")
           localStorage.removeItem("currentRide-user")
           setpaymentModal(false)
-          socket?.emit("paymentCompleted")
+          socket?.emit("paymentCompleted", values.paymentMode, values.amount)
           navigate('/')
         } else {
           toast.error(data.message)
         }
       }
-      else if (values.paymentMode === "stripe") {
+      else if (values.paymentMode === "Stripe") {
         console.log("stripeee modee");
 
         const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
@@ -341,6 +381,10 @@ const UserCurrentRide = () => {
       toast.success("Ride cancelled successfully!")
     }
   }
+
+
+  const [tab, settab] = useState(1);
+
 
   if (!isLoaded) {
     return (
@@ -443,7 +487,7 @@ const UserCurrentRide = () => {
 
                         <Accordion open={open === 2}>
                           <div className='flex items-center' onClick={() => handleOpen(2)}>
-                            <Radio onChange={formik.handleChange} value="stripe" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
+                            <Radio onChange={formik.handleChange} value="Stripe" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
                             <AccordionHeader className='text-sm'>Stripe - Payements made easy</AccordionHeader>
                           </div>
                           <div className='px-11'>
@@ -455,7 +499,7 @@ const UserCurrentRide = () => {
 
                         <Accordion open={open === 3}>
                           <div className='flex items-center' onClick={() => handleOpen(3)}>
-                            <Radio onChange={formik.handleChange} value="COD" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
+                            <Radio onChange={formik.handleChange} value="Cash in hand" name="paymentMode" className='text-xs' color="blue" crossOrigin={undefined} />
                             <AccordionHeader className='text-sm'>Pay in Cash</AccordionHeader>
                           </div>
                           <div className='px-11'>
@@ -493,113 +537,50 @@ const UserCurrentRide = () => {
             </div> */}
             <div className='container w-full h-fit  drop-shadow-xl flex justify-center items-center'>
               <div className='w-full h-fit md:grid md:grid-cols-6 md:gap-4 mt-2 rounded-xl'>
+
+
                 <div className='bg-indigo-50 drop-shadow-xl md:col-span-2 rounded-xl pt-1 pb-4 px-1'>
-                  <div className='px-3 mt-4'>
-                    <h1 className='font-bold text-indigo-400'>Driver Information</h1>
-                  </div>
-                  <div className='w-full flex mt-1 h-36  items-center justify-center '>
-                    <div className="avatar h-max">
-                      <div className="w-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src={driverData?.driverImage} />
-                      </div>
+                  <Tabs position="relative" variant="unstyled">
+                    <div className='px-1 mt-4'>
+                      <TabList>
+                        <Tab sx={{ fontSize: "14px" }} onClick={() => settab(1)}>
+                          <h1 className={tab === 1 ? "font-bold text-indigo-400" : "font-normal"}>Driver Information</h1>
+                        </Tab>
+                        <Tab sx={{ fontSize: "14px" }} onClick={() => settab(2)}>
+                          <h1 className={tab === 2 ? "font-bold text-indigo-400" : "font-normal"}>Contact</h1>
+                        </Tab>
+                        <Tab sx={{ fontSize: "14px" }} onClick={() => settab(3)}>
+                          <h1 className={tab === 3 ? "font-bold text-indigo-400" : "font-normal"}>Driver feedbacks</h1>
+                        </Tab>
+                      </TabList>
+                      <TabIndicator className={tab === 1 ? "ml-2" : "ml-0"} mt="-1.5px" height="3px" bg="blue.500" borderRadius="1px" />
                     </div>
-                  </div>
-                  <div className=' text-center'>
-                    <h1>{driverData?.name}</h1>
-                    <div className='md:flex gap-3 md:justify-center'>
-                      <div className='flex gap-2 justify-center'>
-                        <h1>Cab model:</h1>
-                        <h1> {driverData?.vehicle_details.model}</h1>
-                      </div>
-                      <div className='flex gap-2 justify-center'>
-                        <h1>Reg ID:</h1>
-                        <h1> {(driverData?.vehicle_details.registerationID.toUpperCase())}</h1>
-                      </div>
-                    </div>
-                    <h1>9567632318</h1>
-                  </div>
-                  <div className='my-3'>
+                    <TabPanels>
+                      <TabPanel>
 
-                    <hr
-                      style={{
-                        background: 'gray',
-                        color: 'gray',
-                        borderColor: 'gray',
-                        opacity: "0.2",
-                        height: '0.5px',
-                        width: "80%",
-                        margin: "auto"
-                      }}
-                    />
-                  </div>
+                        <div className='w-full flex mt-1 h-36  items-center justify-center '>
+                          <div className="avatar h-max">
+                            <div className="w-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                              <img src={driverData?.driverImage} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className=' text-center'>
+                          <h1>{driverData?.name}</h1>
+                          <div className='md:flex gap-3 md:justify-center'>
+                            <div className='flex gap-2 justify-center'>
+                              <h1>Cab model:</h1>
+                              <h1> {driverData?.vehicle_details.model}</h1>
+                            </div>
+                            <div className='flex gap-2 justify-center'>
+                              <h1>Reg ID:</h1>
+                              <h1> {(driverData?.vehicle_details.registerationID.toUpperCase())}</h1>
+                            </div>
+                          </div>
+                          <h1><strong>9567632318</strong></h1>
+                        </div>
+                        <div className='my-3'>
 
-
-                  {!rideConfirmed ? (
-                    <>
-                      <div className='px-3 mt-3 flex flex-col gap-4'>
-                        <div>
-                          <h1 className='font-semibold text-indigo-400 mb-1'>Driver coming from</h1>
-                          <div className='flex'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/a.png" alt="work-from-home" /><h1 className='ml-2 truncate'>{driverLocation}</h1>
-                          </div>
-                        </div>
-                        <div>
-                          <h1 className='font-semibold text-indigo-400 mb-1'>Will pick you from</h1>
-                          <div className='flex'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/b.png" alt="work-from-home" /><h1 className='ml-2 truncate'>{rideData?.pickupLocation}</h1>
-                          </div>
-                        </div>
-                        <div>
-                          <h1 className='font-semibold text-indigo-400 mb-1'>Driver arrives in</h1>
-                          <div className='flex'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/time.png" alt="work-from-home" /><h1 className='ml-2'>{duration}</h1>
-                          </div>
-                        </div>
-                        <div className=''>
-                          <h1 className='font-bold text-indigo-400'>OTP for Driver Confirmation</h1>
-                          <div className='flex justify-center  items-center h-12 mt-1 mb-2'>
-                            <h1 className='font-bold text-4xl text-indigo-700 tracking-widest'>{rideData?.pin}</h1>
-                          </div>
-                          <div className='md:flex md:justify-between text-center md:text-left gap-1 bg-gray-100 rounded-2xl drop-shadow-lg items-center md:px-5 px-7 py-2'>
-                            <h1 className='text-[8pt] md:w-40'>Canceling a confirmed ride may affect your Safely account. Please proceed with caution.</h1>
-                            <button
-                              onClick={() => setcancelModal(true)}
-                              className='btn btn-error btn-sm text-white'>cancel the ride</button>
-                          </div>
-                        </div>
-                      </div>
-
-                    </>
-                  ) : (
-                    <>
-                      <div className='px-3 mt-3'>
-                        <h1 className='font-bold text-indigo-400'>Ride Details</h1>
-                      </div>
-                      <div className=' px-5 py-5 flex flex-col gap-6'>
-                        <div className='flex  gap-2'>
-                          <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/street-view.png" alt="work-from-home" />
-                          <h1 className='truncate'>{rideData?.pickupLocation}</h1>
-                        </div>
-                        <div className='flex  gap-2'>
-                          <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/home-page.png" alt="work-from-home" />
-                          <h1 className='truncate'>{rideData?.dropoffLocation}</h1>
-                        </div>
-
-                        <div className='flex  justify-start gap-5'>
-                          <div className='flex gap-2'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/time.png" alt="work-from-home" />
-                            <h1 className='truncate'>{rideData?.duration}</h1>
-                          </div>
-                          <div className='flex gap-2'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/point-objects.png" alt="work-from-home" />
-                            <h1 className='truncate'>{rideData?.distance}</h1>
-                          </div>
-                          <div className='flex gap-2'>
-                            <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/banknotes.png" alt="work-from-home" />
-                            <h1 className='truncate'>₹{rideData?.price}</h1>
-                          </div>
-                        </div>
-                        <div className='my-1'>
                           <hr
                             style={{
                               background: 'gray',
@@ -612,14 +593,140 @@ const UserCurrentRide = () => {
                             }}
                           />
                         </div>
-                        <div className='text-center'>
-                          <h1 className='font-bold text-2xl text-indigo-400'>Your safety is our top priority. Have a smooth journey!</h1>
-                        </div>
-                      </div>
 
-                    </>
-                  )}
+
+                        {!rideConfirmed ? (
+                          <>
+                            <div className='px-3 mt-3 flex flex-col gap-4'>
+                              <div>
+                                <h1 className='font-semibold text-indigo-400 mb-1'>Driver coming from</h1>
+                                <div className='flex'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/a.png" alt="work-from-home" /><h1 className='ml-2 truncate'>{driverLocation}</h1>
+                                </div>
+                              </div>
+                              <div>
+                                <h1 className='font-semibold text-indigo-400 mb-1'>Will pick you from</h1>
+                                <div className='flex'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/b.png" alt="work-from-home" /><h1 className='ml-2 truncate'>{rideData?.pickupLocation}</h1>
+                                </div>
+                              </div>
+                              <div>
+                                <h1 className='font-semibold text-indigo-400 mb-1'>Driver arrives in</h1>
+                                <div className='flex'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/time.png" alt="work-from-home" /><h1 className='ml-2'>{duration}</h1>
+                                </div>
+                              </div>
+                              <div className=''>
+                                <h1 className='font-bold text-indigo-400'>OTP for Driver Confirmation</h1>
+                                <div className='flex justify-center  items-center h-12 mt-1 mb-2'>
+                                  <h1 className='font-bold text-4xl text-indigo-700 tracking-widest'>{rideData?.pin}</h1>
+                                </div>
+                                <div className='md:flex md:justify-between text-center md:text-left gap-1 bg-gray-100 rounded-2xl drop-shadow-lg items-center md:px-5 px-7 py-2'>
+                                  <h1 className='text-[8pt] md:w-40'>Canceling a confirmed ride may affect your Safely account. Please proceed with caution.</h1>
+                                  <button
+                                    onClick={() => setcancelModal(true)}
+                                    className='btn btn-error btn-sm text-white'>cancel the ride</button>
+                                </div>
+                              </div>
+                            </div>
+
+                          </>
+                        ) : (
+                          <>
+                            <div className='px-3 mt-3'>
+                              <h1 className='font-bold text-indigo-400'>Ride Details</h1>
+                            </div>
+                            <div className=' px-5 py-5 flex flex-col gap-6'>
+                              <div className='flex  gap-2'>
+                                <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/street-view.png" alt="work-from-home" />
+                                <h1 className='truncate'>{rideData?.pickupLocation}</h1>
+                              </div>
+                              <div className='flex  gap-2'>
+                                <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/home-page.png" alt="work-from-home" />
+                                <h1 className='truncate'>{rideData?.dropoffLocation}</h1>
+                              </div>
+
+                              <div className='flex  justify-start gap-5'>
+                                <div className='flex gap-2'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/time.png" alt="work-from-home" />
+                                  <h1 className='truncate'>{rideData?.duration}</h1>
+                                </div>
+                                <div className='flex gap-2'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/point-objects.png" alt="work-from-home" />
+                                  <h1 className='truncate'>{rideData?.distance}</h1>
+                                </div>
+                                <div className='flex gap-2'>
+                                  <img width="25" height="25" src="https://img.icons8.com/nolan/64/1A6DFF/C822FF/banknotes.png" alt="work-from-home" />
+                                  <h1 className='truncate'>₹{rideData?.price}</h1>
+                                </div>
+                              </div>
+                              <div className='my-1'>
+                                <hr
+                                  style={{
+                                    background: 'gray',
+                                    color: 'gray',
+                                    borderColor: 'gray',
+                                    opacity: "0.2",
+                                    height: '0.5px',
+                                    width: "80%",
+                                    margin: "auto"
+                                  }}
+                                />
+                              </div>
+                              <div className='text-center'>
+                                <h1 className='font-bold text-2xl text-indigo-400'>Your safety is our top priority. Have a smooth journey!</h1>
+                              </div>
+                            </div>
+
+                          </>
+                        )}
+                      </TabPanel>
+                      <TabPanel>
+                        <div className='bg-white rounded-2xl pt-3 px-3 md:h-[38.5rem] w-full flex flex-col justify-between'>
+                          <div className='h-[20rem] md:h-[35.5rem] pb-2 chat-container overflow-y-auto'>
+                            <ChatList />
+                          </div>
+                          <div className='mb-3 w-full'>
+                            <ChatInputField addMessage={addMessage} />
+                          </div>
+                        </div>
+                      </TabPanel>
+                      <TabPanel>
+                        <div className='bg-indigo-50 rounded-2xl pt-3 px-3 md:h-[38.5rem] w-full'>
+                          <div className='h-[20rem] md:h-[35.5rem] pb-2 chat-container overflow-y-auto'>
+                            <div className='grid gap-3'>
+                            {feedbacks.map((feedbacks: any) => {
+                              return (
+                                <div className="card bg-base-100 shadow-xl">
+                                  <div className="card-body">
+                                    <h2 className="card-title">"{feedbacks.feedback}"</h2>
+                                    <div className="card-actions mt-1 ml-2">
+                                      <div className="rating gap-1">
+                                        <input checked={feedbacks.rating === 1} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                        <input checked={feedbacks.rating === 2} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                        <input checked={feedbacks.rating === 3} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                        <input checked={feedbacks.rating === 4} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                        <input checked={feedbacks.rating === 5} type="radio" name="rating" className="mask mask-heart bg-red-400" />
+                                      </div>
+                                    </div>
+                                    <div className="w-full text-right">
+                                      <p>{feedbacks.formattedDate}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                            </div>
+                          </div>
+                        </div>
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
                 </div>
+
+
+
+
                 <div className='drop-shadow-xl h-96 mt-5 md:mt-0 md:h-auto w-full md:col-span-4 rounded-xl'>
                   <GoogleMap
                     center={center}
