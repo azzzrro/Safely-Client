@@ -220,7 +220,7 @@ const Signup = () => {
                                     <div className="hidden  md:flex md:items-center justify-center">
                                         <img
                                             style={{ height: "280px", width: "auto" }}
-                                            src="../../../public/images/11668479_20943593.jpg"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/11668479_20943593.jpg"
                                             alt=""
                                         />
                                     </div>
