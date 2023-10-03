@@ -1,32 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useSelector } from "react-redux";
+import { Dialog } from "@material-tailwind/react";
 
 const PendingDetails = () => {
+
+    const { adminToken } = useSelector((store: any) => store.admin)
+
     const [acceptModal, setacceptModal] = useState(false);
     const [rejectModal, setrejectModal] = useState(false);
     const [driverData, setdriverData] = useState<any | null>(null);
     const { id } = useParams();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/admin/driverData?id=${id}`);
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get(`driverData?id=${id}`);
             setdriverData(data);
-        };
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
         getData();
     }, []);
 
     const verifyDriver = async () => {
-        const { data } = await axiosInstance.get(`/admin/verifyDriver?id=${id}`);
-        if (data.message === "Success") {
-            toast.success("Driver verified successfully!");
-            navigate("/admin/drivers");
-        } else {
-            toast.error("Something internal error");
+        try {
+            const { data } = await axiosAdmin(adminToken).get(`verifyDriver?id=${id}`);
+            if (data.message === "Success") {
+                toast.success("Driver verified successfully!");
+                navigate("/admin/drivers");
+            } else {
+                toast.error("Something internal error");
+            }
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
     };
 
@@ -39,7 +55,7 @@ const PendingDetails = () => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const { data } = await axiosInstance.post(`/admin/rejectDriver?id=${id}`, values);
+                const { data } = await axiosAdmin(adminToken).post(`rejectDriver?id=${id}`, values);
                 if (data.message === "Success") {
                     setrejectModal(false);
                     toast.success("Driver rejected successfully!");
@@ -58,61 +74,64 @@ const PendingDetails = () => {
     return (
         <>
             {acceptModal && (
-                <div className="relative flex justify-center">
-                    <div
-                        className="fixed inset-0 z-10 overflow-y-auto bg-opacity-40 bg-black"
-                        aria-labelledby="modal-title"
-                        role="dialog"
-                        aria-modal="true"
-                    >
-                        <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-                                &#8203;
-                            </span>
+                <Dialog open={acceptModal} handler={verifyDriver} className='bg-transparent'>
+                    <div className="relative flex justify-center">
+                        <div
+                            className="fixed inset-0 z-10 overflow-y-auto"
+                            aria-labelledby="modal-title"
+                            role="dialog"
+                            aria-modal="true"
+                        >
+                            <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+                                    &#8203;
+                                </span>
 
-                            <div className="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl rtl:text-righ  sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6">
-                                <div>
-                                    <div className="mt-2 text-center">
-                                        <h1 className="text-xl font-bold">
-                                            Are you sure want to verify this registration?
-                                        </h1>
+                                <div className="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl rtl:text-righ  sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6">
+                                    <div>
+                                        <div className="mt-2 text-center">
+                                            <h1 className="text-xl font-bold">
+                                                Are you sure want to verify this registration?
+                                            </h1>
 
-                                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                            Make sure you double checked and validated all the documents submitted by the
-                                            driver.
-                                        </p>
+                                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                                Make sure you double checked and validated all the documents submitted by the
+                                                driver.
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="mt-5 sm:flex sm:items-center sm:justify-center">
-                                    <div className="sm:flex sm:items-center ">
-                                        <button
-                                            onClick={() => setacceptModal(false)}
-                                            className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-blue-600 capitalize transition-colors duration-300 transform  rounded-md sm:w-auto sm:mt-0  focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity- "
-                                        >
-                                            DISMISS
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                verifyDriver();
-                                                setacceptModal(false);
-                                            }}
-                                            className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-                                        >
-                                            VERIFY DRIVER
-                                        </button>
+                                    <div className="mt-5 sm:flex sm:items-center sm:justify-center">
+                                        <div className="sm:flex sm:items-center ">
+                                            <button
+                                                onClick={() => setacceptModal(false)}
+                                                className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-blue-600 capitalize transition-colors duration-300 transform  rounded-md sm:w-auto sm:mt-0  focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity- "
+                                            >
+                                                DISMISS
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    verifyDriver();
+                                                    setacceptModal(false);
+                                                }}
+                                                className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
+                                            >
+                                                VERIFY DRIVER
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Dialog>
             )}
 
             {rejectModal && (
+                <Dialog open={rejectModal} handler={formik.handleSubmit} className='bg-transparent'>
                 <div className="relative flex justify-center">
                     <div
-                        className="fixed inset-0 z-10 overflow-y-auto bg-opacity-40 bg-black"
+                        className="fixed inset-0 z-10 overflow-y-auto"
                         aria-labelledby="modal-title"
                         role="dialog"
                         aria-modal="true"
@@ -170,6 +189,7 @@ const PendingDetails = () => {
                         </div>
                     </div>
                 </div>
+                </Dialog>
             )}
 
             <div className="h-screen">
@@ -251,7 +271,7 @@ const PendingDetails = () => {
                             <img className="w-full" src={driverData?.vehicle_details.rcImageUrl} alt="" />
                         </div>
                         <div className="drop-shadow-2xl h-fit mt-2 rounded-3xl overflow-hidden">
-                            <img  src={driverData?.vehicle_details.carImageUrl} alt="" />
+                            <img src={driverData?.vehicle_details.carImageUrl} alt="" />
                         </div>
                     </div>
                 </div>

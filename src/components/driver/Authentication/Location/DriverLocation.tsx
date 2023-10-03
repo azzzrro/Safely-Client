@@ -3,7 +3,7 @@ import SignupMap from "../../Map/SignupMap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import axiosInstance from "../../../../services/axios";
+import axiosDriver from '../../../../services/axios/axiosDriver'
 import { useNavigate } from "react-router-dom";
 import ExploreIcon from "@mui/icons-material/Explore";
 import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
@@ -50,7 +50,7 @@ function DriverLocation() {
         onSubmit: async (values, { setSubmitting }) => {
             try {
                 const driverId = localStorage.getItem("driverId");
-                const { data } = await axiosInstance.post(`/driver/location?driverId=${driverId}`, values, {
+                const { data } = await axiosDriver(null).post(`location?driverId=${driverId}`, values, {
                     headers: {
                         "Content-Type": "application/json",
                     },

@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react'
-import axiosInstance from '../../../services/axios'
+import axiosDriver from '../../../services/axios/axiosDriver';
 import { useSelector } from 'react-redux/es/hooks/useSelector'
+import toast from 'react-hot-toast'
 
 const DriverVehicleInfo = () => {
-    const driver_id = useSelector((store: any) => store.driver.driver_id)
+    const {driver_id,driverToken} = useSelector((store: any) => store.driver)
     const [driverData, setdriverData] = useState<any | {}>({})
 
-    useEffect(() => {
-
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/driver/driverData?driver_id=${driver_id}`)
+    
+    const getData = async () => {
+        try {
+            const { data } = await axiosDriver(driverToken).get(`driverData?driver_id=${driver_id}`)
             setdriverData(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
-
+    }
+    
+    useEffect(() => {
         getData()
     }, [])
 

@@ -5,23 +5,24 @@ import {
   Typography,
   Button,
   IconButton,
+  Collapse
 } from "@material-tailwind/react";
 import { useDispatch } from "react-redux";
 import { driverLogout } from "../../services/redux/slices/driverAuthSlice";
 import { useNavigate } from "react-router-dom";
- 
+
 export function DriverNavbar() {
   const dispatch = useDispatch()
   const [openNav, setOpenNav] = React.useState(false);
   const navigate = useNavigate()
- 
+
   React.useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
- 
+
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
@@ -30,9 +31,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={()=>navigate('/driver/dashboard')}
-        className="flex items-center cursor-pointer">
+        <p
+          onClick={() => navigate('/driver/dashboard')}
+          className="flex items-center cursor-pointer">
           Dashboard
         </p>
       </Typography>
@@ -42,9 +43,9 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={()=>navigate('/driver/rides')}
-        className="flex items-center cursor-pointer">
+        <p
+          onClick={() => navigate('/driver/rides')}
+          className="flex items-center cursor-pointer">
           Rides
         </p>
       </Typography>
@@ -55,8 +56,8 @@ export function DriverNavbar() {
         className="p-1 font-normal"
       >
         <p
-        onClick={()=>navigate('/driver/notifications')}
-        className="flex items-center cursor-pointer">
+          onClick={() => navigate('/driver/notifications')}
+          className="flex items-center cursor-pointer">
           Notifications
         </p>
       </Typography>
@@ -66,15 +67,15 @@ export function DriverNavbar() {
         color="white"
         className="p-1 font-normal"
       >
-        <p 
-        onClick={()=>navigate('/driver/profile')}
-        className="flex items-center cursor-pointer">
+        <p
+          onClick={() => navigate('/driver/profile')}
+          className="flex items-center cursor-pointer">
           Profile
         </p>
       </Typography>
     </ul>
   );
- 
+
   return (
     <Navbar className="mx-auto max-w-screen-xl py-2 px-4 lg:px-8 lg:py-4 bg-gradient-to-r from-indigo-400 to-cyan-400">
       <div className="container mx-auto flex items-center justify-between text-white">
@@ -86,7 +87,7 @@ export function DriverNavbar() {
           Driver Dashboard
         </Typography>
         <div className="hidden lg:block">{navList}</div>
-        <Button onClick={()=>dispatch(driverLogout())} variant="gradient" size="sm" className="hidden lg:inline-block">
+        <Button onClick={() => dispatch(driverLogout())} variant="gradient" size="sm" className="hidden lg:inline-block">
           <span>LOG OUT</span>
         </Button>
         <IconButton
@@ -127,14 +128,16 @@ export function DriverNavbar() {
           )}
         </IconButton>
       </div>
-      <MobileNav open={openNav}>
+      <Collapse open={openNav}>
         <div className="container mx-auto">
           {navList}
-          <Button onClick={()=>dispatch(driverLogout())} variant="gradient" size="sm" fullWidth className="mb-2">
+          <Button
+            onClick={() => dispatch(driverLogout())}
+            variant="gradient" size="sm" fullWidth className="mb-2">
             <span>LOG OUT</span>
           </Button>
         </div>
-      </MobileNav>
+      </Collapse>
     </Navbar>
   );
 }

@@ -6,8 +6,9 @@ import {
     Chip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosDriver from '../../../services/axios/axiosDriver';
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const DriverWallet = () => {
     const TABLE_HEAD = ["No", "Date", "Details", "Status", "Amount"];
@@ -15,14 +16,21 @@ const DriverWallet = () => {
     const [driverData, setdriverData] = useState<null | any>({})
     const [walletTransactions, setwalletTransactions] = useState<null | any[]>([])
 
-    const driver_id = useSelector((store: any) => store.driver.driver_id)
+    const {driver_id,driverToken} = useSelector((store: any) => store.driver)
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/driver/driverData?driver_id=${driver_id}`)
+    
+    const getData = async () => {
+        try {
+            const { data } = await axiosDriver(driverToken).get(`driverData?driver_id=${driver_id}`)
             setdriverData(data)
             setwalletTransactions(data.wallet.transactions)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+    
+    useEffect(() => {
         getData()
     }, [])
 

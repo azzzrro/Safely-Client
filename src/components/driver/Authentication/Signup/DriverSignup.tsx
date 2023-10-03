@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
-import axiosInstance from "../../../../services/axios";
+import axiosDriver from '../../../../services/axios/axiosDriver'
 
 function DriverSignup() {
 
@@ -87,7 +87,7 @@ function DriverSignup() {
 
     const signupHandle = async (formData: any) => {
         try {
-            const { data } = await axiosInstance.post(`/driver/checkDriver`, formData);
+            const { data } = await axiosDriver(null).post(`checkDriver`, formData);
 
             if (data.message === "Driver login") {
                 toast.error("Driver Already registered! Please Login to continue");
@@ -157,7 +157,7 @@ function DriverSignup() {
 
     const registerSubmit = async () => {
         try {
-            const response = await axiosInstance.post(`/driver/registerDriver`, formik.values);
+            const response = await axiosDriver(null).post(`registerDriver`, formik.values);
             console.log(response);
             if (response.data.message === "Success") {
                 toast.success("OTP verified successfully");

@@ -18,7 +18,6 @@ const ENDPOINT = import.meta.env.VITE_API_URL;
 const Ride = () => {
 
 
-    // const routePolyline = useRef(null);
     const [noDriversModal, setnoDriversModal] = useState(false)
 
 
@@ -40,7 +39,7 @@ const Ride = () => {
     }, [])
 
 
-    const user_id = useSelector((store: any) => store.user.user_id);
+    const {user_id} = useSelector((store: any) => store.user);
 
     const navigate = useNavigate()
     const dispatch = useDispatch();
@@ -361,7 +360,6 @@ const Ride = () => {
                 }
 
                 socket?.emit('getNearByDrivers', values);
-                console.log(values, "formik values");
                 dispatch(startSearching());
                 noDrivers()
 

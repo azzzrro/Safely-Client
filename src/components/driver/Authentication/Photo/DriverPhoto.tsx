@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useState } from "react";
 import Webcam from "react-webcam";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axiosInstance from "../../../../services/axios";
+import axiosDriver from '../../../../services/axios/axiosDriver'
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import DriverVehiclePage from "../../../../pages/driver/Authentication/DriverVehiclePage";
@@ -42,7 +42,7 @@ function DriverPhoto() {
                     const driverId = localStorage.getItem("driverId");
                     console.log(driverId, "tokennnnn");
 
-                    const response = await axiosInstance.post(`/driver/uploadDriverImage?driverId=${driverId}`, formData, {
+                    const response = await axiosDriver(null).post(`uploadDriverImage?driverId=${driverId}`, formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },

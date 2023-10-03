@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 export const VerifiedDrivers = () => {
+
+    const { adminToken } = useSelector((store: any) => store.admin)
+
     const [driversData, setdriversData] = useState([]);
     const navigate = useNavigate()
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get("/admin/verifiedDrivers");
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get("verifiedDrivers");
             setdriversData(data);
-        };
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
         getData();
     }, []);
 

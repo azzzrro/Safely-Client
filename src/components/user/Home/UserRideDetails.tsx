@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axiosInstance from '../../../services/axios'
+import axiosUser from '../../../services/axios/axiosUser'
 import { RideDetails } from '../../../utils/Interfaces'
 import { closeUserRideData } from '../../../services/redux/slices/userRideDataSlice'
 import { useDispatch } from 'react-redux'
@@ -10,20 +10,29 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { toast } from 'react-hot-toast'
 import { Spinner } from '@chakra-ui/react'
+import { useSelector } from 'react-redux/es/hooks/useSelector'
 
 const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
 
     const [rideData, setrideData] = useState<RideDetails | null>(null)
     const [driverData, setdriverData] = useState<any | null>(null)
 
+    const {userToken} = useSelector((store: any) => store.user)
+
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance(`/getRideDetails?ride_id=${ride_id}`)
+    const getData = async () => {
+        try {
+            const { data } = await axiosUser(userToken).get(`getRideDetails?ride_id=${ride_id}`)
             setrideData(data.rideData)
             setdriverData(data.driverData)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
     }, [])
 
@@ -38,7 +47,7 @@ const UserRideDetails = ({ ride_id }: { ride_id: string }) => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const { data } = await axiosInstance.post(`/feedback?_id=${rideData?._id}`, values)
+                const { data } = await axiosUser(userToken).post(`feedback?_id=${rideData?._id}`, values)
                 if (data.message === "Success") {
                     toast.success("Feedback submitted successfully")
                     dispatch(closeUserRideData())

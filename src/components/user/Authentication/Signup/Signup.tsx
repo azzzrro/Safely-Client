@@ -6,7 +6,7 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import GroupIcon from "@mui/icons-material/Group";
 import { useState } from "react";
-import axiosInstance from "../../../../services/axios";
+import axiosUser from '../../../../services/axios/axiosUser'
 import "../../Authentication/Otp/Otp.scss";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import { toast } from "react-toastify";
@@ -19,8 +19,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const Signup = () => {
-
-
 
     const [counter, setCounter] = useState(30);
 
@@ -99,7 +97,7 @@ const Signup = () => {
 
     const signupHandle = async (formData: any) => {
         try {
-            const { data } = await axiosInstance.post(`/checkUser`, formData);
+            const { data } = await axiosUser(null).post(`checkUser`, formData);
 
             if (data.message === "User login") {
                 toast.info("User Already registered! Please Login to continue");
@@ -167,7 +165,7 @@ const Signup = () => {
 
     const registerSubmit = async () => {
         try {
-            const response = await axiosInstance.post(`/register`, formik.values);
+            const response = await axiosUser(null).post(`register`, formik.values);
             if (response.data.message === "Success") {
                 toast.success("OTP verified successfully");
                 localStorage.setItem("userId", response.data.userId);

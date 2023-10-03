@@ -4,19 +4,29 @@ import { useEffect, useState } from 'react'
 import { RideDetails } from '../../../utils/Interfaces'
 import { useDispatch } from 'react-redux'
 import { closeDriverRideData } from '../../../services/redux/slices/driverRideDataSlice'
-import axiosInstance from '../../../services/axios'
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Chip } from '@material-tailwind/react'
+import { useSelector } from 'react-redux';
+import axiosDriver from '../../../services/axios/axiosDriver';
 
 const DriverRideDetails = ({ ride_id }: { ride_id: string }) => {
     const [rideData, setrideData] = useState<RideDetails | null>(null)
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance(`/driver/getRideDetails?ride_id=${ride_id}`)
+    const {driverToken } = useSelector((store: any) => store.driver)
+
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosDriver(driverToken).get(`getRideDetails?ride_id=${ride_id}`)
             setrideData(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
         return ()=>{
             setrideData(null)

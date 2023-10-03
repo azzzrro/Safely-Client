@@ -5,9 +5,9 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.scss";
-import axiosInstance from "../../services/axios";
 import { useDispatch } from "react-redux";
 import { adminLogin } from "../../services/redux/slices/adminAuthSlice";
+import axiosAdmin from '../../services/axios/axiosAdmin'
 
 
 export const AdminLogin = () => {
@@ -26,16 +26,19 @@ export const AdminLogin = () => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const {data} = await axiosInstance.post('/admin/login',values)
+                const {data} = await axiosAdmin(null).post('login',values)
+                console.log(data,"dataaaaa");
+                
                 if(data.message === "Success"){
                     toast.success("Login successfull!")
-                    dispatch(adminLogin({admin:data.email}))
+                    dispatch(adminLogin({admin:data.email,adminToken:data.token}))
                     navigate('/admin/dashboard')
                 }else{
                     toast.error(data.message)
                 }
             } catch (error) {
                 toast.error((error as Error).message);
+                console.log(error);
             } finally {
                 setSubmitting(false);
             }

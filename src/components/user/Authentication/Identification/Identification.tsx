@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axiosInstance from "../../../../services/axios";
+import axiosUser from '../../../../services/axios/axiosUser'
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import "./Identification.scss";
@@ -46,8 +46,8 @@ function Identification() {
 
         const userId = localStorage.getItem("userId");
 
-        axiosInstance
-            .post(`/identification?userId=${userId}`, formData, {
+        axiosUser(null)
+            .post(`identification?userId=${userId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

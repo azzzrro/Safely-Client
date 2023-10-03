@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react'
-import axiosInstance from '../../../services/axios'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { Input } from "@material-tailwind/react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import toast from 'react-hot-toast';
+import axiosUser from '../../../services/axios/axiosUser'
 
 const ProfileInfo = () => {
 
-    const user_id = useSelector((store: any) => store.user.user_id)
+    const {user_id,userToken} = useSelector((store: any) => store.user)
 
     const [userData, setuserData] = useState<any | {}>({})
-    useEffect(() => {
 
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/userData?id=${user_id}`)
+    const getData = async () => {
+        try {
+            const { data } = await axiosUser(userToken).get(`userData?id=${user_id}`)
             setuserData(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
     }, [])
 
@@ -34,7 +40,7 @@ const ProfileInfo = () => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const { data } = await axiosInstance.post(`/profileUpdate?user_id=${user_id}`, values)
+                const { data } = await axiosUser(userToken).post(`profileUpdate?user_id=${user_id}`, values)
                 if (data.message === "Success") {
                     setuserData(data.userData)
                     seteditProfile(false)
@@ -42,6 +48,7 @@ const ProfileInfo = () => {
                 }
             } catch (error) {
                 toast.error((error as Error).message);
+                console.log(error);
             } finally {
                 setSubmitting(false)
             }

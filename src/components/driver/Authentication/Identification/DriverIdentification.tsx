@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axiosInstance from "../../../../services/axios";
+import axiosDriver from '../../../../services/axios/axiosDriver'
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
@@ -32,8 +32,8 @@ function DriverIdentification() {
         
         const driverId = localStorage.getItem("driverId");
 
-        axiosInstance
-            .post(`/driver/identification?driverId=${driverId}`, formData, {
+        axiosDriver(null)
+            .post(`identification?driverId=${driverId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

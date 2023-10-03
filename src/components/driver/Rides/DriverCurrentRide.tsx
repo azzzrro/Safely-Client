@@ -1,24 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Dialog } from "@material-tailwind/react";
 import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
-import axiosInstance from '../../../services/axios';
 import { useJsApiLoader, GoogleMap, DirectionsRenderer } from "@react-google-maps/api";
 import { toast } from 'react-hot-toast';
 import socketIOClient, { Socket } from "socket.io-client";
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
-import ChatBoxReciever from '../../ChatboxReciever';
+import ChatBoxReciever from '../../ChatBoxReciever';
 import ChatBoxSender from '../../ChatBoxSender';
 import ChatInputField from '../../ChatInputField';
 import { useSelector } from 'react-redux';
 import '../driverMain.scss'
+import axiosDriver from '../../../services/axios/axiosDriver';
+
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
 const DriverCurrentRide = () => {
 
-    const { driver, driver_id } = useSelector((store: any) => store.driver)
-
+    const { driver, driver_id, driverToken } = useSelector((store: any) => store.driver)
+    
     const navigate = useNavigate()
 
     const [cancelledModal, setcancelledModal] = useState(false)
@@ -84,7 +85,7 @@ const DriverCurrentRide = () => {
 
     const ChatList = () => {
         return chats.map((chat, index) => {
-            if (chat.sender === driver) return <ChatBoxSender avatar={chat.avatar}  message={chat.message} />
+            if (chat.sender === driver) return <ChatBoxSender avatar={chat.avatar} message={chat.message} />
             return <ChatBoxReciever key={index} message={chat.message} avatar={chat.avatar} />
         })
     }
@@ -122,14 +123,22 @@ const DriverCurrentRide = () => {
     const [rideData, setrideData] = useState<any | null>(null)
     const [rideConfirmed, setrideConfirmed] = useState(false)
     const [driverData, setdriverData] = useState<any | {}>({})
-    useEffect(() => {
-        const getData = async () => {
+
+
+    const getData = async () => {
+        try {
             const rideId = localStorage.getItem("currentRide-driver")
-            const response = await axiosInstance.get(`/driver/getCurrentRide?rideId=${rideId}`)
+            const response = await axiosDriver(driverToken).get(`getCurrentRide?rideId=${rideId}`)
             setrideData(response.data.rideData)
-            const { data } = await axiosInstance.get(`/driver/driverData?driver_id=${driver_id}`)
+            const { data } = await axiosDriver(driverToken).get(`driverData?driver_id=${driver_id}`)
             setdriverData(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
     }, [])
 

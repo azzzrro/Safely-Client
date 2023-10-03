@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useJsApiLoader, GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
-import axiosInstance from '../../../services/axios';
+import { useJsApiLoader, GoogleMap, DirectionsRenderer } from "@react-google-maps/api";
+import axiosUser from '../../../services/axios/axiosUser'
 import { toast } from 'react-hot-toast';
 import socketIOClient, { Socket } from "socket.io-client";
 import {
@@ -18,10 +18,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useLocation } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator } from "@chakra-ui/react";
-import ChatBoxReciever from '../../ChatboxReciever';
 import ChatBoxSender from '../../ChatBoxSender';
 import ChatInputField from '../../ChatInputField';
 import './Home.scss'
+import ChatBoxReciever from '../../ChatBoxReciever';
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 
@@ -29,16 +29,22 @@ const ENDPOINT = import.meta.env.VITE_API_URL;
 const UserCurrentRide = () => {
 
 
-  const { user, user_id } = useSelector((store: any) => store.user)
+  const { user, user_id,userToken } = useSelector((store: any) => store.user)
 
   const [userData, setuserData] = useState<any | null>(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const { data } = await axiosInstance.get(`/userData?id=${user_id}`);
+  const getUserData = async () => {
+    try {
+      const { data } = await axiosUser(userToken).get(`userData?id=${user_id}`);
       setuserData(data);
-    };
-    getData();
+    } catch (error) {
+      toast.error((error as Error).message)
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
   }, [])
 
   interface RideDetails {
@@ -183,16 +189,22 @@ const UserCurrentRide = () => {
 
   ///GETTING THE RIDE DATA
 
-  useEffect(() => {
-    const getData = async () => {
+  const getRideData = async () => {
+    try {
       const ride_id = localStorage.getItem("currentRide-user")
-      const response = await axiosInstance.get(`/getCurrentRide?rideId=${ride_id}`)
+      const response = await axiosUser(userToken).get(`getCurrentRide?rideId=${ride_id}`)
       setrideData(response.data.rideData)
       setdriverData(response.data.driverData)
-      setfeedbacks(response.data.driverData.formattedFeedbacks)
+      setfeedbacks(response.data.driverData?.formattedFeedbacks || null)
       formik.setFieldValue("amount", response.data.rideData?.price)
+    } catch (error) {
+      toast.error((error as Error).message)
+      console.log(error);
     }
-    getData()
+  }
+
+  useEffect(() => {
+    getRideData()
   }, [])
 
   useEffect(()=>{
@@ -320,7 +332,7 @@ const UserCurrentRide = () => {
       if (values.paymentMode === "Wallet" || values.paymentMode === "Cash in hand") {
         console.log(values.paymentMode, "coddd,wallett");
 
-        const { data } = await axiosInstance.post('/payment', values, { params: { rideId: rideId } })
+        const { data } = await axiosUser(userToken).post('payment', values, { params: { rideId: rideId } })
         if (data.message === "Success") {
           toast.success("Payment successfull")
           localStorage.removeItem("currentRide-user")
@@ -332,14 +344,13 @@ const UserCurrentRide = () => {
         }
       }
       else if (values.paymentMode === "Stripe") {
-        console.log("stripeee modee");
 
         const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
         try {
           console.log("stripeeee");
 
-          const { data } = await axiosInstance.post("/payment-stripe", values, { params: { rideId: rideId } })
+          const { data } = await axiosUser(userToken).post("payment-stripe", values, { params: { rideId: rideId } })
 
           try {
             const result = await stripe?.redirectToCheckout({

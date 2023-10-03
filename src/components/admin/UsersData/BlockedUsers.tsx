@@ -1,23 +1,32 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const BlockedUsers = () => {
 
     const [usersData, setusersData] = useState([]);
 
     const navigate = useNavigate();
+    const { adminToken } = useSelector((store: any) => store.admin)
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get("/admin/blockedUsers");
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get("blockedUsers");
             setusersData(data);
-        };
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
+    
+    useEffect(() => {
         getData();
     }, []);
 
-  return (
-    <>
+    return (
+        <>
             <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
@@ -74,7 +83,7 @@ const BlockedUsers = () => {
                 </table>
             </div>
         </>
-  )
+    )
 }
 
 export default BlockedUsers

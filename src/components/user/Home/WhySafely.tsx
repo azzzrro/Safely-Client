@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, Typography, Avatar } from "@material-tailwind/react";
+import { Card, CardHeader, CardBody, Typography } from "@material-tailwind/react";
 import SafetyCheckIcon from "@mui/icons-material/SafetyCheck";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SupportIcon from '@mui/icons-material/Support';

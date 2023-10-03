@@ -7,9 +7,8 @@ import {
     Dialog,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosUser from '../../../services/axios/axiosUser'
 import { useSelector } from "react-redux";
-import { Button } from "@material-tailwind/react";
 import { loadStripe } from '@stripe/stripe-js';
 import toast from "react-hot-toast";
 
@@ -20,14 +19,20 @@ const UserWalletInfo = () => {
     const [userData, setuserData] = useState<null | any>({})
     const [walletTransactions, setwalletTransactions] = useState<null | any[]>([])
 
-    const user_id = useSelector((store: any) => store.user.user_id)
+    const { user_id, userToken } = useSelector((store: any) => store.user)
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/userData?id=${user_id}`)
+    const getData = async () => {
+        try {
+            const { data } = await axiosUser(userToken).get(`userData?id=${user_id}`)
             setuserData(data)
             setwalletTransactions(data.formattedTransactions)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
     }, [])
 
@@ -37,9 +42,9 @@ const UserWalletInfo = () => {
     const addBalance = async () => {
         try {
             const formData = new FormData
-            formData.append("balance",balance)
+            formData.append("balance", balance)
             const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
-            const { data } = await axiosInstance.post("/addWalletBalance", formData,{ params: { user_id: user_id } })
+            const { data } = await axiosUser(userToken).post("addWalletBalance", formData, { params: { user_id: user_id } })
 
             const result = await stripe?.redirectToCheckout({
                 sessionId: data.id

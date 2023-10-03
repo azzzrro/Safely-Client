@@ -3,10 +3,11 @@ import socketIOClient, { Socket } from "socket.io-client";
 import EmergencyShareIcon from '@mui/icons-material/EmergencyShare';
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../services/axios";
+import axiosDriver from '../../../services/axios/axiosDriver';
 import { RideDetails } from "../../../utils/Interfaces";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import { Spinner } from '@chakra-ui/react'
+import toast from "react-hot-toast";
 
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
@@ -32,21 +33,29 @@ export const DriverDashboard = () => {
 
 
 
-    const driver_id = useSelector((store: any) => store.driver.driver_id)
+    const {driver_id,driverToken} = useSelector((store: any) => store.driver)
 
     const [driverData, setdriverData] = useState<any | null>(null);
     const [chartData, setchartData] = useState(null)
     const [pieChartData, setpieChartData] = useState<any[] | []>([])
     const [currentMonthRide, setcurrentMonthRide] = useState(null)
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/driver/dashboardData?driver_id=${driver_id}`)
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosDriver(driverToken).get(`dashboardData?driver_id=${driver_id}`)
             setchartData(data.chartData)
             setpieChartData(data.pieChartData)
             setdriverData(data.driverData);
             setcurrentMonthRide(data.CurrentMonthRides)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+
+    useEffect(() => {
         getData();
     }, [])
 

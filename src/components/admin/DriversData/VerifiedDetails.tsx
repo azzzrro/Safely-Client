@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useSelector } from "react-redux";
+import { Dialog } from "@material-tailwind/react";
 
 const VerifiedDetails = () => {
     const [statusModal, setstatusModal] = useState(false);
@@ -11,11 +13,19 @@ const VerifiedDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/admin/driverData?id=${id}`);
+    const { adminToken } = useSelector((store: any) => store.admin)
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get(`driverData?id=${id}`);
             setdriverData(data);
-        };
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
         getData();
     }, []);
 
@@ -30,7 +40,7 @@ const VerifiedDetails = () => {
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const { data } = await axiosInstance.post(`/admin/updateDriverStatus?id=${id}`, values);
+                const { data } = await axiosAdmin(adminToken).post(`updateDriverStatus?id=${id}`, values);
                 if (data.message === "Success") {
                     setstatusModal(false);
                     toast.success("Status updated successfully!");
@@ -49,9 +59,10 @@ const VerifiedDetails = () => {
     return (
         <>
             {statusModal && (
+                <Dialog open={statusModal} handler={formik.handleSubmit} className='bg-transparent'>
                 <div className="relative flex justify-center">
                     <div
-                        className="fixed inset-0 z-10 overflow-y-auto bg-opacity-40 bg-black"
+                        className="fixed inset-0 z-10 overflow-y-auto"
                         aria-labelledby="modal-title"
                         role="dialog"
                         aria-modal="true"
@@ -129,6 +140,7 @@ const VerifiedDetails = () => {
                         </div>
                     </div>
                 </div>
+                </Dialog>
             )}
 
             <div className="h-screen">

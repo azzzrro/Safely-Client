@@ -1,25 +1,33 @@
 import React from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axiosInstance from '../../../services/axios';
+import axiosAdmin from '../../../services/axios/axiosAdmin'
+import { useSelector } from "react-redux";
+import toast from 'react-hot-toast';
 
 const VerifiedFeedbacks = () => {
     const { id } = useParams();
     const [feedbacks, setfeedbacks] = useState<null | any>([])
+    const { adminToken } = useSelector((store: any) => store.admin)
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get(`driverFeedbacks?driver_id=${id}`)
+            setfeedbacks(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/admin/driverFeedbacks?driver_id=${id}`)
-            console.log(data,"dattaaa");
-            setfeedbacks(data)
-        }
         getData()
     }, [])
     
   return (
     <>
     <div className='bg-gray-100 w-[96%] mx-auto h-fit py-5 rounded-2xl drop-shadow-2xl md:flex items-center px-5'>
-                <div className='w-full md:h-fit h-fit grid grid-cols-3'>
+                <div className='w-full md:h-fit h-fit grid grid-cols-3 gap-4'>
                     {feedbacks.map((feedbacks: any) => {
                         return (
                             <div className="card bg-base-100 shadow-xl">

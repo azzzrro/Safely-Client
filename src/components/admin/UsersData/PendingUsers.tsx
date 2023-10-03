@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const PendingUsers = () => {
     const [usersData, setusersData] = useState([]);
 
     const navigate = useNavigate();
+    const { adminToken } = useSelector((store: any) => store.admin)
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get("pendingUsers");
+            setusersData(data);
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get("/admin/pendingUsers");
-            setusersData(data);
-        };
         getData();
     }, []);
 

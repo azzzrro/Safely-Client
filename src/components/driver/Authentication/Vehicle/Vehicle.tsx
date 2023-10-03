@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axiosInstance from "../../../../services/axios";
+import axiosDriver from '../../../../services/axios/axiosDriver'
 import { toast } from "react-toastify";
 import DriverLocationPage from "../../../../pages/driver/Authentication/DriverLocationPage";
 
@@ -30,7 +30,7 @@ const Vehicle = () => {
 
                 const driverId = localStorage.getItem("driverId");
 
-                const { data } = await axiosInstance.post(`/driver/vehicleDetails?driverId=${driverId}`, values, {
+                const { data } = await axiosDriver(null).post(`vehicleDetails?driverId=${driverId}`, values, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

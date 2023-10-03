@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const VerifiedUsers = () => {
+    const { adminToken } = useSelector((store: any) => store.admin)
+
     const [usersData, setusersData] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         const getData = async () => {
-            const { data } = await axiosInstance.get("/admin/verifiedUsers");
+            const { data } = await axiosAdmin(adminToken).get("verifiedUsers");
             setusersData(data);
         };
         getData();

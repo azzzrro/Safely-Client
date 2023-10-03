@@ -15,8 +15,10 @@ import {
     Tab,
     TabsHeader,
 } from "@material-tailwind/react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { RideDetails } from "../../../utils/Interfaces";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const VerifiedRides = () => {
     const { id } = useParams();
@@ -40,11 +42,19 @@ const VerifiedRides = () => {
 
     const [rideData, setrideData] = useState<null | RideDetails[]>([])
 
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/admin/getDriverRides?driver_id=${id}`)
-            setrideData(data)
+    const { adminToken } = useSelector((store: any) => store.admin)
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get(`getDriverRides?driver_id=${id}`)
+            setrideData(data) 
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
         }
+    }
+
+    useEffect(() => {
         getData()
     }, [])
 

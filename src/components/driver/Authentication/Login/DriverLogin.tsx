@@ -3,14 +3,13 @@ import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { signInWithPhoneNumber, RecaptchaVerifier, Auth, ConfirmationResult } from "firebase/auth";
 import { auth } from "../../../../services/firebase";
-import axiosInstance from "../../../../services/axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import jwt_decode from "jwt-decode";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import axiosDriver from '../../../../services/axios/axiosDriver'
 import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
 import { openRejectedModal } from "../../../../services/redux/slices/rejectedModalSlice";
@@ -38,7 +37,7 @@ function DriverLogin() {
         }),
         onSubmit: async (values) => {
             try {
-                const { data } = await axiosInstance.post("/driver/checkLoginDriver", values);
+                const { data } = await axiosDriver(null).post("checkLoginDriver", values);
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
@@ -140,7 +139,7 @@ function DriverLogin() {
                 const userEmail = decodedData.email;
                 const formData = new FormData();
                 formData.append("email", userEmail);
-                const response = await axiosInstance.post("/driver/checkGoogleLoginDriver", formData);
+                const response = await axiosDriver(null).post("checkGoogleLoginDriver", formData);
                 if (response.data.message === "Success") {
                     toast.success("Login success!");
                     dispatch(

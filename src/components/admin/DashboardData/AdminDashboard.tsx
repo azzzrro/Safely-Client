@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../services/axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import { Spinner } from '@chakra-ui/react'
-
+import axiosAdmin from '../../../services/axios/axiosAdmin'
+import toast from "react-hot-toast";
 
 
 export const AdminDashboard = () => {
+
+  const {adminToken} = useSelector((store: any) => store.admin)
+
+
   const [chartData, setchartData] = useState(null)
   const [pieChartData, setpieChartData] = useState<any[] | []>([])
   const [dashboardData, setdashboardData] = useState<any | {}>({})
 
 
-  useEffect(() => {
-    const getChartData = async () => {
-      const { data } = await axiosInstance.get('/admin/getDashboardData')
+  const getChartData = async () => {
+    try {
+      const { data } = await axiosAdmin(adminToken).get('getDashboardData')
       setchartData(data.chardData)
       setpieChartData(data.pieChartData)
       setdashboardData(data.dashboardData)
+    } catch (error) {
+      toast.error((error as Error).message)
+      console.log(error);
     }
+  }
+
+  useEffect(() => {
     getChartData()
   }, [])
 

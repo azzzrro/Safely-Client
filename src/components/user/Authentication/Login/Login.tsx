@@ -3,7 +3,7 @@ import { PinInput, PinInputField, HStack } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../../services/axios";
+import axiosUser from '../../../../services/axios/axiosUser'
 import { toast } from "react-toastify";
 import { signInWithPhoneNumber, RecaptchaVerifier, Auth, ConfirmationResult } from "firebase/auth";
 import { auth } from "../../../../services/firebase";
@@ -40,7 +40,7 @@ function Login() {
         }),
         onSubmit: async (values) => {
             try {
-                const { data } = await axiosInstance.post("/checkLoginUser", values);
+                const { data } = await axiosUser(null).post("checkLoginUser", values);
                 console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
@@ -142,7 +142,7 @@ function Login() {
                 const userEmail = decodedData.email;
                 const formData = new FormData();
                 formData.append("email", userEmail);
-                const response = await axiosInstance.post("/checkGoogleLoginUser", formData);
+                const response = await axiosUser(null).post("checkGoogleLoginUser", formData);
                 if (response.data.message === "Success") {
                     console.log(response.data);
                     toast.success("Login success!");

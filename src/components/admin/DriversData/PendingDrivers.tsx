@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 
 export const PendingDrivers = () => {
     const [driversData, setdriversData] = useState([]);
     const navigate = useNavigate()
 
-    useEffect(() => {
-        const pendingDrivesAPI = async () => {
-            const { data } = await axiosInstance.get("/admin/pendingDrivers");
+    const { adminToken } = useSelector((store: any) => store.admin)
+
+    const pendingDrivesAPI = async () => {
+        try {
+            const { data } = await axiosAdmin(adminToken).get("pendingDrivers");
             setdriversData(data);
-        };
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
         pendingDrivesAPI();
     }, []);
 
@@ -33,15 +43,15 @@ export const PendingDrivers = () => {
                     <tbody>
                         {/* row 1 */}
 
-                        {driversData.map((drivers:any,index) => {
+                        {driversData.map((drivers: any, index) => {
                             return (
-                                <tr key={index+1} >
+                                <tr key={index + 1} >
                                     <th>
                                         <label>
                                             <input type="checkbox" className="checkbox" />
                                         </label>
                                     </th>
-                                    <th>{index+1}</th>
+                                    <th>{index + 1}</th>
                                     <td>
                                         <div className="flex items-center space-x-3">
                                             <div className="avatar">
@@ -61,9 +71,9 @@ export const PendingDrivers = () => {
                                     <td>{drivers.mobile}</td>
                                     <td>{drivers.email}</td>
                                     <th>
-                                        <button 
-                                        onClick={()=>navigate('/admin/pendingDriver/'+drivers._id)}
-                                        className="btn btn-primary btn-xs relative right-2">MORE DETAILS</button>
+                                        <button
+                                            onClick={() => navigate('/admin/pendingDriver/' + drivers._id)}
+                                            className="btn btn-primary btn-xs relative right-2">MORE DETAILS</button>
                                     </th>
                                 </tr>
                             );

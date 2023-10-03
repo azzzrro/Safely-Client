@@ -2,7 +2,7 @@ import { useRef, useCallback, useState } from "react";
 import Webcam from "react-webcam";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axiosInstance from "../../../../services/axios";
+import axiosUser from '../../../../services/axios/axiosUser'
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -41,7 +41,7 @@ function Photo() {
                     const userId = localStorage.getItem("userId");
                     console.log(userId, "tokennnnn");
 
-                    const response = await axiosInstance.post(`/uploadUserImage?userId=${userId}`, formData, {
+                    const response = await axiosUser(null).post(`uploadUserImage?userId=${userId}`, formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },

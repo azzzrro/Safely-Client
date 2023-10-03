@@ -12,13 +12,16 @@ import {
     Tabs,
     Tab,
     TabsHeader,
+    CardFooter,
+    IconButton,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axios";
+import axiosUser from '../../../services/axios/axiosUser'
 import { useSelector } from "react-redux";
 import { RideDetails } from "../../../utils/Interfaces";
 import { useDispatch } from "react-redux";
 import { openUserRideData } from "../../../services/redux/slices/userRideDataSlice";
+import toast from "react-hot-toast";
 
 const UserRideHistory = () => {
 
@@ -42,20 +45,26 @@ const UserRideHistory = () => {
 
     const TABLE_HEAD = ["No", "Pickup", "Dropoff", "Status", "Date", ""];
 
-    const user_id = useSelector((store: any) => store.user.user_id)
+    const {user_id,userToken} = useSelector((store: any) => store.user)
 
-    const [rideData, setrideData] = useState<null | RideDetails[]>([])
+    const [rideData, setrideData] = useState<[] | RideDetails[]>([])
+
+    const getData = async () => {
+        try {
+            const { data } = await axiosUser(userToken).get(`/getAllrides?user_id=${user_id}`)
+            setrideData(data)
+        } catch (error) {
+            toast.error((error as Error).message)
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
-        const getData = async () => {
-            const { data } = await axiosInstance.get(`/getAllrides?user_id=${user_id}`)
-            setrideData(data)
-        }
         getData()
     }, [])
 
 
-    const [filteredRideData, setFilteredRideData] = useState<RideDetails[] | null>(rideData)
+    const [filteredRideData, setFilteredRideData] = useState<RideDetails[] | []>(rideData)
     const [filterValue, setfilterValue] = useState("All")
 
     useEffect(() => {
@@ -63,7 +72,7 @@ const UserRideHistory = () => {
             setFilteredRideData(rideData);
         } else {
             const filteredData = rideData?.filter(ride => ride.status === filterValue);
-            setFilteredRideData(filteredData ? filteredData : null);
+            setFilteredRideData(filteredData);
         }
     }, [filterValue, rideData]);
 
@@ -75,9 +84,36 @@ const UserRideHistory = () => {
             ride.pickupLocation.toLowerCase().includes(search.toLowerCase()) ||
             ride.dropoffLocation.toLowerCase().includes(search.toLowerCase())
         );
-        setFilteredRideData(filteredData ? filteredData : null);
+        setFilteredRideData(filteredData);
     }, [search, rideData]);
 
+
+    ///PAGINATION
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const displayedData = filteredRideData?.slice(startIndex, endIndex);
+
+
+    const totalPages = Math.ceil(filteredRideData.length / itemsPerPage);
+
+    const pageButtons = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageButtons.push(
+            <IconButton
+                key={i}
+                variant="text"
+                size="sm"
+                onClick={() => setCurrentPage(i)}
+                className={currentPage === i ? 'text-blue-500' : ''}
+            >
+                {i}
+            </IconButton>
+        );
+    }
 
     return (
         <>
@@ -127,7 +163,7 @@ const UserRideHistory = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredRideData?.map(
+                            {displayedData?.map(
                                 (
                                     {
                                         pickupLocation,
@@ -138,7 +174,7 @@ const UserRideHistory = () => {
                                     },
                                     index,
                                 ): any => {
-                                    const isLast = index === filteredRideData?.length - 1;
+                                    const isLast = index === displayedData?.length - 1;
 
                                     const classes = isLast
                                         ? "p-4 text-center"
@@ -217,37 +253,25 @@ const UserRideHistory = () => {
                         </tbody>
                     </table>
                 </CardBody>
-                {/* <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                    <Button variant="outlined" size="sm">
+                <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+                    <Button
+                        variant="outlined"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
                         Previous
                     </Button>
-                    <div className="flex items-center gap-2">
-                        <IconButton variant="outlined" size="sm">
-                            1
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            2
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            3
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            ...
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            8
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            9
-                        </IconButton>
-                        <IconButton variant="text" size="sm">
-                            10
-                        </IconButton>
-                    </div>
-                    <Button variant="outlined" size="sm">
+                    <div className="flex items-center gap-2">{pageButtons}</div>
+                    <Button
+                        variant="outlined"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={endIndex >= filteredRideData.length}
+                    >
                         Next
                     </Button>
-                </CardFooter> */}
+                </CardFooter>
             </Card>
         </>
     )

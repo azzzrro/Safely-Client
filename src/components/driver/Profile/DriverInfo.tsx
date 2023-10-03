@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axiosInstance from '../../../services/axios'
+import axiosDriver from '../../../services/axios/axiosDriver';
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { Input } from "@material-tailwind/react";
 import { useFormik } from 'formik';
@@ -12,16 +12,22 @@ import { Switch } from "@material-tailwind/react";
 const DriverInfo = () => {
 
 
-  const driver_id = useSelector((store: any) => store.driver.driver_id)
+  const {driver_id,driverToken} = useSelector((store: any) => store.driver)
 
   const [driverData, setdriverData] = useState<any | {}>({})
-  useEffect(() => {
 
-    const getData = async () => {
-      const { data } = await axiosInstance.get(`/driver/driverData?driver_id=${driver_id}`)
+  
+  const getData = async () => {
+    try {
+      const { data } = await axiosDriver(driverToken).get(`driverData?driver_id=${driver_id}`)
       setdriverData(data)
+    } catch (error) {
+      toast.error((error as Error).message)
+      console.log(error);
     }
+  }
 
+  useEffect(() => {
     getData()
   }, [])
 
@@ -41,7 +47,7 @@ const DriverInfo = () => {
       try {
         console.log(values);
 
-        const { data } = await axiosInstance.post(`/driver/profileUpdate?driver_id=${driver_id}`, values)
+        const { data } = await axiosDriver(driverToken).post(`profileUpdate?driver_id=${driver_id}`, values)
         if (data.message === "Success") {
           setdriverData(data.driverData)
           seteditProfile(false)
@@ -58,7 +64,7 @@ const DriverInfo = () => {
 
   const updateStatus = async () => {
     try {
-      const { data } = await axiosInstance.get(`/driver/updateStatus?driver_id=${driver_id}`)
+      const { data } = await axiosDriver(driverToken).get(`updateStatus?driver_id=${driver_id}`)
       if (data.message === "Success") {
         setdriverData(data.driverData)
         toast.success("Status updated successfully!")
