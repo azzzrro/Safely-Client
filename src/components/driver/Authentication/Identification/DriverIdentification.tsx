@@ -68,7 +68,7 @@ function DriverIdentification() {
                             <div className="hidden  md:flex md:items-center justify-center" style={{ marginTop: "-30px" }}>
                                 <img
                                     style={{ height: "380px", width: "auto" }}
-                                    src="../../../../public/images/[removal.ai]_22bf0d53-d053-4b6d-9cd1-92bd49f0a131-5214651.png"
+                                    src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_22bf0d53-d053-4b6d-9cd1-92bd49f0a131-5214651.png"
                                     alt=""
                                 />
                             </div>

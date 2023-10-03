@@ -90,7 +90,7 @@ function DriverLocation() {
                         <div className="hidden  md:flex md:items-center justify-center">
                             <img
                                 style={{ height: "300px", width: "auto" }}
-                                src="../../../../public/images/[removal.ai]_e8b3373d-808f-43b2-85d2-374ab65847e9-11641795_4752200.png"
+                                src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_e8b3373d-808f-43b2-85d2-374ab65847e9-11641795_4752200.png"
                             />
                         </div>
                     </div>

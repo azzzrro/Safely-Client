@@ -186,7 +186,7 @@ function Login() {
                         <div className="hidden  md:flex md:items-center" style={{ marginTop: "-25px" }}>
                             <img
                                 style={{ height: "330px", width: "auto" }}
-                                src="../../../public/images/[removal.ai]_ac4bb899-8f0d-469a-b782-3d865a890352-12291223_wavy_tech-28_single-10.png"
+                                src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_ac4bb899-8f0d-469a-b782-3d865a890352-12291223_wavy_tech-28_single-10.png"
                                 alt=""
                             />
                         </div>

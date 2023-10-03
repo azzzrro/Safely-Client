@@ -194,7 +194,7 @@ function DriverSignup() {
                                     <div className="hidden md:block" style={{ marginTop: "-30px" }}>
                                         <img
                                             style={{ height: "360px", width: "auto" }}
-                                            src="../../../../../public/images/[removal.ai]_db9470d4-ef32-48f1-a055-183c21878584-13246824_5191079.png"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_db9470d4-ef32-48f1-a055-183c21878584-13246824_5191079.png"
                                             alt=""
                                         />
                                     </div>

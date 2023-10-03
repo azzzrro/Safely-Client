@@ -84,7 +84,7 @@ function Photo() {
                                     <div className="hidden  md:flex md:items-center justify-center">
                                         <img
                                             style={{ height: "330px", width: "auto" }}
-                                            src="../../../../public/images/[removal.ai]_70cfeada-8ff0-4248-9357-500daaf02a6b-12291262_wavy_tech-30_single-11.png"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_70cfeada-8ff0-4248-9357-500daaf02a6b-12291262_wavy_tech-30_single-11.png"
                                         />
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@ function Photo() {
                                             <div className="hidden  md:flex md:items-center justify-center">
                                                 <img
                                                     style={{ height: "330px", width: "auto" }}
-                                                    src="../../../../public/images/[removal.ai]_70cfeada-8ff0-4248-9357-500daaf02a6b-12291262_wavy_tech-30_single-11.png"
+                                                    src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_70cfeada-8ff0-4248-9357-500daaf02a6b-12291262_wavy_tech-30_single-11.png"
                                                 />
                                             </div>
                                         </div>

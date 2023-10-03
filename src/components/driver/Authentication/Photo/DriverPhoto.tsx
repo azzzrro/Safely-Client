@@ -85,7 +85,7 @@ function DriverPhoto() {
                                     <div className="hidden  md:flex md:items-center justify-center">
                                         <img
                                             style={{ height: "300px", width: "auto" }}
-                                            src="../../../../public/images/20135087_6213634-removebg-preview.png"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/20135087_6213634-removebg-preview.png"
                                         />
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ function DriverPhoto() {
                                             <div className="hidden  md:flex md:items-center justify-center">
                                                 <img
                                                     style={{ height: "330px", width: "auto" }}
-                                                    src="../../../../public/images/20135087_6213634-removebg-preview.png"
+                                                    src="https://d2y3cuhvusjnoc.cloudfront.net/20135087_6213634-removebg-preview.png"
                                                 />
                                             </div>
                                         </div>

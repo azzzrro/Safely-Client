@@ -81,7 +81,7 @@ function Identification() {
                             <div className="hidden  md:flex md:items-center justify-center">
                                 <img
                                     style={{ height: "330px", width: "auto" }}
-                                    src="../../../../public/images/[removal.ai]_606e2e73-3702-4d01-82bb-d822491713e8-12290995_wavy_tech-17_single-04.png"
+                                    src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_606e2e73-3702-4d01-82bb-d822491713e8-12290995_wavy_tech-17_single-04.png"
                                     alt=""
                                 />
                             </div>
