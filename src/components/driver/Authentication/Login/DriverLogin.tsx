@@ -189,7 +189,7 @@ function DriverLogin() {
                         <div className="hidden  md:flex md:items-center" style={{ marginTop: "-45px" }}>
                             <img
                                 style={{ height: "300px", width: "auto" }}
-                                src="../../../public/images/[removal.ai]_4c7ba0ac-90b6-43f1-b097-932d54d9f8b0-sssdsdsd.png"
+                                src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_4c7ba0ac-90b6-43f1-b097-932d54d9f8b0-sssdsdsd.png"
                                 alt=""
                             />
                         </div>

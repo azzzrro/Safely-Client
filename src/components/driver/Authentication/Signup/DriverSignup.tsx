@@ -209,7 +209,7 @@ function DriverSignup() {
                                     <div className="hidden  md:flex md:items-center" style={{ marginTop: "-40px" }}>
                                         <img
                                             style={{ height: "330px", width: "auto" }}
-                                            src="../../../public/images/[removal.ai]_7d8b958b-03bb-4249-8817-6e555f711362-12892968_5095140.png"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/[removal.ai]_7d8b958b-03bb-4249-8817-6e555f711362-12892968_5095140.png"
                                             alt=""
                                         />
                                     </div>
