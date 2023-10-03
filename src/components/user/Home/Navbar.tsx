@@ -130,6 +130,9 @@ const Navbar = () => {
                                                     >
                                                         <a>Signup</a>
                                                     </li>
+                                                    <li onClick={()=>navigate('/driver/login')}>
+                                                        <a>Login as Driver</a>
+                                                    </li>
                                                 </>
                                             )}
                                         </ul>
