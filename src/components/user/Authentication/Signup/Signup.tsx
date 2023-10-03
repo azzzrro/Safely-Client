@@ -205,7 +205,7 @@ const Signup = () => {
                                     <div className="sm:hidden md:block">
                                         <img
                                             style={{ height: "290px", width: "auto" }}
-                                            src="https://img.freepik.com/free-vector/new-message-concept-illustration_114360-666.jpg?w=1060&t=st=1692082525~exp=1692083125~hmac=b2a80958a9575bc687f38f052c36e556a1aa6a5bcaaa94134ba0db6c37823bf4"
+                                            src="https://d2y3cuhvusjnoc.cloudfront.net/new-message-concept-illustration_114360-666.jpg"
                                             alt=""
                                         />
                                     </div>
