@@ -1,4 +1,3 @@
-import React from 'react';
 
 const ThemeButton = ({ text }: { text: string }) => {
   return (

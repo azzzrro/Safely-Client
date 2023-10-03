@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import {
     MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
@@ -10,7 +10,6 @@ import {
     CardBody,
     Chip,
     Input,
-    Button,
     Tabs,
     Tab,
     TabsHeader,
@@ -137,7 +136,6 @@ const VerifiedRides = () => {
                                         dropoffLocation,
                                         status,
                                         date,
-                                        ride_id
                                     },
                                     index,
                                 ): any => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import Vehicle from '../../../components/driver/Authentication/Vehicle/Vehicle'
 
 const DriverVehiclePage = () => {

@@ -1,5 +1,4 @@
-import React from 'react'
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axiosAdmin from '../../../services/axios/axiosAdmin'
 import { useSelector } from "react-redux";

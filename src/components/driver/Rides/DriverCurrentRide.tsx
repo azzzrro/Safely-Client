@@ -108,14 +108,14 @@ const DriverCurrentRide = () => {
 
     ///MAP API-SCRIPT
 
-    const { isLoaded } = useJsApiLoader({
+    useJsApiLoader({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
         libraries: ["places"],
     });
 
-    const [center, setcenter] = useState({ lat: 12.9716, lng: 77.5946 });
-    const [zoom, setzoom] = useState(15);
-    const [map, setmap] = useState<google.maps.Map | undefined>(undefined);
+    const [center] = useState({ lat: 12.9716, lng: 77.5946 });
+    const [zoom] = useState(15);
+    const [, setmap] = useState<google.maps.Map | undefined>(undefined);
 
 
     ///GETTING THE RIDE DATA
@@ -157,7 +157,6 @@ const DriverCurrentRide = () => {
     ///SETTING UP THE DIRECTIONS
 
     const [directionsResponse, setdirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
-    const [driverLocation, setdriverLocation] = useState("")
 
     useEffect(() => {
         if (rideData) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { AdminNavbar } from "../../../components/admin/AdminNavbar";
 import { PendingDrivers } from "../../../components/admin/DriversData/PendingDrivers";
 import { VerifiedDrivers } from "../../../components/admin/DriversData/VerifiedDrivers";

@@ -19,9 +19,9 @@ function DriverLocation() {
     const navigate = useNavigate();
 
     const [isGeolocationActive, setIsGeolocationActive] = useState(false);
-    const [marker, setmarker] = useState(false);
+    const [marker] = useState(false);
 
-    const [location, setlocation] = useState(false);
+    const [, setlocation] = useState(false);
     const [longitude, setlongitude] = useState(68.7);
     const [latitude, setlatitude] = useState(8.4);
 

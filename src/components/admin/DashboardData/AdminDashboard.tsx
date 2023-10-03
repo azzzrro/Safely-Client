@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie,  Cell } from 'recharts';
 import { Spinner } from '@chakra-ui/react'
 import axiosAdmin from '../../../services/axios/axiosAdmin'
 import toast from "react-hot-toast";
@@ -39,7 +39,7 @@ export const AdminDashboard = () => {
   const COLORS = ['#0088FE', '#FFBB28', '#00C49F',];
 
   const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: any) => {
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -158,7 +158,7 @@ export const AdminDashboard = () => {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {pieChartData.map((entry, index) => (
+                      {pieChartData.map((_:any, index:number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>

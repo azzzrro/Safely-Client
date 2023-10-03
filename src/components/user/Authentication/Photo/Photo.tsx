@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { openPendingModal } from "../../../../services/redux/slices/pendingModalSlice";
 
-const WebcamComponent = () => <Webcam />;
 
 const videoConstraints = {
     width: 400,

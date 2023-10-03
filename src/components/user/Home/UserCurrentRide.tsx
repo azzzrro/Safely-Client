@@ -182,9 +182,9 @@ const UserCurrentRide = () => {
     libraries: ["places"],
   });
 
-  const [center, setcenter] = useState({ lat: 12.9716, lng: 77.5946 });
-  const [zoom, setzoom] = useState(11);
-  const [map, setmap] = useState<google.maps.Map | undefined>(undefined);
+  const [center] = useState({ lat: 12.9716, lng: 77.5946 });
+  const [zoom] = useState(11);
+  const [, setmap] = useState<google.maps.Map | undefined>(undefined);
 
 
   ///GETTING THE RIDE DATA

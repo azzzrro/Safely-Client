@@ -1,13 +1,11 @@
-import React, { useRef, useCallback, useState } from "react";
+import  { useRef, useCallback, useState } from "react";
 import Webcam from "react-webcam";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axiosDriver from '../../../../services/axios/axiosDriver'
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import DriverVehiclePage from "../../../../pages/driver/Authentication/DriverVehiclePage";
 
-const WebcamComponent = () => <Webcam />;
 
 const videoConstraints = {
     width: 400,
@@ -20,8 +18,6 @@ function DriverPhoto() {
     const [vehiclePage, setvehiclePage] = useState(false);
 
     const webcamRef = useRef<Webcam | null>(null);
-
-    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {

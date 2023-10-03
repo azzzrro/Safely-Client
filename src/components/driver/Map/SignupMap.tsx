@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
-import mapboxgl, { Marker } from "mapbox-gl";
+import { useRef, useEffect, useState } from "react";
+import mapboxgl from "mapbox-gl";
 import "./SignupMap.scss";
 import { toast } from "react-toastify";
 
@@ -44,7 +44,7 @@ const SignupMap = ({ handleGeolocation, isGeolocationActive }: any) => {
 
         map.current.on("dblclick", handleMapDoubleClick)
 
-        const marker = new mapboxgl.Marker()
+        new mapboxgl.Marker()
             .setLngLat([lng, lat])
             .addTo(map.current)
     }, [lng, lat, zoom]);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import axiosUser from '../../../services/axios/axiosUser'
 import { RideDetails } from '../../../utils/Interfaces'
 import { closeUserRideData } from '../../../services/redux/slices/userRideDataSlice'
