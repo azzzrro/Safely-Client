@@ -62,16 +62,6 @@ export function AdminNavbar() {
           Users
         </p>
       </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="white"
-        className="p-1 font-normal"
-      >
-        <p className="flex items-center cursor-pointer">
-          Profile
-        </p>
-      </Typography>
     </ul>
   );
 
