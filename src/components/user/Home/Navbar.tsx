@@ -114,6 +114,9 @@ const Navbar = () => {
                                                     <li onClick={() => dispatch(userLogout())}>
                                                         <a>Signout</a>
                                                     </li>
+                                                    <li onClick={()=>navigate('/driver/login')}>
+                                                        <a>Login as Driver</a>
+                                                    </li>
                                                 </>
                                             ) : (
                                                 <>
