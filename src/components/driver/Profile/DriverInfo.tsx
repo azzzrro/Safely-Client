@@ -152,7 +152,7 @@ const DriverInfo = () => {
               <div className='md:flex gap-6'>
                 <Input label={driverData?.account_status} disabled crossOrigin={undefined} />
                 <p className='w-1/2 md:hidden'>Joining Date</p>
-                <Input label={driverData?.joiningDate} disabled crossOrigin={undefined} />
+                <Input label={driverData?.formattedDate} disabled crossOrigin={undefined} />
               </div>
               <div className=''>
                 <button
