@@ -6,17 +6,18 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import toast from 'react-hot-toast';
 import { Switch } from "@material-tailwind/react";
+import { Spinner } from '@chakra-ui/react';
 
 
 
 const DriverInfo = () => {
 
 
-  const {driver_id,driverToken} = useSelector((store: any) => store.driver)
+  const { driver_id, driverToken } = useSelector((store: any) => store.driver)
 
   const [driverData, setdriverData] = useState<any | {}>({})
 
-  
+
   const getData = async () => {
     try {
       const { data } = await axiosDriver(driverToken).get(`driverData?driver_id=${driver_id}`)
@@ -81,6 +82,13 @@ const DriverInfo = () => {
   return (
     <>
       <div className='bg-gray-100 w-[96%] mx-auto h-fit rounded-2xl drop-shadow-2xl md:flex items-center px-5'>
+
+        {!driverData &&
+          <div className='pr-4 mx-5 w-full text-center'>
+            <Spinner size='lg' />
+          </div>
+        }
+
         <div className='md:w-1/3 md:h-96 h-80'>
           <div className='h-full flex flex-col gap-1 justify-center items-center'>
             <div className="avatar">
@@ -192,6 +200,9 @@ const DriverInfo = () => {
             </form>
           )}
         </div>
+
+
+
       </div>
 
     </>

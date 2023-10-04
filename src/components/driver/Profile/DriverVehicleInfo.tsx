@@ -43,7 +43,7 @@ const DriverVehicleInfo = () => {
                         </h1>
                     </div>
                 </div>
-                <div className='h-[22rem] w-2/5 py-5'>
+                <div className='h-fit w-2/5 py-5'>
                     <div>
                         <h1 className='text-xl font-semibold mb-2'>
                             RC IMAGE
@@ -53,7 +53,7 @@ const DriverVehicleInfo = () => {
                         <img src={driverData?.vehicle_details?.rcImageUrl} width={"100%"} height={"100%"} alt="" />
                     </div>
                 </div>
-                <div className='h-[22rem] w-2/5 py-5'>
+                <div className='h-fit w-2/5 py-5'>
                     <div>
                         <h1 className='text-xl font-semibold mb-2'>
                             CAR IMAGE
