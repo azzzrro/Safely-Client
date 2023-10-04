@@ -28,6 +28,7 @@ import { AdminDriverDetailsPending } from "./pages/admin/adminDrivers/AdminDrive
 import AdminDriverDetailsVerified from "./pages/admin/adminDrivers/AdminDriverDetailsVerified";
 import AdminUsers from "./pages/admin/adminUsers/AdminUsers";
 import AdminUserDetails from "./pages/admin/adminUsers/AdminUserDetails";
+import About from "./components/user/Home/About";
 
 function App() {
     const user = useSelector((store: any) => store.user.loggedIn)
@@ -49,6 +50,7 @@ function App() {
                         <Route path="/login" element={user ? <Navigate to={'/'} /> : <Loginpage />} />
                         <Route path="/identification" element={user ? <Navigate to={'/'} /> : <Identificationpage />} />
                         <Route path="/" element={<Homepage />} />
+                        <Route path="/about" element={<About />} />
                         <Route path="/profile" element={!user ? <Navigate to={'/login'} /> : <Profilepage />} />
                         <Route path="/rides" element={!user ? <Navigate to={'/login'} /> : <UserCurrentRidePage />} />
 

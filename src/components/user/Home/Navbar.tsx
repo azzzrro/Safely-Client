@@ -106,10 +106,10 @@ const Navbar = () => {
                                         Notifications
                                     </p>
                                     <p
-                                        onClick={() => navigate('/')}
+                                        onClick={() => navigate('/about')}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
-                                        Support
+                                        About
                                     </p>
                                 </div>
 
