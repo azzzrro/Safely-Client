@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userLogout } from "../../../services/redux/slices/userAuthSlice";
@@ -9,8 +9,27 @@ const Navbar = () => {
 
     const dispatch = useDispatch();
 
-    const user = useSelector((store: any) => store.user.user);
+    const { user } = useSelector((store: any) => store.user);
 
+    const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleWindowResize = () => {
+            setWindowSize(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleWindowResize);
+
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    }, []);
+
+    useEffect(()=>{
+        if(windowSize > 400){
+            setIsOpen(false)
+        }
+    },[windowSize])
     return (
         <>
             <div className="">
@@ -18,9 +37,9 @@ const Navbar = () => {
                     <div className="container px-6 py-4 mx-auto">
                         <div className="lg:flex lg:items-center lg:justify-between">
                             <div className="flex items-center justify-between">
-                                <div 
-                                onClick={()=>navigate('/')}
-                                className="flex items-center cursor-pointer">
+                                <div
+                                    onClick={() => navigate('/')}
+                                    className="flex items-center cursor-pointer">
                                     {/* <img src="../../../public/images/Frame 7.png" alt="" style={{height:"2.5rem",width:"auto"}} /> */}
                                     <h1 className="text-blue-800 text-3xl px-2 font-bold">Safely</h1>
                                 </div>
@@ -64,9 +83,8 @@ const Navbar = () => {
                             </div>
 
                             <div
-                                className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${
-                                    isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"
-                                }`}
+                                className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"
+                                    }`}
                             >
                                 <div className="flex flex-col text-gol font-medium -mx-6 lg:flex-row lg:items-center lg:mx-1">
                                     <p
@@ -88,7 +106,7 @@ const Navbar = () => {
                                         Notifications
                                     </p>
                                     <p
-                                        onClick={()=>navigate('/')}
+                                        onClick={() => navigate('/')}
                                         className="px-3 py-2 mx-2 mt-2 cursor-pointer text-blue-800 transition-colors duration-500 transform rounded-md lg:mt-0  hover:drop-shadow-2xl hover:bg-blue-800 hover:text-golden"
                                     >
                                         Support
@@ -98,7 +116,7 @@ const Navbar = () => {
                                 <div className="flex items-center mt-4 lg:mt-0">
                                     <button
                                         type="button"
-                                        className="flex items-center focus:outline-none dropdown dropdown-bottom dropdown-end"
+                                        className={`flex items-center focus:outline-none dropdown  ${!isOpen ? "dropdown-bottom dropdown-end" : "dropdown-right"}`}
                                         aria-label="toggle profile dropdown"
                                         tabIndex={0}
                                     >
@@ -108,43 +126,57 @@ const Navbar = () => {
                                         >
                                             {user ? (
                                                 <>
-                                                    <li onClick={()=>navigate('/profile')}>
+                                                    <li onClick={() => navigate('/profile')}>
                                                         <a>Profile</a>
                                                     </li>
                                                     <li onClick={() => dispatch(userLogout())}>
                                                         <a>Signout</a>
                                                     </li>
-                                                    <li onClick={()=>navigate('/driver/login')}>
+                                                    <li onClick={() => navigate('/driver/login')}>
                                                         <a>Login as Driver</a>
                                                     </li>
                                                 </>
                                             ) : (
                                                 <>
                                                     <li
-                                                    onClick={()=>navigate('/login')}
+                                                        onClick={() => navigate('/login')}
                                                     >
                                                         <a>Login</a>
                                                     </li>
                                                     <li
-                                                    onClick={()=>navigate('/signup')}
+                                                        onClick={() => navigate('/signup')}
                                                     >
                                                         <a>Signup</a>
                                                     </li>
-                                                    <li onClick={()=>navigate('/driver/login')}>
+                                                    <li onClick={() => navigate('/driver/login')}>
                                                         <a>Login as Driver</a>
                                                     </li>
                                                 </>
                                             )}
                                         </ul>
-                                        <div className="w-8 h-8">
-                                            <div className="avatar placeholder object-cover w-full h-full">
-                                                <div className="bg-neutral-focus text-neutral-content rounded-full w-16">
-                                                    <span className="text-sm">A</span>
+                                        {user ? <>
+                                            <div className="w-8 h-8">
+                                                <div className="avatar placeholder object-cover w-full h-full">
+                                                    <div className="bg-neutral-focus text-neutral-content rounded-full w-16">
+                                                        <span className="text-sm">{user[0]}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">Khatab wedaa</h3>
+                                            <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">{user}</h3>
+                                        </> :
+                                            <>
+                                                <div className="w-8 h-8">
+                                                    <div className="avatar placeholder object-cover w-full h-full">
+                                                        <div className="bg-neutral-focus text-neutral-content rounded-full w-16">
+                                                            <span className="text-sm">A</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">Account</h3>
+                                            </>
+                                        }
                                     </button>
                                 </div>
                             </div>

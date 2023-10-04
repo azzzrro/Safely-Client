@@ -96,7 +96,7 @@ const UserWalletInfo = () => {
                                     <h1 className="text-2xl font-medium text-black">Wallet transactions</h1>
                                 </div>
                             </div>
-                            <div className="flex w-fit shrink-0 gap-2">
+                            <div className="md:flex grid md:w-fit shrink-0 gap-3 md:gap-2">
                                 <div className="w-fit flex">
                                     <button className="btn">
                                         WALLET BALANCE
