@@ -41,11 +41,9 @@ function Login() {
         onSubmit: async (values) => {
             try {
                 const { data } = await axiosUser(null).post("checkLoginUser", values);
-                console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
                     setuserData({ user: data.name, userToken: data.token,user_id:data._id });
-                    console.log(userData, "userdattaaa");
                 } else if (data.message === "Incomplete registration") {
                     toast.error("Please complete the verification!");
                     localStorage.setItem("userId", data.userId);
