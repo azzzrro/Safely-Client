@@ -39,7 +39,7 @@ const Ride = () => {
     }, [])
 
 
-    const {user_id} = useSelector((store: any) => store.user);
+    const { user_id } = useSelector((store: any) => store.user);
 
     const navigate = useNavigate()
     const dispatch = useDispatch();

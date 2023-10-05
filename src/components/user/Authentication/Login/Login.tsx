@@ -25,7 +25,7 @@ function Login() {
     const [userData, setuserData] = useState({
         user: "",
         userToken: null,
-        user_id:""
+        user_id: ""
     });
 
     const dispatch = useDispatch();
@@ -43,7 +43,7 @@ function Login() {
                 const { data } = await axiosUser(null).post("checkLoginUser", values);
                 if (data.message === "Success") {
                     sendOtp();
-                    setuserData({ user: data.name, userToken: data.token,user_id:data._id });
+                    setuserData({ user: data.name, userToken: data.token, user_id: data._id });
                 } else if (data.message === "Incomplete registration") {
                     toast.error("Please complete the verification!");
                     localStorage.setItem("userId", data.userId);
@@ -144,7 +144,7 @@ function Login() {
                 if (response.data.message === "Success") {
                     console.log(response.data);
                     toast.success("Login success!");
-                    dispatch(userLogin({ user: response.data.name, userToken: response.data.token,user_id:response.data._id }));
+                    dispatch(userLogin({ user: response.data.name, userToken: response.data.token, user_id: response.data._id }));
                     localStorage.removeItem("userId")
                     navigate("/");
                 } else if (response.data.message === "Incomplete registration") {
