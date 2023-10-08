@@ -51,7 +51,7 @@ function App() {
                         <Route path="/identification" element={user ? <Navigate to={'/'} /> : <Identificationpage />} />
                         <Route path="/" element={<Homepage />} />
                         <Route path="/about" element={<About />} />
-                        <Route path="/profile" element={!user ? <Navigate to={'/login'} /> : <Profilepage />} />
+                        <Route path="/account" element={!user ? <Navigate to={'/login'} /> : <Profilepage />} />
                         <Route path="/rides" element={!user ? <Navigate to={'/login'} /> : <UserCurrentRidePage />} />
 
                         {/* Driver Routes */}
