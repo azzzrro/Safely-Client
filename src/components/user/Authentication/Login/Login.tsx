@@ -142,7 +142,6 @@ function Login() {
                 formData.append("email", userEmail);
                 const response = await axiosUser(null).post("checkGoogleLoginUser", formData);
                 if (response.data.message === "Success") {
-                    console.log(response.data);
                     toast.success("Login success!");
                     dispatch(userLogin({ user: response.data.name, userToken: response.data.token, user_id: response.data._id }));
                     localStorage.removeItem("userId")

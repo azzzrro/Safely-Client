@@ -46,7 +46,6 @@ const DriverInfo = () => {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        console.log(values);
 
         const { data } = await axiosDriver(driverToken).post(`profileUpdate?driver_id=${driver_id}`, values)
         if (data.message === "Success") {

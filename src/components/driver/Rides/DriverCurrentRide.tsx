@@ -254,7 +254,6 @@ const DriverCurrentRide = () => {
         if (newPin.length < 6) {
             toast.error("Please enter a PIN")
         } else if (pin === rideData.pin) {
-            console.log(pin, "pin number");
             try {
                 socket?.emit("verifyRide", pin)
             } catch (error: any) {

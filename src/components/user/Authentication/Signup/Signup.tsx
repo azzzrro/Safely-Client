@@ -37,11 +37,6 @@ const Signup = () => {
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
 
-    useEffect(() => {
-        console.log(otp);
-
-    }, [otp])
-
 
     useEffect(() => {
         setOtpPage(false);
@@ -104,7 +99,6 @@ const Signup = () => {
                 navigate("/login");
             } else if (data.message === "User must fill documents") {
                 toast.info(`User Already registered! Please verify the documents`);
-                console.log(data);
                 localStorage.setItem("userId", data.userId);
                 setIdentificationPage(true);
             } else {

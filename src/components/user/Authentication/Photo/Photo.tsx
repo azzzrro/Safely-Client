@@ -38,15 +38,12 @@ function Photo() {
                     const formData = new FormData();
                     formData.append("userImage", file);
                     const userId = localStorage.getItem("userId");
-                    console.log(userId, "tokennnnn");
 
                     const response = await axiosUser(null).post(`uploadUserImage?userId=${userId}`, formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },
                     });
-
-                    console.log(response);
 
                     if (response.data.message === "Success") {
                         navigate("/login");

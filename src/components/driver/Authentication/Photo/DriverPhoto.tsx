@@ -36,15 +36,12 @@ function DriverPhoto() {
                     formData.append("driverImage", file);
 
                     const driverId = localStorage.getItem("driverId");
-                    console.log(driverId, "tokennnnn");
 
                     const response = await axiosDriver(null).post(`uploadDriverImage?driverId=${driverId}`, formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },
                     });
-
-                    console.log(response);
 
                     if (response.data.message === "Success") {
                         toast.success("Successfully uploaded Image!");

@@ -38,11 +38,9 @@ function DriverLogin() {
         onSubmit: async (values) => {
             try {
                 const { data } = await axiosDriver(null).post("checkLoginDriver", values);
-                console.log(data, "dattaaa");
                 if (data.message === "Success") {
                     sendOtp();
                     setdriverData({ name: data.name, driverToken: data.token, driver_id: data._id });
-                    console.log(driverData, "driverData");
                 } else if (data.message === "Incomplete registration") {
                     toast.info("Please complete the verification!");
                     localStorage.setItem("driverId", data.driverId);

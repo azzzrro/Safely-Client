@@ -127,7 +127,6 @@ function DriverSignup() {
             const number = "+91" + formik.values.mobile;
             const appVerifier = window.recaptchaVerifier;
             const result = await signInWithPhoneNumber(auth, number, appVerifier);
-            console.log(result,"otp");
             
             setConfirmationResult(result);
             setOtpPage(true);

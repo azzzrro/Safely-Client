@@ -48,7 +48,7 @@ export function DriverNavbar() {
           Rides
         </p>
       </Typography>
-      <Typography
+      {/* <Typography
         as="li"
         variant="small"
         color="white"
@@ -59,7 +59,7 @@ export function DriverNavbar() {
           className="flex items-center cursor-pointer">
           Notifications
         </p>
-      </Typography>
+      </Typography> */}
       <Typography
         as="li"
         variant="small"

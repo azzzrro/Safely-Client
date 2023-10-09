@@ -102,7 +102,6 @@ const UserCurrentRide = () => {
     })
 
     socketInstance.on("userPaymentPage", () => {
-      console.log("response from user side");
       setpaymentModal(true)
     })
 
@@ -207,9 +206,6 @@ const UserCurrentRide = () => {
     getRideData()
   }, [])
 
-  useEffect(()=>{
-    console.log(feedbacks,"feeed");
-  },[feedbacks])
 
 
   ///SETTING UP THE DIRECTIONS
@@ -326,12 +322,9 @@ const UserCurrentRide = () => {
       }
 
       const rideId = localStorage.getItem("currentRide-user")
-      console.log(values.paymentMode, "valuesss");
 
 
       if (values.paymentMode === "Wallet" || values.paymentMode === "Cash in hand") {
-        console.log(values.paymentMode, "coddd,wallett");
-
         const { data } = await axiosUser(userToken).post('payment', values, { params: { rideId: rideId } })
         if (data.message === "Success") {
           toast.success("Payment successfull")
@@ -348,16 +341,12 @@ const UserCurrentRide = () => {
         const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
         try {
-          console.log("stripeeee");
-
           const { data } = await axiosUser(userToken).post("payment-stripe", values, { params: { rideId: rideId } })
 
           try {
             const result = await stripe?.redirectToCheckout({
               sessionId: data.id
             });
-            console.log(result, "resultt");
-
             if (result?.error) {
               toast.error(result.error.message || "An error occurred during payment.");
             }

@@ -32,9 +32,6 @@ export const AdminDashboard = () => {
     getChartData()
   }, [])
 
-  useEffect(() => {
-    console.log(dashboardData, "charttt");
-  }, [dashboardData])
 
   const COLORS = ['#0088FE', '#FFBB28', '#00C49F',];
 

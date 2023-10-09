@@ -32,7 +32,6 @@ const BlockedDrivers = () => {
                     {/* head */}
                     <thead>
                         <tr>
-                            <th>SELECT</th>
                             <th>NO</th>
                             <th>NAME</th>
                             <th>MOBILE</th>
@@ -46,11 +45,6 @@ const BlockedDrivers = () => {
                         {driversData.map((drivers: any, index) => {
                             return (
                                 <tr key={index + 1} >
-                                    <th>
-                                        <label>
-                                            <input type="checkbox" className="checkbox" />
-                                        </label>
-                                    </th>
                                     <th>{index + 1}</th>
                                     <td>
                                         <div className="flex items-center space-x-3">

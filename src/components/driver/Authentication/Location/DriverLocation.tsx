@@ -26,7 +26,6 @@ function DriverLocation() {
     const [latitude, setlatitude] = useState(8.4);
 
     const handleGeolocation = (lat: any, lng: any, status: any) => {
-        console.log("User Location:", lat, lng, status);
         setlocation(status);
         setlongitude(lng);
         setlatitude(lat);

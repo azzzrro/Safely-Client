@@ -28,7 +28,7 @@ const DriverFeedbacks = () => {
     return (
         <>
             <div className='bg-gray-100 w-[96%] mx-auto h-fit py-5 rounded-2xl drop-shadow-2xl md:flex items-center px-5'>
-                <div className='w-full md:h-fit h-fit grid grid-cols-3 gap-4'>
+                <div className='w-full md:h-fit h-fit md:grid grid-cols-3 gap-4'>
                     {feedbacks.map((feedbacks: any) => {
                         return (
                             <div className="card bg-base-100 shadow-xl">

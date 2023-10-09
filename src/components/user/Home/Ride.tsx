@@ -351,7 +351,6 @@ const Ride = () => {
             model: Yup.string().min(3, "Please choose an option!").required("Please choose an option!"),
         }),
         onSubmit: async (values, { setSubmitting }) => {
-            console.log(values, "submitting values");
 
             try {
 

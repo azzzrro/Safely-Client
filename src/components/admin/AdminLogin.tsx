@@ -27,7 +27,6 @@ export const AdminLogin = () => {
         onSubmit: async (values, { setSubmitting }) => {
             try {
                 const {data} = await axiosAdmin(null).post('login',values)
-                console.log(data,"dataaaaa");
                 
                 if(data.message === "Success"){
                     toast.success("Login successfull!")

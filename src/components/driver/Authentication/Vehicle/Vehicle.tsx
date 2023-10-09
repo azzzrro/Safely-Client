@@ -63,11 +63,6 @@ const Vehicle = () => {
         }
     };
 
-    useEffect(() => {
-        console.log(formik.values);
-        console.log(rcImageUrl, carImageUrl);
-
-    }, [formik.values])
 
     return (
         <>

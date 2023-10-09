@@ -59,9 +59,7 @@ export const DriverDashboard = () => {
         getData();
     }, [])
 
-    useEffect(() => {
-        console.log(pieChartData, "charttt");
-    }, [pieChartData])
+
 
     const navigate = useNavigate()
 
@@ -75,14 +73,10 @@ export const DriverDashboard = () => {
         setSocket(socketInstance);
 
         socketInstance.on("getNearByDrivers", () => {
-            console.log("inside socket request");
             if (navigator.geolocation) {
-                console.log("inside geonavigation");
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        console.log("position", position);
                         const { latitude, longitude } = position.coords
-                        console.log(latitude, longitude, "pos coordinates");
                         if (socketInstance) {
                             console.log("Socket is still on after getting coords");
 
@@ -122,7 +116,6 @@ export const DriverDashboard = () => {
     const handleAcceptRide = () => {
         if (socket) {
             const updatedRideDetails = { ...rides, driver_id }
-            console.log(updatedRideDetails, "updated and accepted ridedetails");
             socket.emit("acceptRide", updatedRideDetails);
         }
     };

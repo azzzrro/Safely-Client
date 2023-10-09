@@ -46,12 +46,10 @@ const UserWalletInfo = () => {
             const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
             const { data } = await axiosUser(userToken).post("addWalletBalance", formData, { params: { user_id: user_id } })
 
-            console.log(data, "stripe  dataaaa");
 
             const result = await stripe?.redirectToCheckout({
                 sessionId: data.id
             });
-            console.log(result, "resultttt");
 
             if (result?.error) {
                 toast.error(result.error.message || "An error occurred during payment.");

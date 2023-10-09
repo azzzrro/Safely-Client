@@ -25,7 +25,7 @@ const DriverVehicleInfo = () => {
     return (
         <>
             <div className='bg-gray-100 w-[96%] mx-auto h-fit rounded-2xl drop-shadow-2xl md:flex gap-4 px-5'>
-                <div className='h-[22rem] w-1/5 flex flex-col justify-center items-center text-center gap-4'>
+                <div className='h-[22rem] md:w-1/5 w-full flex flex-col justify-center items-center text-center gap-4'>
                     <div>
                         <h1 className='text-xl font-semibold'>
                             Vehicle Model
@@ -43,7 +43,7 @@ const DriverVehicleInfo = () => {
                         </h1>
                     </div>
                 </div>
-                <div className='h-fit w-2/5 py-5'>
+                <div className='h-fit md:w-2/5 w-full py-5'>
                     <div>
                         <h1 className='text-xl font-semibold mb-2'>
                             RC IMAGE
@@ -53,7 +53,7 @@ const DriverVehicleInfo = () => {
                         <img src={driverData?.vehicle_details?.rcImageUrl} width={"100%"} height={"100%"} alt="" />
                     </div>
                 </div>
-                <div className='h-fit w-2/5 py-5'>
+                <div className='h-fit md:w-2/5 w-full py-5'>
                     <div>
                         <h1 className='text-xl font-semibold mb-2'>
                             CAR IMAGE
