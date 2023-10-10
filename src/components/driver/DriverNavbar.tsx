@@ -43,7 +43,7 @@ export function DriverNavbar() {
         className="p-1 font-normal"
       >
         <p
-          onClick={() => navigate('/driver/rides')}
+          onClick={() => navigate('/driver/driverRides')}
           className="flex items-center cursor-pointer">
           Rides
         </p>

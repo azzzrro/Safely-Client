@@ -61,7 +61,7 @@ function App() {
                         <Route path="/driver/identification" element={driver ? <Navigate to={'/driver/dashboard'} /> : <DriverIdentificationPage />} />
                         <Route path="/driver/dashboard" element={!driver ? <Navigate to={'/driver/login'} /> : <DriverDashboardpage />} />
                         <Route path="/driver/notifications" element={!driver ? <Navigate to={'/driver/login'} /> : <DriverNotificationPage />} />
-                        <Route path="/driver/rides" element={!driver ? <Navigate to={'/driver/login'} /> : <DriverRidesPage />} />
+                        <Route path="/driver/driverRides" element={!driver ? <Navigate to={'/driver/login'} /> : <DriverRidesPage />} />
                         <Route path="/driver/profile" element={!driver ? <Navigate to={'/driver/login'} /> : <DriverProfilePage />} />
 
                         {/* Admin Routes */}
