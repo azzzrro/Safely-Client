@@ -348,13 +348,13 @@ const UserDetails = () => {
                                 <div className="md:flex justify-center items-center h-2/5">
                                     <button
                                         onClick={() => setacceptModal(true)}
-                                        className="btn btn-active btn-success btn-sm mx-2 text-white"
+                                        className="btn btn-active btn-success btn-md  mx-2 text-white"
                                     >
                                         accept
                                     </button>
                                     <button
                                         onClick={() => setrejectModal(true)}
-                                        className="btn btn-active btn-error btn-sm text-white"
+                                        className="btn btn-active btn-error btn-md text-white"
                                     >
                                         reject
                                     </button>
