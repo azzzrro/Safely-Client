@@ -748,6 +748,12 @@ const UserCurrentRide = () => {
           </div>
         </>
       )}
+
+      {!rideData && (
+        <div className='w-full text-center my-3'>
+          <h1>No active rides</h1>
+        </div>
+      )}
     </div>
   )
 }
