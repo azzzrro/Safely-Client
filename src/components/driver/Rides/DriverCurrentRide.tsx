@@ -19,7 +19,7 @@ const ENDPOINT = import.meta.env.VITE_API_URL;
 const DriverCurrentRide = () => {
 
     const { driver, driver_id, driverToken } = useSelector((store: any) => store.driver)
-    
+
     const navigate = useNavigate()
 
     const [cancelledModal, setcancelledModal] = useState(false)
@@ -552,6 +552,12 @@ const DriverCurrentRide = () => {
                         </div>
                     </div>
                 </>
+            )}
+
+            {!rideData && (
+                <div className='w-full text-center my-3'>
+                    <h1>No active rides</h1>
+                </div>
             )}
         </div>
     )
