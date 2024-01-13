@@ -99,8 +99,8 @@ export const DriverDashboard = () => {
 
         socketInstance.on("driverConfirmation", (rideId) => {
             localStorage.setItem("currentRide-driver", rideId)
-            socketInstance.emit("forUser",rideId)
             navigate('/driver/driverRides')
+            socketInstance.emit("forUser",rideId)
         })
 
         return () => {
