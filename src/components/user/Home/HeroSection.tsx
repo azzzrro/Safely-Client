@@ -8,7 +8,7 @@ const HeroSection = () => {
                     <div
                         className="hero h-full"
                         style={{
-                            backgroundImage: "url(https://res.cloudinary.com/dxz1rikvk/image/upload/v1722520613/safely/h0wloailzjhd1zrc2zpr.jpg)",
+                            backgroundImage: "url(https://res.cloudinary.com/dxz1rikvk/image/upload/v1723115795/safely/eqooypzsixiyaqabhiwt.jpg)",
                         }}
                     >
                         <div className="hero-overlay bg-opacity-60"></div>
